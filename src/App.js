@@ -175,6 +175,9 @@ class App extends Component {
     is_playing: "Paused",
     progress_ms: 0,
     searchResults: [],
+    next: null,
+    next_queue: [],
+    deviceID: "",
   };
   this.getCurrentlyPlaying = this.getCurrentlyPlaying.bind(this);
   }
@@ -196,6 +199,8 @@ class App extends Component {
               progress_ms: data.progress_ms,
               searchResults: [],
               next: null,
+              next_queue: [],
+              the_token: token, 
             });
        }
       },
@@ -204,7 +209,7 @@ class App extends Component {
       }
     });
   }
-
+  a
   getSearchResults(query){
     const access_token = this.state.token;
     const searchQuery = query;
@@ -231,7 +236,7 @@ class App extends Component {
         let artists = []
         element.artists.forEach(artist => artists.push(artist.name))
         results.push(      
-          <List.Item key={element.uri} onClick={function(){playSong(access_token, element.uri)}}>
+          <List.Item key={element.uri} onClick={() => {this.playSong(access_token, element.uri)}}>
             <List.Item.Meta
               avatar={<Avatar shape='square' size='large' src={element.album.images[0].url} />}
               title={<p href="https://ant.design">{element.name}</p>}
@@ -249,6 +254,228 @@ class App extends Component {
     )
   }
 
+    queue = ({
+      spotify_uri,
+      device,
+      info,
+      playerInstance: {
+        _options: {
+          getOAuthToken,
+          id
+        }
+      }
+    }) => {
+      getOAuthToken(access_token => {
+        fetch(`https://api.spotify.com/v1/me/player/queue?uri=${spotify_uri}&device_id=${this.state.deviceID}`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${access_token}`,
+          }
+        })
+        .then(response => response.text())
+        .then(data => this.getRecs(access_token, info.artists[0].id, info.genre, info.id, info ))
+        .catch((error) => {console.log(error)});
+      });
+    };
+
+    queueSong = (access_token, uri, img, info) => {
+    let player = new window.Spotify.Player({
+    name: 'Web Playback SDK Quick Start Player',
+    getOAuthToken: cb => { cb(access_token); }
+    });
+
+    // Error handling
+    player.addListener('initialization_error', ({ message }) => { console.error(message); });
+    player.addListener('authentication_error', ({ message }) => { console.error(message); });
+    player.addListener('account_error', ({ message }) => { console.error(message); });
+    player.addListener('playback_error', ({ message }) => { console.error(message); });
+
+    // Playback status updates
+    player.addListener('player_state_changed', state => { console.log(state); });
+
+    // Ready
+    player.addListener('ready', ({ device_id }) => {
+      console.log('Ready with Device ID', device_id);
+      let temp = []
+      for( var i = 0; i < this.state.next_queue.length; i++){
+        temp.push(this.state.next_queue[i]);
+      }
+      temp.push(      
+          <List.Item key={uri}>
+            <List.Item.Meta
+              avatar={<Avatar shape='square' size='large' src={img} />}
+            />
+          </List.Item>);
+      this.setState({
+           next_queue: temp,
+        })
+      this.queue({
+        /*playerInstance: new window.Spotify.Player({
+          name: 'New Player',
+          getOAuthToken: callback => {
+            // Run code to get a fresh access token
+            console.log(access_token);
+            callback(access_token);
+          },
+          volume: 0.5
+        })*/
+        playerInstance: player,
+        device: device_id,
+        spotify_uri: uri,
+        info: info
+         });
+    });
+
+    // Not Ready
+    player.addListener('not_ready', ({ device_id }) => {
+      console.log('Device ID has gone offline', device_id);
+    });
+
+    // Connect to the player!
+    player.connect();
+
+    console.log(player);
+  }
+
+  play = ({
+      spotify_uri,
+      device,
+      playerInstance: {
+        _options: {
+          getOAuthToken,
+          id
+        }
+      }
+    }) => {
+      getOAuthToken(access_token => {
+        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceID}`, {
+          method: 'PUT',
+          body: JSON.stringify({ uris: [spotify_uri] }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${access_token}`,
+          }
+        })
+        .then(response => response.text())
+        .then(data => this.updatePlaying(access_token))
+        .catch((error) => {console.log(error)});
+      });
+    };
+
+
+  playSong = (access_token, uri) => {
+    let player = new window.Spotify.Player({
+    name: 'Web Playback SDK Quick Start Player',
+    getOAuthToken: cb => { cb(access_token); }
+    });
+
+    // Error handling
+    player.addListener('initialization_error', ({ message }) => { console.error(message); });
+    player.addListener('authentication_error', ({ message }) => { console.error(message); });
+    player.addListener('account_error', ({ message }) => { console.error(message); });
+    player.addListener('playback_error', ({ message }) => { console.error(message); });
+
+    // Playback status updates
+    player.addListener('player_state_changed', state => { console.log(state); });
+
+    // Ready
+    player.addListener('ready', ({ device_id }) => {
+      console.log('Ready with Device ID', device_id);
+
+      this.play({
+        /*playerInstance: new window.Spotify.Player({
+          name: 'New Player',
+          getOAuthToken: callback => {
+            // Run code to get a fresh access token
+            console.log(access_token);
+            callback(access_token);
+          },
+          volume: 0.5
+        })*/
+        playerInstance: player,
+        device: device_id,
+        spotify_uri: uri,
+         });
+    });
+
+    // Not Ready
+    player.addListener('not_ready', ({ device_id }) => {
+      console.log('Device ID has gone offline', device_id);
+    });
+
+    // Connect to the player!
+    player.connect();
+
+    console.log(player);
+  }
+
+  updatePlaying = (token) => {
+    // Make a call using the token
+    $.ajax({
+      url: "https://api.spotify.com/v1/me/player",
+      type: "GET",
+      beforeSend: (xhr) => {
+        xhr.setRequestHeader("Authorization", "Bearer " + token);
+      },
+      success: (data) => {
+      console.log("success!");
+      console.log("this is the data = " + data)
+      if(data){ 
+        console.log(data);
+        this.setState({
+           item: data.item,
+           is_playing: data.is_playing,
+           progress_ms: data.progress_ms,
+        })
+        this.getRecs(token, data.item.artists[0].id, data.item.genre, data.item.id, data); 
+       }
+      },
+      error: () =>{
+            console.log("failure");
+      }
+    });
+  }
+
+  getRecs = (token, artist, genre, track, info) => {
+    let test_genre = [
+      "alt_rock%2bluegrass%2blues%2classical"];
+    $.ajax({
+      url: `https://api.spotify.com/v1/recommendations?limit=3&seed_artists=${artist}&seed_genres=${test_genre}&seed_tracks=${track}`,
+      type: "GET",
+      beforeSend: (xhr) => {
+        xhr.setRequestHeader("Authorization", "Bearer " + token);
+      },
+      success: (data) => {
+      console.log("success!");
+      console.log("this is the recommendations data = " + data);
+      console.log(data);
+      console.log(this.state.next_queue);
+        if(data){ 
+            this.setState({
+              next: data.tracks,
+              next_queue: this.state.next_queue,
+              the_token: token, 
+            })
+            console.log(data.tracks);
+        /*
+        ReactDOM.render(<Player 
+              item={info.item}
+              is_playing={info.is_playing}
+              progress_ms={info.progress_ms}
+              next={data.tracks}
+              the_token={token}
+            />, document.getElementById('currentPlayer'))
+        */
+        }
+      },
+      error: () =>{
+            console.log("failure");
+      }
+    });
+ }
+
   componentDidMount() {
    //particles.js github page says to load package like so:
     particlesJS.load('particles-js', '/assets/particles.json', function() {
@@ -264,15 +491,27 @@ class App extends Component {
       this.getCurrentlyPlaying(_token)
     }
     this.timerID = setInterval(
-      () => this.tick(),
+      () => this.tick(_token),
       1000
     );
   }
 
-  tick(){
+  tick(token){
+    let temp = this.state.progress_ms + 1000;
     this.setState({
-    duration_ms: this.state.duration_ms++
+        progress_ms: temp
     })
+    if(this.state.progress_ms > this.state.item.duration_ms){
+    let temp_list = []
+      for( var i = 1; i < this.state.next_queue.length; i++){
+        temp_list.push(this.state.next_queue[i]);
+      }
+      this.setState({
+           next_queue: temp_list,
+           progress_ms: 0
+        })
+      this.updatePlaying(token)
+    }
    }
 
 
@@ -296,6 +535,9 @@ render() {
   // Ready
   player.addListener('ready', ({ device_id }) => {
     console.log('Ready with Device ID', device_id);
+    this.setState({
+     deviceID: device_id
+  })
   });
 
   // Not Ready
@@ -305,10 +547,15 @@ render() {
 
   // Connect to the player!
   player.connect();
+
+  
+  
 };
 
   let card;
   if(this.state.searchResults.length > 0){
+      console.log("these are the search results");
+      console.log(this.state.searchResults);
       card = <Card>
         <List itemLayout="horizontal">
           {this.state.searchResults}
@@ -337,6 +584,11 @@ render() {
               item={this.state.item}
               is_playing={this.state.is_playing}
               progress_ms={this.state.progress_ms}
+              next={this.state.next}
+              next_queue={this.state.next_queue}
+              the_token={this.state.token}
+              func={this.queueSong}
+              device={this.state.deviceID}
             />
           )}
           {this.state.token && (

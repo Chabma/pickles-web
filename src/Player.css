@@ -67,3 +67,6 @@
   margin-bottom: 0.1em;
   color: purple;
 }
+#buttons{
+display: flex;
+}

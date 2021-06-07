@@ -12,6 +12,10 @@
   .App-logo {
     animation: App-logo-spin infinite 25s linear;
   }
+  .btn--loginApp-link {
+    animation: Login-hover infinite 15s linear;
+  }
+
 }
 
 .App-header {
@@ -50,9 +54,10 @@
 
 .btn--loginApp-link {
     margin-top: 30px;
-    background-color: #ffffff;
+    background-color: #66ff66;
     border-radius: 10px;
     padding: 2px;
+    font-family: 'Lobster', cursive;
 }
 
 .btn--loginApp-link:active {
@@ -66,6 +71,29 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes Login-hover {
+  0% {
+    -webkit-transform: translate(5%, 0%);
+	transform: translate(5%, 0%);
+  }
+  25% {
+    -webkit-transform: translate(-10%, 100%);
+	transform: translate(-10%, 100%);
+  }
+  50% {
+    -webkit-transform: translate(-5%, 200%);
+	transform: translate(-5%, 200%);
+  }
+  75%{
+   -webkit-transform: translate(10%, 100%);
+	transform: translate(10%, 100%);
+  }
+  100% {
+    -webkit-transform: translate(5%, 0%);
+	transform: translate(5%, 0%);
   }
 }
 
