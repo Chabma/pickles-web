@@ -7,6 +7,7 @@ import play_btn from "./play.png";
 import pause_btn from "./pause.png";
 import next_btn from "./next.png";
 import previous_btn from "./previous.png";
+import add_to_library from "./addToLibrary.png"
 
 const Player = props => {
 
@@ -59,6 +60,49 @@ const Player = props => {
           }
         })
     }
+  const add_to_library_btn_func = (access_token, track) => {
+        fetch(`https://api.spotify.com/v1/me/tracks?ids=${track}`, {
+          method: 'PUT',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${access_token}`,
+          }
+        })
+    }
+  const add_playlist_btn_func = (access_token, playlist_name, user_id) => {
+        console.log(playlist_name);
+        let playlist_id = "";
+        let data = {
+              "name":  playlist_name,
+              "description": "Made by Pickles, d'illest playlist creator web app",
+              "public": false
+          };
+        fetch(`https://api.spotify.com/v1/users/${user_id}/playlists`, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${access_token}`,
+          }
+        })
+        .then(response => response.json())
+        .then(data => { 
+            playlist_id = data.id;
+            for (var i = 0; i < props.total_queue.length; i++){
+                fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?uris=spotify%3Atrack%3A${props.total_queue[i]}`, {
+                  method: 'POST',
+                  headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${access_token}`,
+                  }
+                })
+            }
+        })
+        .catch((error) => {console.log(error)});
+    }
 
   const backgroundStyles = {
     backgroundImage:`url(${props.item.album.images[0].url})`,
@@ -89,6 +133,7 @@ const Player = props => {
   console.log(props);
   return (
     <div className="App" id="currentPlayer">
+    {props.next && (
       <div className="main-wrapper">
         <div className="now-playing__img">
           <img src={props.item.album.images[0].url}  alt="player" />
@@ -102,10 +147,10 @@ const Player = props => {
             {props.is_playing ? "Playing" : "Paused"}
           </div>
           <div id="buttons">
-          <img src={previous_btn} onClick={function(){previous_btn_func(props.the_token, props.device)}}/>
-          <img id="pause_btn_div" src={pause_btn} style={{display: (!is_playing ? 'none' :'block')}} onClick={function(){pause_btn_func(props.the_token, props.device)}}/>
-          <img id="play_btn_div" src={play_btn} style={{display: (is_playing ? 'none' :'block')}} onClick={function(){play_btn_func(props.the_token, props.device)}}/>
-          <img src={next_btn} onClick={function(){next_btn_func(props.the_token, props.device)}}/>
+            <img src={previous_btn} onClick={function(){previous_btn_func(props.the_token, props.device)}}/>
+            <img id="pause_btn_div" src={pause_btn} style={{display: (!is_playing ? 'none' :'block')}} onClick={function(){pause_btn_func(props.the_token, props.device)}}/>
+            <img id="play_btn_div" src={play_btn} style={{display: (is_playing ? 'none' :'block')}} onClick={function(){play_btn_func(props.the_token, props.device)}}/>
+            <img src={next_btn} onClick={function(){next_btn_func(props.the_token, props.device)}}/>
           </div>
           <div className="progress">
             <div
@@ -113,9 +158,14 @@ const Player = props => {
               style={progressBarStyles}
             />
           </div>
+          <div id="buttons_two">
+            <img src={add_to_library} onClick={function(){add_to_library_btn_func(props.the_token, props.item.id)}}/>
+            <Input type="text" id="playlist_name" placeholder="Enter Playlist Name Here"></Input>
+            <button onClick={function(){add_playlist_btn_func(props.the_token, document.getElementById("playlist_name").value, props.user )}}>Create a playlist from queue</button>          
+          </div>
         </div>
-        <div className="background" style={backgroundStyles} />{" "}
       </div>
+      )}
       <div id="queue">
         {queue_card}
       </div>
@@ -157,7 +207,7 @@ const Player = props => {
               </div> 
           </div>
             )}
-      </div>
+        </div>
     </div>
   );
 

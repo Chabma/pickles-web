@@ -70,3 +70,7 @@
 #buttons{
 display: flex;
 }
+#buttons_two{
+display: flex;
+height: 100px;
+}

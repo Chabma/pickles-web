@@ -1,6 +1,7 @@
 .App {
   text-align: center;
   overflow: hidden;
+  z-index: 1;
 }
 
 .App-logo {
@@ -10,9 +11,6 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 25s linear;
-  }
-  .btn--loginApp-link {
     animation: Login-hover infinite 15s linear;
   }
 
@@ -53,15 +51,20 @@
 }
 
 .btn--loginApp-link {
-    margin-top: 30px;
-    background-color: #66ff66;
+    font-size: 50px;
+    margin-top: 130px;
+    background-color: none;
     border-radius: 10px;
     padding: 2px;
+    color: #000000;
     font-family: 'Lobster', cursive;
+    z-index: 1;
 }
 
+.btn--loginApp-link:hover {
+    color: #CC43BC;
+}
 .btn--loginApp-link:active {
-    background-color: #0437cf;
     color: #ffffff;
 }
 
@@ -77,23 +80,23 @@
 @keyframes Login-hover {
   0% {
     -webkit-transform: translate(5%, 0%);
-	transform: translate(5%, 0%);
+	transform: translate(5%, 0%) rotate(0deg);
   }
   25% {
     -webkit-transform: translate(-10%, 100%);
-	transform: translate(-10%, 100%);
+	transform: translate(-10%, 100%) rotate(90deg);
   }
   50% {
     -webkit-transform: translate(-5%, 200%);
-	transform: translate(-5%, 200%);
+	transform: translate(-5%, 200%) rotate(180deg);
   }
   75%{
    -webkit-transform: translate(10%, 100%);
-	transform: translate(10%, 100%);
+	transform: translate(10%, 100%) rotate(270deg);
   }
   100% {
     -webkit-transform: translate(5%, 0%);
-	transform: translate(5%, 0%);
+	transform: translate(5%, 0%) rotate(360deg); 
   }
 }
 
@@ -105,6 +108,11 @@
   background-size: cover;
   background-position: 50% 50%;
   background-repeat: no-repeat;
+  z-index: -2;
+}
+
+#refresh_btn{
+    height: 64px;
 }
 
 canvas{
