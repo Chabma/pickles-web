@@ -1,0 +1,91 @@
+/** Now Playing **/
+.now-playing__name {
+  font-size: 1.5em;
+  margin-bottom: 0.2em;
+  color: purple;
+}
+.now-playing__artist {
+  margin-bottom: 1em;
+  color: purple;
+}
+.now-playing__status {
+  margin-bottom: 1em;
+  color: purple;
+}
+.now-playing__img {
+  float: left;
+  text-align: right;
+  width: 50%;
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+}
+.now-playing__img img {
+  max-width: 400px;
+  width: 100%;
+  margin: auto;
+}
+.now-playing__side {
+  float: left;
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+/** Progress **/
+.progress {
+  border: 1px solid #000;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress__bar {
+  background-color: purple;
+  height: 6px;
+}
+
+.next-wrapper{
+	width: 100%;
+}
+
+.next-playing__img img {
+  max-width: 150px;
+  width: 80%;
+}
+.next-playing__side {
+  float: left;
+  margin: auto;
+  width: 100%;
+  padding: 10px;
+}
+.next-playing__name {
+  font-size: 0.5em;
+  margin-bottom: 0.1em;
+  color: purple;
+}
+.next-playing__artist {
+  font-size: 0.7em;
+  margin-bottom: 0.1em;
+  color: purple;
+}
+#nextPlayer{	float: left;
+    flex-direction: column;
+    width: 25%;
+}
+#queue {
+	max-height: 80%;
+}
+#buttons{
+	display: flex;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+}
+#buttons_two{
+	flex-direction: column; 
+	display: flex;
+	height: 100px;
+}
+.button_img{
+	width: 33%;
+	margin: auto;
+}

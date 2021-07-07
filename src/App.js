@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom';
 //import hash from "./hash";
 import logo from "./logo.png";
 import refresh_btn from "./refresh.png";
+import { Input, List, Avatar, Card } from 'antd';
+import 'antd/dist/antd.css';
 import "./App.css";
 import * as $ from "jquery";
 import Player from "./Player";
+import NextPlayer from "./NextPlayer";
 import 'particles.js/particles';
-import { Input, List, Avatar, Card } from 'antd';
-import 'antd/dist/antd.css';
+
 
 export const authEndpoint = 'https://accounts.spotify.com/authorize';
 // Replace with your app's client ID, redirect URI and desired scopes
@@ -40,128 +42,6 @@ const hash = window.location.hash
   }, {});
 window.location.hash = "";
 
-const play = ({
-  spotify_uri,
-  device,
-  playerInstance: {
-    _options: {
-      getOAuthToken,
-      id
-    }
-  }
-}) => {
-  getOAuthToken(access_token => {
-    fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device}`, {
-      method: 'PUT',
-      body: JSON.stringify({ uris: [spotify_uri] }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${access_token}`,
-      }
-    })
-    .then(response => response.text())
-    .then(data => updatePlaying(access_token))
-    .catch((error) => {console.log(error)});
-  });
-};
-
-const playSong = (access_token, uri) => {
-    let player = new window.Spotify.Player({
-    name: 'Web Playback SDK Quick Start Player',
-    getOAuthToken: cb => { cb(access_token); }
-    });
-
-    // Error handling
-    player.addListener('initialization_error', ({ message }) => { console.error(message); });
-    player.addListener('authentication_error', ({ message }) => { console.error(message); });
-    player.addListener('account_error', ({ message }) => { console.error(message); });
-    player.addListener('playback_error', ({ message }) => { console.error(message); });
-
-    // Playback status updates
-    player.addListener('player_state_changed', state => { console.log(state); });
-
-    // Ready
-    player.addListener('ready', ({ device_id }) => {
-      console.log('Ready with Device ID', device_id);
-      play({
-        /*playerInstance: new window.Spotify.Player({
-          name: 'New Player',
-          getOAuthToken: callback => {
-            // Run code to get a fresh access token
-            console.log(access_token);
-            callback(access_token);
-          },
-          volume: 0.5
-        })*/
-        playerInstance: player,
-        device: device_id,
-        spotify_uri: uri,
-         });
-    });
-
-    // Not Ready
-    player.addListener('not_ready', ({ device_id }) => {
-      console.log('Device ID has gone offline', device_id);
-    });
-
-    // Connect to the player!
-    player.connect();
-
-    console.log(player);
-  }
-
-  
-  const updatePlaying = (token) => {
-    // Make a call using the token
-    $.ajax({
-      url: "https://api.spotify.com/v1/me/player",
-      type: "GET",
-      beforeSend: (xhr) => {
-        xhr.setRequestHeader("Authorization", "Bearer " + token);
-      },
-      success: (data) => {
-      console.log("success!");
-      console.log("this is the data = " + data)
-      if(data){ 
-        console.log(data);
-        getRecs(token, data.item.artists[0].id, data.item.genre, data.item.id, data); 
-       }
-      },
-      error: () =>{
-            console.log("failure");
-      }
-    });
-  }
-
-  const getRecs = (token, artist, genre, track, info) => {
-    let test_genre = [
-      "alt_rock%2bluegrass%2blues%2classical"];
-    $.ajax({
-      url: `https://api.spotify.com/v1/recommendations?limit=3&seed_artists=${artist}&seed_genres=${test_genre}&seed_tracks=${track}`,
-      type: "GET",
-      beforeSend: (xhr) => {
-        xhr.setRequestHeader("Authorization", "Bearer " + token);
-      },
-      success: (data) => {
-      console.log("success!");
-      console.log("this is the recommendations data = " + data);
-      console.log(data);
-        if(data){ 
-        ReactDOM.render(<Player 
-              item={info.item}
-              is_playing={info.is_playing}
-              progress_ms={info.progress_ms}
-              next={data.tracks}
-              the_token={token}
-            />, document.getElementById('currentPlayer'))
-        }
-      },
-      error: () =>{
-            console.log("failure");
-      }
-    });
- }
-
 class App extends Component {
 
   constructor() {
@@ -177,11 +57,12 @@ class App extends Component {
        duration_ms:0,
        id: "",
       },
-      is_playing: "Paused",
+      is_playing: false,
       progress_ms: 0,
       searchResults: [],
       next: null,
       next_queue: [],
+      played_queue: [],
       total_queue: [],
       deviceID: "",
       userID: "",
@@ -198,7 +79,6 @@ class App extends Component {
         xhr.setRequestHeader("Authorization", "Bearer " + token);
       },
       success: (data) => {
-      console.log("success!");
       if(data){  
           this.setState({
               item: data.item,
@@ -215,7 +95,7 @@ class App extends Component {
       }
     });
   }
-  a
+  
   getSearchResults(query){
     const access_token = this.state.token;
     const searchQuery = query;
@@ -242,7 +122,7 @@ class App extends Component {
         let artists = []
         element.artists.forEach(artist => artists.push(artist.name))
         results.push(      
-          <List.Item key={element.uri} onClick={() => {this.playSong(access_token, element.uri, element.album.images[0].url, element.id)}}>
+          <List.Item key={element.uri} onClick={() => {this.playSong(access_token, element.uri, element.album.images[0].url, element.id, element, element.artists)}}>
             <List.Item.Meta
               avatar={<Avatar shape='square' size='large' src={element.album.images[0].url} />}
               title={<p href="https://ant.design">{element.name}</p>}
@@ -260,7 +140,7 @@ class App extends Component {
     )
   }
 
-    queue = ({
+  queue = ({
       spotify_uri,
       device,
       info,
@@ -287,6 +167,15 @@ class App extends Component {
     };
 
     queueSong = (access_token, uri, img, info) => {
+
+    let el = document.querySelector('.main-wrapper');
+    if(el){
+        el.addEventListener("wheel", (evt) => {
+        evt.preventDefault();
+        el.scrollLeft += evt.deltaY;
+    });
+    }
+
     let player = new window.Spotify.Player({
     name: 'Web Playback SDK Quick Start Player',
     getOAuthToken: cb => { cb(access_token); }
@@ -308,10 +197,16 @@ class App extends Component {
       for( var i = 0; i < this.state.next_queue.length; i++){
         temp.push(this.state.next_queue[i]);
       }
+      console.log("THIS IS THE ARTIST INFO THINGY")
+      console.log(info);
+      let artists = [];
+      info.artists.forEach(artist => artists.push(artist.name));
       temp.push(      
-          <List.Item key={uri}>
-            <List.Item.Meta
-              avatar={<Avatar shape='square' size='large' src={img} />}
+          <List.Item key={uri} style={{height:"100%",border: "4px solid #0000"}}>
+            <List.Item.Meta style={{display:"block"}}
+              avatar={<Avatar shape='square' size='large' src={img} style={{height:"50%", width:"150px"}} />}
+              title={<p href="https://ant.design">{info.name}</p>}
+              description={artists.join(', ')}
             />
           </List.Item>);
       let temp_all = [];
@@ -383,7 +278,7 @@ class App extends Component {
     };
 
 
-  playSong = (access_token, uri, img, track_id) => {
+  playLastSong = (access_token, uri, img, track_id, element, artist_list) => {
     let player = new window.Spotify.Player({
     name: 'Web Playback SDK Quick Start Player',
     getOAuthToken: cb => { cb(access_token); }
@@ -406,14 +301,76 @@ class App extends Component {
         temp_all.push(this.state.total_queue[i]);
       }
       temp_all.push(      
-          track_id);
-        /*<List.Item key={uri}>
-            <List.Item.Meta
-              avatar={<Avatar shape='square' size='large' src={img} />}
+           track_id);
+      let artists = []
+      artist_list.forEach(artist => artists.push(artist.name))
+      let temp_played = [];
+      temp_played.push(
+        <List.Item key={uri} style={{height:"100%",border: "4px solid #0000"}}>
+            <List.Item.Meta style={{display:"block"}}
+              avatar={<Avatar shape='square' size='large' src={img} style={{height:"50%", width:"150px"}} />}
+              title={<p href="https://ant.design">{element.name}</p>}
+              description={artists.join(', ')}
             />
-          </List.Item>);*/
+        </List.Item>);
       this.setState({
-           total_queue: temp_all,
+           total_queue: temp_all, 
+           played_queue: temp_played,
+        })
+      this.play({
+        /*playerInstance: new window.Spotify.Player({
+          name: 'New Player',
+          getOAuthToken: callback => {
+            // Run code to get a fresh access token
+            console.log(access_token);
+            callback(access_token);
+          },
+          volume: 0.5
+        })*/
+        playerInstance: player,
+        device: device_id,
+        spotify_uri: uri,
+         });
+    });
+
+  playSong = (access_token, uri, img, track_id, element, artist_list) => {
+    let player = new window.Spotify.Player({
+    name: 'Web Playback SDK Quick Start Player',
+    getOAuthToken: cb => { cb(access_token); }
+    });
+
+    // Error handling
+    player.addListener('initialization_error', ({ message }) => { console.error(message); });
+    player.addListener('authentication_error', ({ message }) => { console.error(message); });
+    player.addListener('account_error', ({ message }) => { console.error(message); });
+    player.addListener('playback_error', ({ message }) => { console.error(message); });
+
+    // Playback status updates
+    player.addListener('player_state_changed', state => { console.log(state); });
+
+    // Ready
+    player.addListener('ready', ({ device_id }) => {
+      console.log('Ready with Device ID', device_id);
+      let temp_all = [];
+      for( var i = 0; i < this.state.total_queue.length; i++){
+        temp_all.push(this.state.total_queue[i]);
+      }
+      temp_all.push(      
+           track_id);
+      let artists = []
+      artist_list.forEach(artist => artists.push(artist.name))
+      let temp_played = [];
+      temp_played.push(
+        <List.Item key={uri} style={{height:"100%",border: "4px solid #0000"}}>
+            <List.Item.Meta style={{display:"block"}}
+              avatar={<Avatar shape='square' size='large' src={img} style={{height:"50%", width:"150px"}} />}
+              title={<p href="https://ant.design">{element.name}</p>}
+              description={artists.join(', ')}
+            />
+        </List.Item>);
+      this.setState({
+           total_queue: temp_all, 
+           played_queue: temp_played,
         })
       this.play({
         /*playerInstance: new window.Spotify.Player({
@@ -444,6 +401,13 @@ class App extends Component {
 
   updatePlaying = (token) => {
     // Make a call using the token
+    let el = document.querySelector('.main-wrapper');
+    if(el){
+        el.addEventListener("wheel", (evt) => {
+        evt.preventDefault();
+        el.scrollLeft += evt.deltaY;
+    });
+    }
     $.ajax({
       url: "https://api.spotify.com/v1/me/player",
       type: "GET",
@@ -452,7 +416,7 @@ class App extends Component {
       },
       success: (data) => {
       console.log("success!");
-      console.log("this is the data = " + data)
+      console.log("thisthis.state.next_queue is the data = " + data)
       if(data){ 
         console.log(data);
         this.setState({
@@ -527,24 +491,44 @@ class App extends Component {
       1000
     );
   }
+  
+
+  nextQueue = (token) =>{
+        let temp_list = []
+        for( var i = 1; i < this.state.next_queue.length; i++){
+            temp_list.push(this.state.next_queue[i]);
+        }
+        let temp_list_played = this.state.played_queue;
+        temp_list_played.push(this.state.next_queue[0]);
+        this.setState({
+            next_queue: temp_list,
+            played_queue: temp_list_played,
+            progress_ms: 0
+        })
+        let el = document.querySelector('.main-wrapper');
+        let el2 = document.querySelector('#played_queue_card');
+        if(el){
+            el.scrollLeft = el2.offsetWidth - (window.innerWidth  * .3) ;
+        }
+        this.updatePlaying(token)
+  }
+
 
   tick(token){
-    let temp = this.state.progress_ms + 1000;
-    this.setState({
-        progress_ms: temp
-    })
-    if(this.state.progress_ms > this.state.item.duration_ms){
-    let temp_list = []
-      for( var i = 1; i < this.state.next_queue.length; i++){
-        temp_list.push(this.state.next_queue[i]);
+      if(this.state.is_playing){
+        let temp = this.state.progress_ms + 1000;
+        if(this.state.progress_ms > this.state.item.duration_ms){
+            this.nextQueue(token);
+        }
+        else{
+            this.setState({
+                progress_ms: temp
+            })
+        }
       }
-      this.setState({
-           next_queue: temp_list,
-           progress_ms: 0
-        })
-      this.updatePlaying(token)
-    }
-   }
+ }
+
+
 
 
 render() {
@@ -603,7 +587,7 @@ render() {
   if(this.state.searchResults.length > 0){
       console.log("these are the search results");
       console.log(this.state.searchResults);
-      card = <Card>
+      card = <Card >
         <List itemLayout="horizontal">
           {this.state.searchResults}
         </List>
@@ -616,7 +600,12 @@ render() {
     <div className="App" >
       <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
       <div id="particles-js">
+      </div>
           <div className="App-header">
+                <div id="header" style={{width: "100%", height: "50px", backgroundColor: "#b4bfcc55"}}>
+        <img style={{float: "left", height: "100%"}} src={logo}alt="logo" />
+        <h3 style={{top: "0", float: "left", margin: "auto"}} >Pickles</h3>
+      </div>
           <img src={logo} className="App-logo" alt="logo" />
           {!this.state.token && (
             <a
@@ -627,8 +616,23 @@ render() {
             </a>
           )}
           {this.state.token && (
-            <div>
+            <div style={{zIndex: 10, width: "100%", height: "100%"}}>
                 <Player 
+                  item={this.state.item}
+                  is_playing={this.state.is_playing}
+                  progress_ms={this.state.progress_ms}
+                  next={this.state.next}
+                  next_queue={this.state.next_queue}
+                  played_queue={this.state.played_queue}
+                  the_token={this.state.token}
+                  func={this.queueSong}
+                  updateFunc={this.updatePlaying}
+                  nextFunc={this.nextQueue}
+                  device={this.state.deviceID}
+                  user={this.state.userID}
+                  total_queue={this.state.total_queue}
+                />
+                <NextPlayer
                   item={this.state.item}
                   is_playing={this.state.is_playing}
                   progress_ms={this.state.progress_ms}
@@ -643,24 +647,18 @@ render() {
                 <div id ="refresh_btn_div"  style={{display: (this.state.item.id == "" ? 'none' :'block')}}>
                     <img id="refresh_btn" src={refresh_btn} onClick={() => {this.updatePlaying(this.state.token)}}/>
                 </div>
+                <div className="Search"><Input
+                    placeholder="Search for a song"
+                    size="large"
+                    onChange={value => this.getSearchResults(value.target.value)}
+                    />
+                    {card}
+                </div>
             </div>
           )}
-          {this.state.token && (
-            
-                <div className="Search"><Search
-                placeholder="input search text"
-                enterButton="Search"
-                size="large"
-                onChange={value => this.getSearchResults(value.target.value)}
-                onSearch={value => console.log(value)}
-                />
-                {card}
-                </div>
-          )} </div>
-     </div>
+          </div>
     </div>
   );
   }
 }
 export default App;
-export {playSong, play};

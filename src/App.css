@@ -7,26 +7,27 @@
 .App-logo {
   height: 15vmin;
   pointer-events: none;
+  position: absolute;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: Login-hover infinite 15s linear;
+    animation: Login-hover infinite 30s linear;
   }
 
 }
 
 .App-header {
   background-color: rgba(255, 0, 0, 0.0);
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   font-size: calc(10px + 2vmin);
   color: rgba(255, 0, 0, 0.0);
-  position: absolute;
+  overflow: scroll;
+  justify-content: felx-start;
 }
 
 .App-link {
@@ -34,19 +35,24 @@
 }
 
 .main-wrapper {
+  width: 100%;
+  min-width: 550px;
+  height: 90%;
+  padding-bottom: 1%;
   margin: auto;
-  width: 90%;
-  padding: 30px;
+  box-sizing: border-box;
+  display: flex;
+  overflow: scroll;
 }
 
 .Search {
   padding: 30px;
-  margin: '0 auto';
+  margin: auto;
   max-width: 800px;
   color: black;
+  padding-bottom: 150px
 }
 .ant-card {
-    max-height: 300px;
     overflow: scroll;
 }
 
@@ -62,7 +68,7 @@
 }
 
 .btn--loginApp-link:hover {
-    color: #CC43BC;
+    color: #1E1B96;
 }
 .btn--loginApp-link:active {
     color: #ffffff;
@@ -80,30 +86,32 @@
 @keyframes Login-hover {
   0% {
     -webkit-transform: translate(5%, 0%);
-	transform: translate(5%, 0%) rotate(0deg);
+	transform: translate(75%, 0%) rotate(0deg);
   }
   25% {
     -webkit-transform: translate(-10%, 100%);
-	transform: translate(-10%, 100%) rotate(90deg);
+	transform: translate(-200%, 500%) rotate(90deg);
   }
   50% {
     -webkit-transform: translate(-5%, 200%);
-	transform: translate(-5%, 200%) rotate(180deg);
+	transform: translate(-100%, 1000%) rotate(180deg);
   }
   75%{
    -webkit-transform: translate(10%, 100%);
-	transform: translate(10%, 100%) rotate(270deg);
+	transform: translate(200%, 500%) rotate(270deg);
   }
   100% {
     -webkit-transform: translate(5%, 0%);
-	transform: translate(5%, 0%) rotate(360deg); 
+	transform: translate(75%, 0%) rotate(360deg); 
   }
 }
 
 #particles-js{
+  position: absolute;
   width: 100%;
   height: 100vh;
-  background-color: #1dbfaf;
+  background-color: #FFFFFF;
+  /*background-color: #1dbfaf;*/
   background-image: url('');
   background-size: cover;
   background-position: 50% 50%;
@@ -113,9 +121,142 @@
 
 #refresh_btn{
     height: 64px;
+    float: left;
+    margin: auto;
+    margin-top: 40px;
+}
+
+#refresh_btn_div{
+    float: left;
+    width: 15%;
+}
+#currentPlayer{
+    height: 70%;
 }
 
 canvas{
   display:block;
   vertical-align:bottom;
+}
+/** Now Playing **/
+.now-playing__name {
+  font-size: 1.5em;
+  color: #1E1B96;
+}
+.now-playing__artist {
+  margin-bottom: 1em;
+  color: #1E1B96;
+}
+.now-playing__status {
+  margin-bottom: 1em;
+  color: #1E1B96;
+}
+.now-playing__img {
+  float: left;
+  text-align: right;
+  width: 50%;
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+}
+.now-playing__img img {
+  max-width: 400px;
+  width: 100%;
+  margin: auto;
+}
+.now-playing__side {
+  float: left;
+  margin: auto;
+  width: 50%;
+}
+/** Progress **/
+.progress {
+  border: 1px solid #000;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress__bar {
+  background-color: #1E1B96;
+  height: 6px;
+}
+
+.next-wrapper{
+	width: 33%;
+}
+
+.next-playing__img img {
+  max-width: 150px;
+  width: 80%;
+}
+.next-playing__side {
+  float: left;
+  margin: auto;
+  width: 100%;
+  padding: 10px;
+}
+.next-playing__name {
+  font-size: 0.5em;
+  margin-bottom: 0.1em;
+  color: #1E1B96;
+}
+.next-playing__artist {
+  font-size: 0.7em;
+  margin-bottom: 0.1em;
+  color: #1E1B96;
+}
+#nextPlayer{
+	float: left;
+    flex-direction: row;
+    display: flex;
+    width: 85%;
+    max-height: 30%;
+}
+#queue {
+	max-height: 100%;
+}
+#buttons{
+	display: flex;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+}
+#buttons_two{
+	flex-direction: column; 
+	display: flex;
+	height: 100px;
+}
+.button_img{
+	width: 33%;
+	margin: auto;
+}
+.ant-list-item-meta-avatar{
+	height: 100%;
+    margin-right: auto;
+}
+.ant-list-item-meta-content{
+    width: auto;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 20px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #0005;
+  border-radius: 8px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #0005;
+  /*background: #1E1B96;*/ 
 }
