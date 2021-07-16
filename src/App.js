@@ -14,6 +14,7 @@ import * as $ from "jquery";
 import Player from "./Player";
 import NextPlayer from "./NextPlayer";
 import 'particles.js/particles';
+import { Route, Switch, Link } from "react-router-dom";
 
 
 export const authEndpoint = 'https://accounts.spotify.com/authorize';
