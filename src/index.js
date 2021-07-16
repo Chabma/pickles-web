@@ -9,6 +9,7 @@ ReactDOM.render(
   <React.StrictMode>
         <HashRouter>
         <Route path="/:access_token(access_token=.*)" component={App} />
+        <Route exact path="/" component={App} />
         </HashRouter>
   </React.StrictMode>,
   document.getElementById('root')
