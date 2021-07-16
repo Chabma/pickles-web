@@ -14,13 +14,12 @@ import * as $ from "jquery";
 import Player from "./Player";
 import NextPlayer from "./NextPlayer";
 import 'particles.js/particles';
-import { Route, Switch, Link } from "react-router-dom";
 
 
 export const authEndpoint = 'https://accounts.spotify.com/authorize';
 // Replace with your app's client ID, redirect URI and desired scopes
 const clientId = "fadd120c4e7a4a1a954bf081a4fd6e59";
-const redirectUri = "https://chabma.github.io/pickles-web/callback";
+const redirectUri = "https://chabma.github.io/pickles-web/#/callback";
 //const redirectUri = "http://localhost:3000/callback";
 const scopes = [
   "user-read-currently-playing",
@@ -626,17 +625,14 @@ class App extends Component {
 
           <img src={logo} className="App-logo" alt="logo" />
           {!this.state.token && (
-              <Link to="/">
-                  <a
-                      className="btn btn--loginApp-link"
-                      href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=token&show_dialog=true`}
-                  >
-                      Login to Spotify
-                  </a>
-              </Link>
+              <a
+                  className="btn btn--loginApp-link"
+                  href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=token&show_dialog=true`}
+              >
+                  Login to Spotify
+              </a>
           )}
           {this.state.token && (
-          <Link to="/callback">
               <div style={{zIndex: 10, width: "100%", height: "100%"}}>
                   <Player 
                       item={this.state.item}
@@ -681,7 +677,6 @@ class App extends Component {
                       {card}
                   </div>
               </div>
-          </Link>
           )}
         </div>
       </div>
