@@ -19,7 +19,7 @@ import 'particles.js/particles';
 export const authEndpoint = 'https://accounts.spotify.com/authorize';
 // Replace with your app's client ID, redirect URI and desired scopes
 const clientId = "fadd120c4e7a4a1a954bf081a4fd6e59";
-const redirectUri = "https://chabma.github.io/pickles-web/#/callback";
+const redirectUri = "https://chabma.github.io/pickles-web";
 //const redirectUri = "http://localhost:3000/callback";
 const scopes = [
   "user-read-currently-playing",
@@ -35,7 +35,7 @@ const particlesJS = window.particlesJS;
 
 // Get the hash of the url
 const hash = window.location.hash
-  .substring(2)
+  .substring(1)
   .split("&")
   .reduce(function(initial, item) {
     if (item) {
@@ -516,9 +516,6 @@ class App extends Component {
     particlesJS.load('particles-js', '/assets/particles.json', function() {
       console.log('callback - particles.js config loaded');
     });
-
-    
-
     // Set token
     let _token = hash.access_token;
     if (_token) {
@@ -619,7 +616,7 @@ class App extends Component {
         card = <Card hidden={true}/>;
     }
     return ( 
-      <div className="App">
+      <div className="App" >
         <link rel="preconnect" href="https://fonts.googleapis.com"/>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet"/>

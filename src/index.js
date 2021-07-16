@@ -3,14 +3,10 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
-import { HashRouter, Route } from 'react-router-dom';
 
 ReactDOM.render(
   <React.StrictMode>
-        <HashRouter>
-        <Route path="/:access_token(access_token=.*)" component={App} />
-        <Route exact path="/" component={App} />
-        </HashRouter>
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );
