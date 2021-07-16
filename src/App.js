@@ -616,7 +616,7 @@ class App extends Component {
         card = <Card hidden={true}/>;
     }
     return ( 
-      <div className="App" >
+      <div className="App">
         <link rel="preconnect" href="https://fonts.googleapis.com"/>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -625,14 +625,17 @@ class App extends Component {
 
           <img src={logo} className="App-logo" alt="logo" />
           {!this.state.token && (
-              <a
-                  className="btn btn--loginApp-link"
-                  href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=token&show_dialog=true`}
-              >
-                  Login to Spotify
-              </a>
+              <Link to="/">
+                  <a
+                      className="btn btn--loginApp-link"
+                      href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=token&show_dialog=true`}
+                  >
+                      Login to Spotify
+                  </a>
+              </Link>
           )}
           {this.state.token && (
+          <Link to="/callback">
               <div style={{zIndex: 10, width: "100%", height: "100%"}}>
                   <Player 
                       item={this.state.item}
@@ -677,6 +680,7 @@ class App extends Component {
                       {card}
                   </div>
               </div>
+          </Link>
           )}
         </div>
       </div>
