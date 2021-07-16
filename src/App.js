@@ -35,7 +35,7 @@ const particlesJS = window.particlesJS;
 
 // Get the hash of the url
 const hash = window.location.hash
-  .substring(1)
+  .substring(2)
   .split("&")
   .reduce(function(initial, item) {
     if (item) {
@@ -516,6 +516,9 @@ class App extends Component {
     particlesJS.load('particles-js', '/assets/particles.json', function() {
       console.log('callback - particles.js config loaded');
     });
+
+    
+
     // Set token
     let _token = hash.access_token;
     if (_token) {

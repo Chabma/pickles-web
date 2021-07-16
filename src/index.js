@@ -8,7 +8,7 @@ import { HashRouter } from 'react-router-dom';
 ReactDOM.render(
   <React.StrictMode>
         <HashRouter>
-    <App />
+        <Route path="/:access_token(access_token=.*)" component={App} />
         </HashRouter>
   </React.StrictMode>,
   document.getElementById('root')
