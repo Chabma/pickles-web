@@ -13,8 +13,8 @@
     "shape": {
       "type": "circle",
       "stroke": {
-        "width": 0,
-        "color": "#ec42f5"
+        "width": 0.3,
+        "color": "#000000"
       },
       "polygon": {
         "nb_sides": 5
@@ -26,7 +26,7 @@
       }
     },
     "opacity": {
-      "value": 0.4,
+      "value": 0.0,
       "random": true,
       "anim": {
         "enable": false,
