@@ -19,7 +19,7 @@ import 'particles.js/particles';
 export const authEndpoint = 'https://accounts.spotify.com/authorize';
 // Replace with your app's client ID, redirect URI and desired scopes
 const clientId = "fadd120c4e7a4a1a954bf081a4fd6e59";
-const redirectUri = "https://chabma.github.io/pickles-web";
+const redirectUri = "https://chabma.github.io/pickles-web/";
 //const redirectUri = "http://localhost:3000/callback";
 const scopes = [
   "user-read-currently-playing",
