@@ -1,6 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\public",
+    "\\public\\assets",
+    "\\src"
   ],
+  "SelectedNode": "\\src\\NextPlayer.js",
   "PreviewInSolutionExplorer": false
 }

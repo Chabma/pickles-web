@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-//import ReactDOM from 'react-dom';
-//import hash from "./hash";
 import logo from "./logo.png";
 import refresh_btn from "./refresh.png";
 import { Input, List, Avatar, Card } from 'antd';
@@ -134,7 +132,7 @@ class App extends Component {
       spotify_uri,
       device,
       info
-  }) => {
+    }) => {
     this.state.player._options.getOAuthToken(access_token => {
         fetch(`https://api.spotify.com/v1/me/player/queue?uri=${spotify_uri}&device_id=${this.state.deviceID}`, {
             method: 'POST',
@@ -208,7 +206,7 @@ class App extends Component {
     //});
   }
 
-    queueSongStart = (uri, img, info) => {
+  queueSongStart = (uri, img, info) => {
     // Scroll so that current item is in the middle
     let el = document.querySelector('.main-wrapper');
     if(el){
@@ -511,7 +509,21 @@ class App extends Component {
     });
   }
 
-  componentDidMount() {
+  tick(){
+    if(this.state.is_playing){
+        let temp = this.state.progress_ms + 1000;
+        if(this.state.progress_ms > this.state.item.duration_ms){
+            this.nextQueue(this.state.token);
+        }
+        else{
+            this.setState({
+                progress_ms: temp
+            })
+        }
+    }
+  }
+
+ componentDidMount() {
     //particles.js github page says to load package like so:
     particlesJS.load('particles-js', '/assets/particles.json', function() {
       console.log('callback - particles.js config loaded');
@@ -529,20 +541,6 @@ class App extends Component {
       () => this.tick(_token),
       1000
     );
-  }
-
-  tick(){
-    if(this.state.is_playing){
-        let temp = this.state.progress_ms + 1000;
-        if(this.state.progress_ms > this.state.item.duration_ms){
-            this.nextQueue(this.state.token);
-        }
-        else{
-            this.setState({
-                progress_ms: temp
-            })
-        }
-    }
   }
 
   render() {
@@ -579,6 +577,8 @@ class App extends Component {
         // Connect to the player!
         player.connect();
 
+        
+        //set up /me
         fetch(`https://api.spotify.com/v1/me`, {
             method: 'GET',
             headers: {

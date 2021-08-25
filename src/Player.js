@@ -160,15 +160,6 @@ const Player = props => {
       played_queue_card = <Card hidden={true}/>;
   }
 
-  /*              
-  <h3 className="now-playing__name">{props.item.name}</h3>
-  <h4 className="now-playing__artist">
-     {props.item.artists[0].name}
-  </h4>
-  */
-
-  // console.log("THESE ARE THE PROPS");
-  // console.log(props);
 
   return (
   <>
