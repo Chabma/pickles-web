@@ -198,6 +198,13 @@ class App extends Component {
         total_queue: temp_all,
     })
     
+    //update queue scroll to keep now playing in the middle
+    let el1 = document.querySelector('.main-wrapper');
+    let el2 = document.querySelector('#played_queue_card');
+    if(el1){
+            el1.scrollLeft = el2.offsetWidth - (window.innerWidth  * .1) ;
+    }
+
     this.getRecs(info.artists[0].id, info.genre, info.id, info )
     //this.queue({
     //    device: this.state.device_id,
@@ -253,6 +260,12 @@ class App extends Component {
         }
     }
 
+    //update queue scroll to keep now playing in the middle
+    let el1 = document.querySelector('.main-wrapper');
+    let el2 = document.querySelector('#played_queue_card');
+    if(el1){
+            el1.scrollLeft = el2.offsetWidth - (window.innerWidth  * .1) ;
+    }
 
     this.setState({
         next_queue: temp,
@@ -296,12 +309,7 @@ class App extends Component {
             let el = document.querySelector('.main-wrapper');
             let el2 = document.querySelector('#played_queue_card');
             if(el){
-                if(el2.offsetWidth >  (window.innerWidth  * .3)){
-                    el.scrollLeft = el2.offsetWidth - (window.innerWidth  * .3);
-                }
-                else{
-                    el.scrollLeft = el2.offsetWidth;
-                }
+                    el.scrollLeft = el2.offsetWidth + 158 - (window.innerWidth  * .1) ;
             }
 
             //play new song
@@ -418,6 +426,13 @@ class App extends Component {
                   description={artists.join(', ')}
                 />
             </List.Item>);
+    
+        //update queue scroll to keep now playing in the middle
+            let el = document.querySelector('.main-wrapper');
+            let el2 = document.querySelector('#played_queue_card');
+            if(el){
+                    el.scrollLeft = el2.offsetWidth - 158 - (window.innerWidth  * .1) ;
+            }
 
         // set up current item
         let new_pos = this.state.queue_pos - 1;
@@ -676,7 +691,7 @@ class App extends Component {
                       />
                       {card}
                   </div>
-                   <button style={{float: 'right', color: 'red' }} onClick={() => {this.clearQueue();}}>Clear Queue</button>
+                   <button style={{color: 'red', margin: 'auto', display: (this.state.item.id === "" ? 'none' :'block')}} onClick={() => {this.clearQueue();}}>Clear Queue</button>
               </div>
           )}
         </div>

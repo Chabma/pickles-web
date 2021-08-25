@@ -33,7 +33,7 @@
 .now-playing__side {
   float: left;
   margin: auto;
-  height: 100%;
+  height: 95%;
   min-width: 80%;
 }
 /** Progress **/
@@ -72,17 +72,18 @@
 #queue {
 	height: 100%;
 	float: left;
-	min-width: 30%;
+	min-width: 10%;
 }
 #played_queue {
+	min-width: 10%;
 	height: 100%;
 	float: right;
-	min-width: 30%;
-	display: contents;
+	display: inline-table;
 }
 #played_queue_card .ant-card-body{
 	float: right;
 	display: block;
+	padding: 0px;
 }
 
 #buttons{
@@ -90,7 +91,8 @@
 	margin-left: auto;
 	margin-right: auto;
 	width: 100%;
-	height: 5%;
+	height: 7%;
+	padding-top: 5px;
 }
 #buttons_two{
 	flex-direction: column; 

@@ -149,7 +149,7 @@ const Player = props => {
   if(props.played_queue.length > 0){
      //console.log("this is the next queue");
      //console.log(props.next_queue);
-      played_queue_card = <Card id="played_queue_card" style={{overflowY: "hidden", overflow: "visible", width: "100%", float: "right", backgroundColor: "#0000", height: "100%", border: "0", padding: "0", boxSizing: "border-box"}}>
+      played_queue_card = <Card id="played_queue_card" style={{overflowY: "hidden", overflow: "visible", float: "right", backgroundColor: "#0000", height: "100%", border: "0", padding: "0", boxSizing: "border-box"}}>
                     <ul grid="{gutter: 16, column: 10}" style={{boxSizing: "border-box", display: "flex", flexDirection: "row", width: "100%", height: "100%", padding: "0"}}>
                       {props.played_queue.slice(0,-1)}
                     </ul>
@@ -170,7 +170,7 @@ const Player = props => {
              <Search
                         className="Search"
                         style={{margin: "auto", padding: "0", height: "10%", fontFamily: "Roboto", maxWidth: "85%", width: "700px"}} type="text" id="playlist_name" 
-                        placeholder="Enter Playlist Name Here"
+                        placeholder="Playlist Name"
                         enterButton="Save Session as Playlist"
                         onSearch={function(){add_playlist_btn_func(document.getElementById("playlist_name").value, props.user )}}
               />
@@ -184,10 +184,10 @@ const Player = props => {
                 <img style={{maxWidth: "100%", maxHeight: "100%", margin: "auto"}} src={props.item.album.images[0].url}  alt="player" />
               </div>
               <svg viewBox="0 0 75 5" style={{overflow: "visible", float: "left", height:"10%"}}>
-                <text x="0" y="100%" textLength="100%" fontSize=".2em">{props.item.name}</text>
+                <text x="0" y="100%" textLength="100%" fontSize=".25em">{props.item.name}</text>
               </svg>
-              <svg viewBox="0 0 50 5" style={{overflow: "visible", float: "left", height:"5%"}}>
-                <text x="0" y="100%" textLength="100%" fontSize=".2em">{props.item.artists[0].name}</text>
+              <svg viewBox="0 0 50 5" style={{overflow: "visible", float: "left", height:"5%", paddingBottom: "5px"}}>
+                <text x="0" y="100%" textLength="100%" fontSize=".3em">{props.item.artists[0].name}</text>
               </svg>
               <div id="buttons">
                 <img id="previous_btn_div" alt="previous song" className="button_img" src={previous_btn} onClick={function(){previous_btn_func(props.device)}}/>
