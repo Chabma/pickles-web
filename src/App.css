@@ -40,7 +40,6 @@
 
 .main-wrapper {
   width: 100%;
-  min-width: 550px;
   height: 90%;
   padding-bottom: 1%;
   margin: auto;
@@ -54,7 +53,7 @@
   margin: auto;
   max-width: 800px;
   color: black;
-  padding-bottom: 150px
+  padding-bottom: 50px
 }
 .ant-card {
     overflow: scroll;
@@ -126,12 +125,11 @@
     height: 64px;
     float: left;
     margin: auto;
-    margin-top: 40px;
 }
 
 #refresh_btn_div{
     float: left;
-    width: 15%;
+    width: 20%;
 }
 #currentPlayer{
     height: 70%;
@@ -195,7 +193,6 @@ canvas{
 .next-playing__side {
   float: left;
   margin: auto;
-  width: 100%;
   padding: 10px;
 }
 .next-playing__name {
@@ -212,7 +209,7 @@ canvas{
 	float: left;
     flex-direction: row;
     display: flex;
-    width: 85%;
+    width: 80%;
     max-height: 30%;
 }
 #queue {

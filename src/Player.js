@@ -171,10 +171,9 @@ const Player = props => {
                         className="Search"
                         style={{margin: "auto", padding: "0", height: "10%", fontFamily: "Roboto", maxWidth: "85%", width: "700px"}} type="text" id="playlist_name" 
                         placeholder="Enter Playlist Name Here"
-                        enterButton="Save Session as a Spotify Playlist"
+                        enterButton="Save Session as Playlist"
                         onSearch={function(){add_playlist_btn_func(document.getElementById("playlist_name").value, props.user )}}
               />
-              <button style={{float: 'right', color: 'red', width: "15%", fontSize: "1.5vw" }} onClick={() => {pause_btn_func(props.device, false);}}>Clear Queue</button>
           </div>
           <div className="main-wrapper">
             <div id="played_queue">

@@ -525,7 +525,7 @@ class App extends Component {
 
  componentDidMount() {
     //particles.js github page says to load package like so:
-    particlesJS.load('particles-js', '/particles.json', function() {
+    particlesJS.load('particles-js', 'particles.json', function() {
       console.log('callback - particles.js config loaded');
     });
     // Set token
@@ -676,6 +676,7 @@ class App extends Component {
                       />
                       {card}
                   </div>
+                   <button style={{float: 'right', color: 'red' }} onClick={() => {this.clearQueue();}}>Clear Queue</button>
               </div>
           )}
         </div>
