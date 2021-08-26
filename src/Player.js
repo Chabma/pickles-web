@@ -64,7 +64,6 @@ const Player = props => {
         props.nextFunc();
     }
   const previous_btn_func = (device) => {
-        //TODO: Fix Previous
         /*fetch(`https://api.spotify.com/v1/me/player/previous?device_id=${device}`, {
           method: 'POST',
           headers: {

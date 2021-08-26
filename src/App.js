@@ -104,10 +104,13 @@ class App extends Component {
                     //    this.playSong(element.uri, element.album.images[0].url, element.id, element, element.artists)
                     // }}
                     actions={[
-                        <img id="list_play_btn" alt="play song" src={play_btn} style={{display: 'block', width: "30px"}} onClick={() => {this.setState({ searchValue: "", searchResults: []  }); this.playSong(element.uri, element.album.images[0].url, element.id, element, element.artists);}}/>,
+                        <img id="list_play_btn" alt="play song" src={play_btn} style={{display: (this.state.is_playing ? 'none' :'block'), width: "30px"}} onClick={() => {this.setState({ searchValue: "", searchResults: []}); this.playSong(element.uri, element.album.images[0].url, element.id, element, element.artists);}}/>
+                        ]}
+                    extra={[
+                        <img id="list_play_btn" alt="play song" src={play_btn} style={{display: (this.state.is_playing ? 'block' :'none'), width: "30px"}} onClick={() => {this.setState({ searchValue: "", searchResults: []}); this.playSong(element.uri, element.album.images[0].url, element.id, element, element.artists, false);}}/>,
                         <img id="list_queue_start_btn" alt="add song to start of queue" src={add_start_queue} style={{width: "30px", display: (this.state.is_playing ? 'block' :'none')}} onClick={() =>{this.queueSongStart(element.uri, element.album.images[0].url, element)}}/>,
                         <img id="list_queue_end_btn" alt="add song to end of queue" src={add_end_queue} style={{width: "30px", display: (this.state.is_playing ? 'block' :'none')}} onClick={() => {this.queueSong(element.uri, element.album.images[0].url, element)}}/>
-                    ]}
+                        ]}
                     >
             <List.Item.Meta
               avatar={<Avatar shape='square' size='large' src={element.album.images[0].url} />}
@@ -341,31 +344,32 @@ class App extends Component {
     });
   };
 
-  playSong = (uri, img, track_id, element, artist_list) => {
-      let temp_all = [];
-      for( var i = 0; i < this.state.total_queue.length; i++){
-        temp_all.push(this.state.total_queue[i]);
+  playSong = (uri, img, track_id, element, artist_list, all_bool = true) => {
+          let temp_all = [];
+          for( var i = 0; i < this.state.total_queue.length; i++){
+            temp_all.push(this.state.total_queue[i]);
+          }
+      if(all_bool){
+          temp_all.push({"uri": uri, "id": track_id});
       }
+          let artists = []
+          artist_list.forEach(artist => artists.push(artist.name));
+          let temp_played = [];
 
-      temp_all.push({"uri": uri, "id": track_id});
-      let artists = []
-      artist_list.forEach(artist => artists.push(artist.name))
-      let temp_played = [];
+          temp_played.push(
+            <List.Item key={uri} style={{height:"100%",border: "4px solid #0000"}}>
+                <List.Item.Meta style={{display:"block"}}
+                  avatar={<Avatar shape='square' size='large' src={img} style={{height:"50%", width:"150px"}} />}
+                  title={<p href="https://ant.design">{element.name}</p>}
+                  description={artists.join(', ')}
+                />
+            </List.Item>
+          );
 
-      temp_played.push(
-        <List.Item key={uri} style={{height:"100%",border: "4px solid #0000"}}>
-            <List.Item.Meta style={{display:"block"}}
-              avatar={<Avatar shape='square' size='large' src={img} style={{height:"50%", width:"150px"}} />}
-              title={<p href="https://ant.design">{element.name}</p>}
-              description={artists.join(', ')}
-            />
-        </List.Item>
-      );
-
-      this.setState({
-           total_queue: temp_all, 
-           played_queue: temp_played,
-      })
+          this.setState({
+               total_queue: temp_all, 
+               played_queue: temp_played,
+          })
 
       this.play({
         spotify_uri: uri
@@ -574,7 +578,15 @@ class App extends Component {
         player.addListener('playback_error', ({ message }) => { console.error(message); });
 
         // Playback status updates
-        player.addListener('player_state_changed', state => { this.updatePlaying(false, false); });
+        player.addListener('player_state_changed', state => { 
+            this.updatePlaying(false, false); 
+        });
+
+        //On Autoplay failure
+        player.addListener('autoplay_failed', () => {
+          console.log('Autoplay is not allowed by the browser autoplay rules');
+          alert('Autoplay is not allowed by the browser autoplay rules');
+        });
 
         // Ready
         player.addListener('ready', ({ device_id }) => {
