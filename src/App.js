@@ -50,6 +50,7 @@ class App extends Component {
     super();
     this.state = {
       token: null,
+      refresh_token: null,
       player: null,
       deviceID: "",
       searchValue: "",
@@ -71,6 +72,7 @@ class App extends Component {
       total_queue: [],
       queue_pos: 0,
       userID: "",
+      current_time: Date.now()
   };
   }
   
@@ -104,12 +106,12 @@ class App extends Component {
                     //    this.playSong(element.uri, element.album.images[0].url, element.id, element, element.artists)
                     // }}
                     actions={[
-                        <img id="list_play_btn" alt="play song" src={play_btn} style={{display: (this.state.is_playing ? 'none' :'block'), width: "30px"}} onClick={() => {this.setState({ searchValue: "", searchResults: []}); this.playSong(element.uri, element.album.images[0].url, element.id, element, element.artists);}}/>
+                        <img id="list_play_btn" alt="play song" src={play_btn} style={{display: (this.state.total_queue.length > 0 ? 'none' :'block'), width: "30px"}} onClick={() => {this.setState({ searchValue: "", searchResults: []}); this.playSong(element.uri, element.album.images[0].url, element.id, element, element.artists);}}/>
                         ]}
                     extra={[
-                        <img id="list_play_btn" alt="play song" src={play_btn} style={{display: (this.state.is_playing ? 'block' :'none'), width: "30px"}} onClick={() => {this.setState({ searchValue: "", searchResults: []}); this.playSong(element.uri, element.album.images[0].url, element.id, element, element.artists, false);}}/>,
-                        <img id="list_queue_start_btn" alt="add song to start of queue" src={add_start_queue} style={{width: "30px", display: (this.state.is_playing ? 'block' :'none')}} onClick={() =>{this.queueSongStart(element.uri, element.album.images[0].url, element)}}/>,
-                        <img id="list_queue_end_btn" alt="add song to end of queue" src={add_end_queue} style={{width: "30px", display: (this.state.is_playing ? 'block' :'none')}} onClick={() => {this.queueSong(element.uri, element.album.images[0].url, element)}}/>
+                        <img id="list_play_btn" alt="play song" src={play_btn} style={{display: (this.state.total_queue.length > 0 ? 'block' :'none'), width: "30px"}} onClick={() => {this.setState({ searchValue: "", searchResults: []}); this.playSong(element.uri, element.album.images[0].url, element.id, element, element.artists, false);}}/>,
+                        <img id="list_queue_start_btn" alt="add song to start of queue" src={add_start_queue} style={{width: "30px", display: (this.state.total_queue.length > 0 ? 'block' :'none')}} onClick={() =>{this.queueSongStart(element.uri, element.album.images[0].url, element)}}/>,
+                        <img id="list_queue_end_btn" alt="add song to end of queue" src={add_end_queue} style={{width: "30px", display: (this.state.total_queue.length > 0 ? 'block' :'none')}} onClick={() => {this.queueSong(element.uri, element.album.images[0].url, element)}}/>
                         ]}
                     >
             <List.Item.Meta
@@ -204,7 +206,7 @@ class App extends Component {
     //update queue scroll to keep now playing in the middle
     let el1 = document.querySelector('.main-wrapper');
     let el2 = document.querySelector('#played_queue_card');
-    if(el1){
+    if(el1 && el2){
             el1.scrollLeft = el2.offsetWidth - (window.innerWidth  * .1) ;
     }
 
@@ -404,7 +406,6 @@ class App extends Component {
     // set next song to current Item
     // set previous to have one less item  
 
-
     if(this.state.queue_pos > 0){
         // set up previous_queue
         let temp_list = []
@@ -471,6 +472,8 @@ class App extends Component {
             }
         });
     }
+
+
     $.ajax({
       url: "https://api.spotify.com/v1/me/player",
       type: "GET",
@@ -483,10 +486,22 @@ class App extends Component {
           if(data){ 
             if(setItemBoolean){
                 this.setState({
+                   deviceID: data.device.id,
                    item: data.item,
                    is_playing: data.is_playing,
                    progress_ms: data.progress_ms,
                 })
+            // update pause button
+            if(document.getElementById('pause_btn_div') !== null && document.getElementById('play_btn_div') !== null){
+                if(data.is_playing){
+                   document.getElementById('pause_btn_div').style.display = 'block'; 
+                   document.getElementById('play_btn_div').style.display = 'none';
+                }
+                else{
+                    document.getElementById('pause_btn_div').style.display = 'none'; 
+                    document.getElementById('play_btn_div').style.display = 'block';
+                }
+            }
             }
             if(refreshSelections){
                 this.getRecs(data.item.artists[0].id, data.item.genre, data.item.id, data);
@@ -531,7 +546,7 @@ class App extends Component {
   tick(){
     if(this.state.is_playing){
         let temp = this.state.progress_ms + 1000;
-        if(this.state.progress_ms > this.state.item.duration_ms){
+        if(temp > this.state.item.duration_ms){
             this.nextQueue(this.state.token);
         }
         else{
@@ -540,6 +555,38 @@ class App extends Component {
             })
         }
     }
+    if(Date.now() - this.state.current_time > 1800000){
+        this.setState({
+                current_time: Date.now()
+        })
+        this.refreshToken();
+    }
+  }
+
+  refreshToken(){
+    $.ajax({
+      url: `https://accounts.spotify.com/api/token`,
+      type: "POST",
+      data: {
+      grant_type: "refresh_token",
+      refresh_token: this.state.refresh_token,
+      client_id: clientId
+      },
+      success: (data) => {
+      console.log("success!");
+        if(data){ 
+            this.setState({
+                token: data.access_token,
+                refresh_token: data.refresh_token
+              });
+        }
+      },
+      error: () =>{
+            console.log("failure");
+      }
+    });
+
+
   }
 
  componentDidMount() {
@@ -549,10 +596,12 @@ class App extends Component {
     });
     // Set token
     let _token = hash.access_token;
+    let _refresh_token = hash.refresh_token;
     if (_token) {
       // Set token
       this.setState({
-        token: _token
+        token: _token,
+        refresh_token: _refresh_token
       });
       this.updatePlaying(true);
     }
@@ -572,14 +621,14 @@ class App extends Component {
         });
 
         // Error handling
-        player.addListener('initialization_error', ({ message }) => { console.error(message); });
+        player.addListener('initialization_error', ({ message }) => { console.error(message); alert(message); });
         player.addListener('authentication_error', ({ message }) => { console.error(message); });
         player.addListener('account_error', ({ message }) => { console.error(message); });
         player.addListener('playback_error', ({ message }) => { console.error(message); });
 
         // Playback status updates
         player.addListener('player_state_changed', state => { 
-            this.updatePlaying(false, false); 
+            this.updatePlaying(false, true); 
         });
 
         //On Autoplay failure

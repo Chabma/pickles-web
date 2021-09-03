@@ -211,7 +211,7 @@ const Player = props => {
         )
         :(<>
         <h3 style={{display: ((props.item.id === "") ? 'block' :'none')}}> Play a song to start your playlist:</h3>
-        <h3 style={{display: ((props.item.id === "") ? 'none' :'block')}}> Current session detected, click refresh to load:</h3>
+        <h3 style={{display: ((props.item.id === "") ? 'none' :'block')}}> Current session detected, click the refresh icon to load:</h3>
         </>)}
     </>
   );
