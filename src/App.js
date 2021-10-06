@@ -1,21 +1,18 @@
 import React, { Component } from "react";
-import logo from "./logo.png";
-import refresh_btn from "./refresh.png";
-import { Input, List, Avatar, Card } from 'antd';
-import {SearchOutlined } from '@ant-design/icons';
+import { Input, List, Avatar, Card, Button } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import "./App.css";
-import play_btn from "./play.png";
-import add_start_queue from "./add_start_queue.png";
-import add_end_queue from "./add_end_queue.png";
 import * as $ from "jquery";
 import Player from "./Player";
 import NextPlayer from "./NextPlayer";
+import SearchItem from "./SearchItem";
+import logo from "./images/logo.png";
+import refresh_btn from "./images/refresh.png";
 import 'particles.js/particles';
 
-
+// set up spotify info
 export const authEndpoint = 'https://accounts.spotify.com/authorize';
-// Replace with your app's client ID, redirect URI and desired scopes
 const clientId = "fadd120c4e7a4a1a954bf081a4fd6e59";
 const redirectUri = "https://chabma.github.io/pickles-web/";
 //const redirectUri = "http://localhost:3000/callback";
@@ -29,9 +26,12 @@ const scopes = [
   "playlist-modify-public",
   "playlist-modify-private",
 ];
-const particlesJS = window.particlesJS;
 
-// Get the hash of the url
+// set up particlesJS
+const particlesJS = window.particlesJS;
+console.log(window.location);
+
+// get the hash of the url
 const hash = window.location.hash
   .substring(1)
   .split("&")
@@ -54,426 +54,149 @@ class App extends Component {
       player: null,
       deviceID: "",
       searchValue: "",
-      item: {
-        album: {
-            images: [{ url: "" }]
-        },
-        name: "",
-        artists: [{ name: "" }],
-        duration_ms:0,
-        id: "",
-      },
+      searchResults: [],
       is_playing: false,
       progress_ms: 0,
-      searchResults: [],
-      next: null,
-      next_queue: [],
-      played_queue: [],
       total_queue: [],
       queue_pos: 0,
       userID: "",
+      next: null,
       current_time: Date.now()
-  };
+    };
   }
   
   getSearchResults(query){
+  /*
+  Create search items and then add to state total queue
+  */
     const access_token = this.state.token;
     const searchQuery = query;
-    //console.log("Search Query: " + searchQuery.toString())
     const fetchURL = encodeURI(`q=${searchQuery}`);
+
+    //search with spotify api
     fetch(`https://api.spotify.com/v1/search?${fetchURL}&type=track`, {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${access_token}`     
-        }
+        headers: { Authorization: `Bearer ${access_token}` }
     })
     .then(response => {
-      if(!response.ok){
-        throw Error("Response Not Ok")
-      }
+      if(!response.ok){ throw Error("Response Not Ok") }
       return response;
     })
     .then(response => response.json())
     .then(({tracks}) => {
-      //console.log(tracks.items[0].name);
+      //create an item for each search result
       const results = [];
       tracks.items.forEach(element => {
-        let artists = []
-        element.artists.forEach(artist => artists.push(artist.name))
-        results.push(      
-          <List.Item key={element.uri} 
-                    // onClick={() => {
-                    //    this.playSong(element.uri, element.album.images[0].url, element.id, element, element.artists)
-                    // }}
-                    actions={[
-                        <img id="list_play_btn" alt="play song" src={play_btn} style={{display: (this.state.total_queue.length > 0 ? 'none' :'block'), width: "30px"}} onClick={() => {this.setState({ searchValue: "", searchResults: []}); this.playSong(element.uri, element.album.images[0].url, element.id, element, element.artists);}}/>
-                        ]}
-                    extra={[
-                        <img id="list_play_btn" alt="play song" src={play_btn} style={{display: (this.state.total_queue.length > 0 ? 'block' :'none'), width: "30px"}} onClick={() => {this.setState({ searchValue: "", searchResults: []}); this.playSong(element.uri, element.album.images[0].url, element.id, element, element.artists, false);}}/>,
-                        <img id="list_queue_start_btn" alt="add song to start of queue" src={add_start_queue} style={{width: "30px", display: (this.state.total_queue.length > 0 ? 'block' :'none')}} onClick={() =>{this.queueSongStart(element.uri, element.album.images[0].url, element)}}/>,
-                        <img id="list_queue_end_btn" alt="add song to end of queue" src={add_end_queue} style={{width: "30px", display: (this.state.total_queue.length > 0 ? 'block' :'none')}} onClick={() => {this.queueSong(element.uri, element.album.images[0].url, element)}}/>
-                        ]}
-                    >
-            <List.Item.Meta
-              avatar={<Avatar shape='square' size='large' src={element.album.images[0].url} />}
-              title={<p href="https://ant.design">{element.name}</p>}
-              description={artists.join(', ')}
-            />
-          </List.Item>
+        let artists = [];
+        element.artists.forEach(artist => artists.push(artist.name));
+
+        results.push(
+          <SearchItem
+            element={element}
+            artists={artists}
+            queue_pos={this.state.queue_pos}
+            total_queue={this.state.total_queue}
+            setFunc={(value, results) => {
+                this.setState({
+                    searchValue: value,
+                    searchResults: results
+                })
+            }}
+            playFunc={this.play}
+            queueFunc={this.queue}
+          />
         );
       });
+
+      //update search results
       this.setState({
         searchResults: results
       });
     })
     .catch(error => this.setState({
         searchResults: []
-      })
-    )  
-  }
-
-
-  queue = ({
-      spotify_uri,
-      device,
-      info
-    }) => {
-    this.state.player._options.getOAuthToken(access_token => {
-        fetch(`https://api.spotify.com/v1/me/player/queue?uri=${spotify_uri}&device_id=${this.state.deviceID}`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${access_token}`,
-            }
-        })
-        .then(response => response.text())
-        .then(data => this.getRecs(info.artists[0].id, info.genre, info.id, info ))
-        .catch((error) => {console.log(error)});
-    });
-  };
-
-  queueSong = (uri, img, info) => {
-    // Scroll so that current item is in the middle
-    let el = document.querySelector('.main-wrapper');
-    if(el){
-        el.addEventListener("wheel", (evt) => {
-            if (evt.deltaY < 0){
-                if(el.scrollLeft != 0){
-                    evt.preventDefault();
-                    el.scrollLeft += (evt.deltaY * 0.03);
-                }
-            }
-            else{
-                if(el.scrollLeft < el.scrollWidth - el.clientWidth){
-                    evt.preventDefault();
-                    el.scrollLeft += (evt.deltaY * 0.03);
-                }
-            }
-        });
-    }
-
-    // set up next_queue
-    let temp = [];
-    for( var i = 0; i < this.state.next_queue.length; i++){
-        temp.push(this.state.next_queue[i]);
-    }
-    //console.log("THIS IS THE ARTIST INFO THINGY")
-    //console.log(info);
-    let artists = [];
-    info.artists.forEach(artist => artists.push(artist.name));
-    temp.push(      
-        <List.Item key={uri.concat('-', Date.now.toString())} style={{height:"100%",border: "4px solid #0000"}}>
-            <List.Item.Meta style={{display:"block"}}
-              avatar={<Avatar shape='square' size='large' src={img} style={{height:"50%", width:"150px"}} />}
-              title={<p href="https://ant.design">{info.name}</p>}
-              description={artists.join(', ')}
-            />
-        </List.Item>);
-
-    // set up total_queue
-    let temp_all = [];
-    for( var j = 0; j < this.state.total_queue.length; j++){
-        temp_all.push(this.state.total_queue[j]);
-    }
-    temp_all.push({"uri": uri, "id": info.id});
-
-    this.setState({
-        next_queue: temp,
-        total_queue: temp_all,
-    })
-    
-    //update queue scroll to keep now playing in the middle
-    let el1 = document.querySelector('.main-wrapper');
-    let el2 = document.querySelector('#played_queue_card');
-    if(el1 && el2){
-            el1.scrollLeft = el2.offsetWidth - (window.innerWidth  * .1) ;
-    }
-
-    this.getRecs(info.artists[0].id, info.genre, info.id, info )
-    //this.queue({
-    //    device: this.state.device_id,
-    //    spotify_uri: uri,
-    //    info: info
-    //});
-  }
-
-  queueSongStart = (uri, img, info) => {
-    // Scroll so that current item is in the middle
-    let el = document.querySelector('.main-wrapper');
-    if(el){
-        el.addEventListener("wheel", (evt) => {
-            if (evt.deltaY < 0){
-                if(el.scrollLeft != 0){
-                    evt.preventDefault();
-                    el.scrollLeft += (evt.deltaY * 0.03);
-                }
-            }
-            else{
-                if(el.scrollLeft < el.scrollWidth - el.clientWidth){
-                    evt.preventDefault();
-                    el.scrollLeft += (evt.deltaY * 0.03);
-                }
-            }
-        });
-    }
-
-    // set up next_queue
-    let temp = [];
-    for( var i = 0; i < this.state.next_queue.length; i++){
-        temp.push(this.state.next_queue[i]);
-    }
-
-    let artists = [];
-    info.artists.forEach(artist => artists.push(artist.name));
-    temp.unshift(      
-        <List.Item key={uri} style={{height:"100%",border: "4px solid #0000"}}>
-            <List.Item.Meta style={{display:"block"}}
-              avatar={<Avatar shape='square' size='large' src={img} style={{height:"50%", width:"150px"}} />}
-              title={<p href="https://ant.design">{info.name}</p>}
-              description={artists.join(', ')}
-            />
-        </List.Item>
-    );
-
-    // set up total_queue
-    let temp_all = [];
-    for( var j = 0; j < this.state.total_queue.length; j++){
-        temp_all.push(this.state.total_queue[j]);
-        if(j === this.state.queue_pos){
-            temp_all.push({"uri": uri, "id": info.id});
-        }
-    }
-
-    //update queue scroll to keep now playing in the middle
-    let el1 = document.querySelector('.main-wrapper');
-    let el2 = document.querySelector('#played_queue_card');
-    if(el1){
-            el1.scrollLeft = el2.offsetWidth - (window.innerWidth  * .1) ;
-    }
-
-    this.setState({
-        next_queue: temp,
-        total_queue: temp_all,
-    })
-    
-    this.getRecs(info.artists[0].id, info.genre, info.id, info )
-    //this.queue({
-    //    device: this.state.device_id,
-    //    spotify_uri: uri,
-    //    info: info
-    //});
-  }
-
-  nextQueue = () =>{
-        //update queue position
-        let new_pos = this.state.queue_pos + 1;
-        
-        if(this.state.total_queue.length > new_pos){
-            //update next queue
-            let temp_list = []
-            for( var i = 1; i < this.state.next_queue.length; i++){
-                temp_list.push(this.state.next_queue[i]);
-            }
-
-            //update previous queue
-            let temp_list_played = this.state.played_queue;
-            temp_list_played.push(this.state.next_queue[0]);
-
-
-        
-            //push updates
-            this.setState({
-                next_queue: temp_list,
-                played_queue: temp_list_played,
-                progress_ms: 0,
-                queue_pos: new_pos,
-            })
-
-            //update queue scroll to keep now playing in the middle
-            let el = document.querySelector('.main-wrapper');
-            let el2 = document.querySelector('#played_queue_card');
-            if(el){
-                    el.scrollLeft = el2.offsetWidth + 158 - (window.innerWidth  * .1) ;
-            }
-
-            //play new song
-            this.play({spotify_uri: this.state.total_queue[new_pos].uri});
-
-        }
-
-        this.updatePlaying(true);
+    }))  
   }
   
-  play = ({
-    spotify_uri
-  }) => {
+  queue = (track, position, playBoolean = false) => {
+  /*
+  Create new item and add item to state's total queue 
+  (updates via a call to getRecs?)
+  */
+    //enable Horizontal Scroll
+    this.enableHorizontalScroll();
 
-    console.log("this is the uri");
-    console.log(spotify_uri);
+    //create new item
+    let artists = track.artists.map(item => item.name);
+    let item = {
+        "uri": track.uri, 
+        "id": track.id,
+        "songDuration": track.duration_ms,
+        "name": track.name,
+        "artists": track.artists, 
+        "image": track.album.images[0],
+        "item": <List.Item key={track.uri.concat('-', Date.now.toString())}
+                    style={{height:"100%",border: "4px solid #0000"}}>
+                    <List.Item.Meta style={{display:"block"}}
+                      avatar={<Avatar shape='square' size='large'
+                      src={track.album.images[0].url}
+                      style={{height:"50%", width:"150px"}}
+                    />}
+                      title={<p href="https://ant.design">{track.name}</p>}
+                      description={artists.join(', ')}
+                    />
+                </List.Item>
+    } 
+
+    //add item to total_queue
+    let tempQueue = [...this.state.total_queue.slice(0, position)];
+    tempQueue.push(item);
+    tempQueue = [...tempQueue, ...this.state.total_queue.slice(position)];
+    
+    this.setState({total_queue: tempQueue},
+    () =>{
+        if(playBoolean){
+            this.play(position);
+        }
+    });   
+
+    //update queue scroll to keep now playing in the middle
+    //TODO: determine if this is needed
+    this.getRecs(track.artists[0].id, track.id);
+  }
+
+  play = (queuePosition=this.state.queue_pos) => {
+  /*
+  Call spotify api to play song via current web player (calls update playing function)
+  */
+
     this.state.player._options.getOAuthToken(access_token => {
-        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceID}`, {
+        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceID}`,{
             method: 'PUT',
-            body: JSON.stringify({ uris: [spotify_uri] }),
+            body: JSON.stringify({ uris: [this.state.total_queue[queuePosition]?.uri] }),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${access_token}`,
             }
         })
         .then(response => response.text())
-        .then(data => this.updatePlaying(true))
+        .then(data => {
+            this.setState({queue_pos: queuePosition});
+            this.updatePlaying(true);
+        })
         .catch((error) => {console.log(error)});
     });
-  };
-
-  playSong = (uri, img, track_id, element, artist_list, all_bool = true) => {
-          let temp_all = [];
-          for( var i = 0; i < this.state.total_queue.length; i++){
-            temp_all.push(this.state.total_queue[i]);
-          }
-      if(all_bool){
-          temp_all.push({"uri": uri, "id": track_id});
-      }
-          let artists = []
-          artist_list.forEach(artist => artists.push(artist.name));
-          let temp_played = [];
-
-          temp_played.push(
-            <List.Item key={uri} style={{height:"100%",border: "4px solid #0000"}}>
-                <List.Item.Meta style={{display:"block"}}
-                  avatar={<Avatar shape='square' size='large' src={img} style={{height:"50%", width:"150px"}} />}
-                  title={<p href="https://ant.design">{element.name}</p>}
-                  description={artists.join(', ')}
-                />
-            </List.Item>
-          );
-
-          this.setState({
-               total_queue: temp_all, 
-               played_queue: temp_played,
-          })
-
-      this.play({
-        spotify_uri: uri
-      });
-  }
-
-  clearQueue = () => {
-    this.setState({
-      searchValue: "",
-      item: {
-        album: {
-            images: [{ url: "" }]
-        },
-        name: "",
-        artists: [{ name: "" }],
-        duration_ms:0,
-        id: "",
-      },
-      is_playing: false,
-      progress_ms: 0,
-      searchResults: [],
-      next: null,
-      next_queue: [],
-      played_queue: [],
-      total_queue: [],
-      queue_pos: 0,
-    })
-  }
-
-  playPreviousSong = () => {
-    // set previous song to current Item
-    // set next song to current Item
-    // set previous to have one less item  
-
-    if(this.state.queue_pos > 0){
-        // set up previous_queue
-        let temp_list = []
-        for( var i = 0; i < this.state.played_queue.length - 1; i++){
-            temp_list.push(this.state.played_queue[i]);
-        }
-
-    
-        // set up next_queue
-        let temp = [];
-        for( var i = 0; i < this.state.next_queue.length; i++){
-            temp.push(this.state.next_queue[i]);
-        }
-        //console.log("THIS IS THE ARTIST INFO THINGY")
-        //console.log(info);
-        let artists = [];
-        this.state.item.artists.forEach(artist => artists.push(artist.name));
-        temp.unshift(      
-            <List.Item key={this.state.item.uri} style={{height:"100%",border: "4px solid #0000"}}>
-                <List.Item.Meta style={{display:"block"}}
-                  avatar={<Avatar shape='square' size='large' src={this.state.item.album.images[0].url} style={{height:"50%", width:"150px"}} />}
-                  title={<p href="https://ant.design">{this.state.item.name}</p>}
-                  description={artists.join(', ')}
-                />
-            </List.Item>);
-    
-        //update queue scroll to keep now playing in the middle
-            let el = document.querySelector('.main-wrapper');
-            let el2 = document.querySelector('#played_queue_card');
-            if(el){
-                    el.scrollLeft = el2.offsetWidth - 158 - (window.innerWidth  * .1) ;
-            }
-
-        // set up current item
-        let new_pos = this.state.queue_pos - 1;
-
-        this.setState({
-            next_queue: temp, 
-            played_queue: temp_list,    
-            progress_ms: 0,
-            queue_pos: new_pos
-        })
-
-        this.play({spotify_uri: this.state.total_queue[new_pos].uri})
-    }
-  }
+  }; 
 
   updatePlaying = (refreshSelections, setItemBoolean=true) => {
-    // Make a call using the token
-    let el = document.querySelector('.main-wrapper');
-    if(el){
-        el.addEventListener("wheel", (evt) => {
-            if (evt.deltaY < 0){
-                if(el.scrollLeft != 0){
-                    evt.preventDefault();
-                    el.scrollLeft += (evt.deltaY * 0.03);
-                }
-            }
-            else{
-                if(el.scrollLeft < el.scrollWidth - el.clientWidth){
-                    evt.preventDefault();
-                    el.scrollLeft += (evt.deltaY * 0.03);
-                }
-            }
-        });
-    }
+  /*
+  Update's current state based on spotify api 
+  (updates via a call to get Recs?)
+  */
 
+    this.enableHorizontalScroll();
 
+    //update player info based on spotify's latest info
     $.ajax({
       url: "https://api.spotify.com/v1/me/player",
       type: "GET",
@@ -481,80 +204,75 @@ class App extends Component {
         xhr.setRequestHeader("Authorization", "Bearer " + this.state.token);
       },
       success: (data) => {
-          console.log("success!");
-          console.log("this.state.next_queue is the data = " + data)
-          if(data){ 
-            if(setItemBoolean){
-                this.setState({
-                   deviceID: data.device.id,
-                   item: data.item,
-                   is_playing: data.is_playing,
-                   progress_ms: data.progress_ms,
-                })
-            // update pause button
-            if(document.getElementById('pause_btn_div') !== null && document.getElementById('play_btn_div') !== null){
-                if(data.is_playing){
-                   document.getElementById('pause_btn_div').style.display = 'block'; 
-                   document.getElementById('play_btn_div').style.display = 'none';
-                }
-                else{
-                    document.getElementById('pause_btn_div').style.display = 'none'; 
-                    document.getElementById('play_btn_div').style.display = 'block';
-                }
-            }
-            }
-            if(refreshSelections){
-                this.getRecs(data.item.artists[0].id, data.item.genre, data.item.id, data);
-            }
-          }
+        if(setItemBoolean){
+            this.setState({
+                deviceID: data?.device.id ?? this.state.deviceID,
+                is_playing: data?.is_playing ?? this.state.is_playing,
+                progress_ms: data?.progress_ms ?? this.state.progress_ms,
+            })
+        }
+        if(refreshSelections){
+            this.getRecs(data?.item.artists[0].id, data?.item.id);
+        }
       },
-      error: () =>{
-        console.log("failure");
+      error: (e) =>{
+        console.log("Failure getting player info");
+        console.log(e.responseText);
       }
     });
   }
 
-  getRecs = (artist, genre, track, info) => {
-    let tracks_string = this.state.total_queue.map(a => a.id).slice(-4).join();
-    console.log(this.state.total_queue);
-    let test_genre = [""];
+  getRecs = (artist, track) => {
+  /*
+  Calls recomendation api with last 5 songs and updates the three recommendations
+  */
+    let tracks_string = this.state.total_queue.map(a => a.id).slice(-1).join('');
+    tracks_string = `${track},${tracks_string}`;
+
     $.ajax({
-      url: `https://api.spotify.com/v1/recommendations?limit=3&seed_artists=${artist}&seed_genres=${test_genre}&seed_tracks=${tracks_string}`,
+      url: `https://api.spotify.com/v1/recommendations?limit=3&seed_artists=${artist}&seed_genres=%20&seed_tracks=${tracks_string}`,
       type: "GET",
       beforeSend: (xhr) => {
         xhr.setRequestHeader("Authorization", "Bearer " + this.state.token);
       },
       success: (data) => {
-      console.log("success!");
-      console.log("this is the recommendations data = " + data);
-      console.log(data);
-      console.log(this.state.next_queue);
         if(data){ 
+            //update recommendations
             this.setState({
               next: data.tracks,
-              the_token: this.state.token, 
             })
-            console.log(data.tracks);
         }
       },
       error: () =>{
-            console.log("failure");
+            console.log("Failure loading recommendations");
       }
     });
   }
 
   tick(){
+  /*
+  Called every second to inch forward progress bar and check if the spotify token should be refreshed
+  */
+    // check if next song should play
     if(this.state.is_playing){
-        let temp = this.state.progress_ms + 1000;
-        if(temp > this.state.item.duration_ms){
-            this.nextQueue(this.state.token);
+        let nextSecond = this.state.progress_ms + 1000;
+        let currentSongDuration = this.state.total_queue[this.state.queue_pos]?.songDuration; 
+        
+        if(nextSecond > currentSongDuration){
+            this.play(this.state.queue_pos + 1);
+            this.setState({
+                progress_ms: 0,
+                queue_pos: this.state.queue_pos + 1
+            })
         }
         else{
             this.setState({
-                progress_ms: temp
+                progress_ms: nextSecond
             })
         }
     }
+
+    // check for token refresh
     if(Date.now() - this.state.current_time > 1800000){
         this.setState({
                 current_time: Date.now()
@@ -563,7 +281,60 @@ class App extends Component {
     }
   }
 
+  clearQueue = () => {
+  /*
+  Cleared state variables associated with songs in the player
+  */
+    this.setState({
+      searchValue: "",
+      is_playing: false,
+      progress_ms: 0,
+      searchResults: [],
+      next: null,
+      total_queue: [],
+      queue_pos: 0,
+    })
+  }
+
+  enableHorizontalScroll = () => {
+  /*
+  Adds horizontal Scroll to player window
+  TODO: confirm this is only called once
+  */
+    let el = document.querySelector('.main-wrapper');
+    if(el){
+        el.addEventListener("wheel", (evt) => {    
+            if (evt.deltaY < 0){
+                if(el.scrollLeft !== 0){
+                    evt.preventDefault();
+                    el.scrollLeft += (evt.deltaY * 0.03);
+                }
+            }
+            else{
+                if(el.scrollLeft < el.scrollWidth - el.clientWidth){
+                    evt.preventDefault();
+                    el.scrollLeft += (evt.deltaY * 0.03);
+                }
+            }
+        });
+    }
+  }
+
+  updateScrollPosition = () => {
+  /*
+  Updates horizontal scroll position of the player to display the playing item in the center
+  */
+    let el1 = document.querySelector('.main-wrapper');
+    let el2 = document.querySelector('#played_queue_card');
+    if(el1 && el2){
+            el1.scrollLeft = el2.offsetWidth - (window.innerWidth  * .1) ;
+    }
+  }
+
   refreshToken(){
+  /*
+  Refresh spotify access token via api to allow player to stay active and avoid token timeout
+  */
     $.ajax({
       url: `https://accounts.spotify.com/api/token`,
       type: "POST",
@@ -585,174 +356,209 @@ class App extends Component {
             console.log("failure");
       }
     });
-
-
   }
 
  componentDidMount() {
-    //particles.js github page says to load package like so:
-    particlesJS.load('particles-js', 'particles.json', function() {
-      console.log('callback - particles.js config loaded');
-    });
-    // Set token
+ /*
+ Initial functions run once the main component mounts (on startup)
+ */
+    //run particles
+    particlesJS.load('particles-js', 'particles.json', function() {/*callback*/});
+
+    //create token
+    console.log(hash);
     let _token = hash.access_token;
     let _refresh_token = hash.refresh_token;
     if (_token) {
-      // Set token
       this.setState({
         token: _token,
         refresh_token: _refresh_token
       });
       this.updatePlaying(true);
     }
-    this.timerID = setInterval(
-      () => this.tick(_token),
-      1000
-    );
-  }
+    console.log(`set Token ${_token}`);
 
-  render() {
-    // Start app
-    window.onSpotifyWebPlaybackSDKReady = () => {
-        const token = this.state.token;
-        let player = new window.Spotify.Player({
-            name: 'Pickles Web Player',
-            getOAuthToken: cb => { cb(token); }
-        });
+    //start tick
+    this.timerID = setInterval(() => this.tick(_token), 1000);
+ }
 
-        // Error handling
-        player.addListener('initialization_error', ({ message }) => { console.error(message); alert(message); });
-        player.addListener('authentication_error', ({ message }) => { console.error(message); });
-        player.addListener('account_error', ({ message }) => { console.error(message); });
-        player.addListener('playback_error', ({ message }) => { console.error(message); });
+ render() {
+ /*
+ Initial functions run once the main component renders (after mount(?))
+ */
 
-        // Playback status updates
-        player.addListener('player_state_changed', state => { 
-            this.updatePlaying(false, true); 
-        });
+    if(this.state.token){
+    /*    
+    Initializatiopn after checking if user is already logged in
+    */
 
-        //On Autoplay failure
-        player.addListener('autoplay_failed', () => {
-          console.log('Autoplay is not allowed by the browser autoplay rules');
-          alert('Autoplay is not allowed by the browser autoplay rules');
-        });
+        //start app
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            const token = this.state.token;
+            let player = new window.Spotify.Player({
+                name: 'Pickles Web Player',
+                getOAuthToken: cb => cb(token)
+            });
 
-        // Ready
-        player.addListener('ready', ({ device_id }) => {
-            console.log('Ready with Device ID', device_id);
-            this.setState({
-                deviceID: device_id
-            })
-        });
+            // Error handling
+            player.addListener('initialization_error', message => console.error(message));
+            player.addListener('authentication_error', message => console.error(message));
+            player.addListener('account_error', message => console.error(message));
+            player.addListener('playback_error', message => console.error(message));
 
-        // Not Ready
-        player.addListener('not_ready', ({ device_id }) => {
-            console.log('Device ID has gone offline', device_id);
-        });
+            // Playback status updates
+            player.addListener('player_state_changed', state => this.updatePlaying(false, true));
 
-        // Connect to the player!
-        player.connect();
+            //On Autoplay failure
+            player.addListener('autoplay_failed', () => console.log('Autoplay is not allowed by the browser'));
+
+            // Ready
+            player.addListener('ready', ({ device_id }) => {
+                console.log('Ready with Device ID', device_id);
+                this.setState({
+                    deviceID: device_id
+                })
+            });
+
+            // Not Ready
+            player.addListener('not_ready', ({ device_id }) => {
+                console.log('Device ID has gone offline', device_id);
+            });
+
+            // Connect to the player!
+            player.connect();
 
         
-        //set up /me
-        fetch(`https://api.spotify.com/v1/me`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.state.token}`,
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            this.setState({
-                userID: data.id,
-                player: player
-            });
-        })
-        .catch((error) => {console.log(error)});
-    };
-
-    // <div id="header" style={{width: "100%", height: "50px", backgroundColor: "#b4bfcc55"}}>
-    //    <img style={{float: "left", height: "100%"}} src={logo}alt="logo" />
-    //    <h3 style={{top: "0", float: "left", margin: "auto"}} >Pickles</h3>
-    // </div>
-
+            //set up /me
+            fetch(`https://api.spotify.com/v1/me`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.state.token}`,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.setState({
+                    userID: data.id,
+                    player: player
+                });
+            })
+            .catch((error) => {console.log(error)});
+        };
+    }
+    
     // Show search results
     let card;
     if(this.state.searchResults.length > 0){
-      //console.log("these are the search results");
-      //console.log(this.state.searchResults);
         card = <Card>
-                <List itemLayout="horizontal">
-                  {this.state.searchResults}
-                </List>
-             </Card>;
+                    <List itemLayout="horizontal">
+                        {this.state.searchResults}
+                    </List>
+                </Card>;
     }
     else {
         card = <Card hidden={true}/>;
     }
+
+    //return web page
     return ( 
-      <div className="App" >
+      <div className="App">
+        {/* preloading */}
         <link rel="preconnect" href="https://fonts.googleapis.com"/>
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet"/>
         <div id="particles-js"></div>
+        
+        {/* normal page loading */}
         <div className="App-header">
-
           <img src={logo} className="App-logo" alt="logo" />
+          
+          {/* token doesn't exist, then load login screen */}
           {!this.state.token && (
-              <a
-                  className="btn btn--loginApp-link"
+              <a  className="btn btn--loginApp-link"
                   href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=token&show_dialog=true`}
               >
                   Login to Spotify
               </a>
           )}
+
+          {/* token does exist, then load player */}
+          {/* TODO: confirm all these state properties are needed */}
           {this.state.token && (
               <div style={{zIndex: 10, width: "100%", height: "100%"}}>
+                  
+                  {/* Song Queue */}
                   <Player 
-                      item={this.state.item}
                       is_playing={this.state.is_playing}
                       progress_ms={this.state.progress_ms}
                       next={this.state.next}
-                      next_queue={this.state.next_queue}
-                      played_queue={this.state.played_queue}
                       the_token={this.state.token}
+                      playFunc={this.play}
                       updateFunc={this.updatePlaying}
-                      nextFunc={this.nextQueue}
+                      nextFunc={this.playNextSong}
                       prevFunc={this.playPreviousSong}
                       device={this.state.deviceID}
                       user={this.state.userID}
                       total_queue={this.state.total_queue}
+                      queue_pos={this.state.queue_pos}
                       clearQueue={this.clearQueue}
                   />
+
+                  {/* Song recomendations */}
                   <NextPlayer
-                      item={this.state.item}
                       is_playing={this.state.is_playing}
                       progress_ms={this.state.progress_ms}
-                      next={this.state.next}
-                      next_queue={this.state.next_queue}
-                      func={this.queueSong}
+                      playFunc={this.play}
+                      queueFunc={this.queue}
                       device={this.state.deviceID}
                       user={this.state.userID}
+                      next={this.state.next}
+                      queue_pos={this.state.queue_pos}
+                      total_queue={this.state.total_queue}
                   />
-                  <div id ="refresh_btn_div"  style={{display: (this.state.item.id === "" ? 'none' :'block'), float: (this.state.item.id === "" ? 'none' :'left'), margin: 'auto' }}>
-                      <img id="refresh_btn" alt="refresh recommendations" src={refresh_btn} onClick={() => {this.updatePlaying(true)}}/>
+
+                  {/* Refresh Recomendations Button */}
+                  {/* TODO: move all styles to css */}
+                  <div id ="refresh_btn_div"  
+                      style={{
+                          display: (!this.state.total_queue[this.state.queue_pos]?.id ? 'none' :'block'),
+                          float: (!this.state.total_queue[this.state.queue_pos]?.id ? 'none' :'left'),
+                          margin: 'auto' 
+                      }}>
+                      <img id="refresh_btn" 
+                        alt="refresh recommendations" 
+                        src={refresh_btn}
+                        onClick={() => {this.updatePlaying(true)}}
+                      />
                   </div>
+
+                  {/* Song Search Field & Results */}
                   <div className="Search">
                       <Input
                           id="searchInput" 
                           style={{fontFamily: "Roboto"}}
                           placeholder="Search for a song"
                           size="large"
-                          onChange={value => {this.setState({searchValue: value.target.value}); this.getSearchResults(value.target.value)}}
+                          onChange={value => {
+                                this.setState({searchValue: value.target.value});
+                                this.getSearchResults(value.target.value)
+                          }}
                           allowClear={true}
                           value={this.state.searchValue}
-                          prefix={<SearchOutlined className="searchg-form-icon" />}
+                          prefix={<SearchOutlined className="search-form-icon" />}
                       />
                       {card}
                   </div>
-                   <button style={{color: 'red', margin: 'auto', display: (this.state.item.id === "" ? 'none' :'block')}} onClick={() => {this.clearQueue();}}>Clear Queue</button>
+
+                  {/* Clear Button */}
+                   <Button 
+                       style={{
+                            margin: 'auto',
+                            display: (!this.state.total_queue[this.state.queue_pos]?.id ? 'none' :'block')
+                       }} 
+                       onClick={() => {this.clearQueue();}} danger>Clear Queue
+                   </Button>
+
               </div>
           )}
         </div>

@@ -7,7 +7,7 @@ return (
     <div id ="nextPlayer">
        {props.next && (
           <React.Fragment>
-              <div className="next-wrapper" onClick={function(){props.func(props.next[0].uri, props.next[0].album.images[0].url, props.next[0])}}>
+              <div className="next-wrapper" onClick={function(){props.queueFunc(props.next[0], props.total_queue.length)}}>
                 <div className="next-playing__img">
                   <img src={props.next[0].album.images[0].url}  alt="player" />
                 </div> 
@@ -18,7 +18,7 @@ return (
                   </div>
                 </div>
               </div>
-              <div className="next-wrapper" onClick={function(){props.func(props.next[1].uri, props.next[1].album.images[0].url, props.next[1])}}>
+              <div className="next-wrapper" onClick={function(){props.queueFunc(props.next[1], props.total_queue.length)}}>
                 <div className="next-playing__img">
                   <img src={props.next[1].album.images[0].url}  alt="player" />
                 </div>
@@ -29,7 +29,7 @@ return (
                   </div>
                 </div>
               </div>
-              <div className="next-wrapper" onClick={function(){props.func(props.next[2].uri, props.next[2].album.images[0].url, props.next[2])}}>
+              <div className="next-wrapper" onClick={function(){props.queueFunc(props.next[2], props.total_queue.length)}}>
                 <div className="next-playing__img">
                   <img src={props.next[2].album.images[0].url}  alt="player" />
                 </div>
