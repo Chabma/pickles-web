@@ -1,30 +1,28 @@
 {
   "files": {
-    "main.css": "/pickles-web/static/css/main.86bbe88c.chunk.css",
-    "main.js": "/pickles-web/static/js/main.a3ed901a.chunk.js",
-    "main.js.map": "/pickles-web/static/js/main.a3ed901a.chunk.js.map",
-    "runtime-main.js": "/pickles-web/static/js/runtime-main.89613e7f.js",
-    "runtime-main.js.map": "/pickles-web/static/js/runtime-main.89613e7f.js.map",
+    "main.css": "/pickles-web/static/css/main.46b8256d.chunk.css",
+    "main.js": "/pickles-web/static/js/main.60b4c67c.chunk.js",
+    "main.js.map": "/pickles-web/static/js/main.60b4c67c.chunk.js.map",
+    "runtime-main.js": "/pickles-web/static/js/runtime-main.acef3b78.js",
+    "runtime-main.js.map": "/pickles-web/static/js/runtime-main.acef3b78.js.map",
     "static/css/2.3c3a73a9.chunk.css": "/pickles-web/static/css/2.3c3a73a9.chunk.css",
-    "static/js/2.dd6f93a7.chunk.js": "/pickles-web/static/js/2.dd6f93a7.chunk.js",
-    "static/js/2.dd6f93a7.chunk.js.map": "/pickles-web/static/js/2.dd6f93a7.chunk.js.map",
-    "static/js/3.ac9d1f77.chunk.js": "/pickles-web/static/js/3.ac9d1f77.chunk.js",
-    "static/js/3.ac9d1f77.chunk.js.map": "/pickles-web/static/js/3.ac9d1f77.chunk.js.map",
+    "static/js/2.322f54a3.chunk.js": "/pickles-web/static/js/2.322f54a3.chunk.js",
+    "static/js/2.322f54a3.chunk.js.map": "/pickles-web/static/js/2.322f54a3.chunk.js.map",
+    "static/js/3.f3cf4989.chunk.js": "/pickles-web/static/js/3.f3cf4989.chunk.js",
+    "static/js/3.f3cf4989.chunk.js.map": "/pickles-web/static/js/3.f3cf4989.chunk.js.map",
     "index.html": "/pickles-web/index.html",
     "static/css/2.3c3a73a9.chunk.css.map": "/pickles-web/static/css/2.3c3a73a9.chunk.css.map",
-    "static/css/main.86bbe88c.chunk.css.map": "/pickles-web/static/css/main.86bbe88c.chunk.css.map",
-    "static/js/2.dd6f93a7.chunk.js.LICENSE.txt": "/pickles-web/static/js/2.dd6f93a7.chunk.js.LICENSE.txt",
-    "static/media/addToLibrary.23e615aa.png": "/pickles-web/static/media/addToLibrary.23e615aa.png",
+    "static/css/main.46b8256d.chunk.css.map": "/pickles-web/static/css/main.46b8256d.chunk.css.map",
+    "static/js/2.322f54a3.chunk.js.LICENSE.txt": "/pickles-web/static/js/2.322f54a3.chunk.js.LICENSE.txt",
     "static/media/add_end_queue.aa85d3a8.png": "/pickles-web/static/media/add_end_queue.aa85d3a8.png",
     "static/media/add_start_queue.852d6a3b.png": "/pickles-web/static/media/add_start_queue.852d6a3b.png",
-    "static/media/logo.ebb4ae6c.png": "/pickles-web/static/media/logo.ebb4ae6c.png",
-    "static/media/refresh.f64816c1.png": "/pickles-web/static/media/refresh.f64816c1.png"
+    "static/media/logo.ebb4ae6c.png": "/pickles-web/static/media/logo.ebb4ae6c.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.89613e7f.js",
+    "static/js/runtime-main.acef3b78.js",
     "static/css/2.3c3a73a9.chunk.css",
-    "static/js/2.dd6f93a7.chunk.js",
-    "static/css/main.86bbe88c.chunk.css",
-    "static/js/main.a3ed901a.chunk.js"
+    "static/js/2.322f54a3.chunk.js",
+    "static/css/main.46b8256d.chunk.css",
+    "static/js/main.60b4c67c.chunk.js"
   ]
 }
