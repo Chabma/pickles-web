@@ -344,7 +344,8 @@ class App extends Component {
       client_id: clientId
       },
       success: (data) => {
-      console.log("success!");
+      console.log("successfully refreshed token");
+      console.log(data.access_token);
         if(data){ 
             this.setState({
                 token: data.access_token,
@@ -353,7 +354,8 @@ class App extends Component {
         }
       },
       error: () =>{
-            console.log("failure");
+            console.log("failured to refresh token, trying again");
+            refreshToken();
       }
     });
   }
