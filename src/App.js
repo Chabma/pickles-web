@@ -355,7 +355,7 @@ class App extends Component {
       },
       error: () =>{
             console.log("failured to refresh token, trying again");
-            refreshToken();
+            this.refreshToken();
       }
     });
   }
