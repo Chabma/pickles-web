@@ -481,7 +481,7 @@ class App extends Component {
           {/* token doesn't exist, then load login screen */}
           {!this.state.token && (
               <a  className="btn btn--loginApp-link"
-                  href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=token&show_dialog=true`}
+                  href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=code&show_dialog=true`}
               >
                   Login to Spotify
               </a>
