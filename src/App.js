@@ -277,7 +277,7 @@ class App extends Component {
         this.setState({
                 current_time: Date.now()
         })
-        this.refreshToken();
+        this.refreshToken(0);
     }
   }
 
@@ -331,7 +331,7 @@ class App extends Component {
     }
   }
 
-  refreshToken(){
+  refreshToken(x){
   /*
   Refresh spotify access token via api to allow player to stay active and avoid token timeout
   */
@@ -354,8 +354,11 @@ class App extends Component {
         }
       },
       error: () =>{
-            console.log("failured to refresh token, trying again");
-            this.refreshToken();
+            if(x < 10){
+                console.log("failured to refresh token, trying again");
+                console.log(x);
+                this.refreshToken(x+1);
+            }
       }
     });
   }
@@ -478,7 +481,7 @@ class App extends Component {
           {/* token doesn't exist, then load login screen */}
           {!this.state.token && (
               <a  className="btn btn--loginApp-link"
-                  href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=token&show_dialog=true`}
+                  href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=code&show_dialog=true`}
               >
                   Login to Spotify
               </a>
