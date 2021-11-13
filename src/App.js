@@ -13,8 +13,10 @@ import 'particles.js/particles';
 
 // set up spotify info
 export const authEndpoint = 'https://accounts.spotify.com/authorize';
+export const tokenUri = "https://accounts.spotify.com/api/token";
 const clientId = "fadd120c4e7a4a1a954bf081a4fd6e59";
 const redirectUri = "https://chabma.github.io/pickles-web/";
+
 //const redirectUri = "http://localhost:3000/callback";
 const scopes = [
   "user-read-currently-playing",
@@ -33,7 +35,7 @@ console.log(window.location);
 
 // get the hash of the url
 const hash = window.location.hash
-  .substring(1)
+  .substring(0)
   .split("&")
   .reduce(function(initial, item) {
     if (item) {
@@ -50,6 +52,7 @@ class App extends Component {
     super();
     this.state = {
       token: null,
+      code: null,
       refresh_token: null,
       player: null,
       deviceID: "",
@@ -374,10 +377,12 @@ class App extends Component {
     console.log(hash);
     let _token = hash.access_token;
     let _refresh_token = hash.refresh_token;
+    let _code = hash.code;
     if (_token) {
       this.setState({
         token: _token,
-        refresh_token: _refresh_token
+        refresh_token: _refresh_token,
+        code: _code
       });
       this.updatePlaying(true);
     }
@@ -479,11 +484,19 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           
           {/* token doesn't exist, then load login screen */}
-          {!this.state.token && (
+          {(!this.state.token && !this.state.code) && (
               <a  className="btn btn--loginApp-link"
-                  href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=code&show_dialog=true`}
+                  href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=code&show_dialog=false`}
               >
                   Login to Spotify
+              </a>
+          )}
+
+          {(!this.state.token && this.state.code) && (
+              <a  className="btn btn--loginApp-link"
+                  href={`${tokenEndpoint}?grant_type=authorization_code&redirect_uri=${redirectUri}&code=${this.state.code}`}
+              >
+                  Confirm Login
               </a>
           )}
 
