@@ -13,7 +13,7 @@ import 'particles.js/particles';
 
 // set up spotify info
 export const authEndpoint = 'https://accounts.spotify.com/authorize';
-export const tokenUri = "https://accounts.spotify.com/api/token";
+export const tokenEndpoint = "https://accounts.spotify.com/api/token";
 const clientId = "fadd120c4e7a4a1a954bf081a4fd6e59";
 const redirectUri = "https://chabma.github.io/pickles-web/";
 
