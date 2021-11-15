@@ -11,16 +11,21 @@ import logo from "./images/logo.png";
 import refresh_btn from "./images/refresh.png";
 import 'particles.js/particles';
 
-// set up spotify info
+// Spotify info
 export const authEndpoint = 'https://accounts.spotify.com/authorize';
 export const tokenEndpoint = "https://accounts.spotify.com/api/token";
 const clientId = "fadd120c4e7a4a1a954bf081a4fd6e59";
-const redirectUri = "https://chabma.github.io/pickles-web/";
-
+const clientSecret = "97c1d3b88b9e4a89898482bb4141b2df";
+//TODO: change uses of client Secret to Base 64 encoded uses
+const redirectUri = "https://chabma.github.io/pickles-web/";  
 //const redirectUri = "http://localhost:3000/callback";
+//^^ redirect URI for local testing
+
 const scopes = [
   "user-read-currently-playing",
   "user-read-playback-state",
+  "user-read-private",
+  "user-read-email",
   "app-remote-control",
   "streaming",
   "user-modify-playback-state",
@@ -33,18 +38,16 @@ const scopes = [
 const particlesJS = window.particlesJS;
 console.log(window.location);
 
-// get the hash of the url
-const hash = window.location.hash
-  .substring(0)
-  .split("&")
-  .reduce(function(initial, item) {
+// get the code from the url;
+const code = window.location.search
+    .split("?")
+    .reduce(function(initial, item) {
     if (item) {
       var parts = item.split("=");
       initial[parts[0]] = decodeURIComponent(parts[1]);
     }
     return initial;
   }, {});
-window.location.hash = "";
 
 class App extends Component {
 
@@ -342,9 +345,10 @@ class App extends Component {
       url: `https://accounts.spotify.com/api/token`,
       type: "POST",
       data: {
-      grant_type: "refresh_token",
-      refresh_token: this.state.refresh_token,
-      client_id: clientId
+          grant_type: "refresh_token",
+          refresh_token: this.state.refresh_token,
+          client_id: clientId,
+          client_secret: clientSecret,
       },
       success: (data) => {
       console.log("successfully refreshed token");
@@ -368,96 +372,110 @@ class App extends Component {
 
  componentDidMount() {
  /*
- Initial functions run once the main component mounts (on startup)
+ Initial functions run once this component mounts (will only be called once after the first render)
  */
     //run particles
     particlesJS.load('particles-js', 'particles.json', function() {/*callback*/});
 
-    //create token
-    console.log(hash);
-    let _token = hash.access_token;
-    let _refresh_token = hash.refresh_token;
-    let _code = hash.code;
-    if (_token) {
-      this.setState({
-        token: _token,
-        refresh_token: _refresh_token,
-        code: _code
-      });
-      this.updatePlaying(true);
-    }
-    console.log(`set Token ${_token}`);
+    //use code from url
+    console.log(code);
+    if (code.code) {
+        this.setState({
+          code: code.code,
+        });
+        console.log(`set Code ${code.code}`);
 
-    //start tick
-    this.timerID = setInterval(() => this.tick(_token), 1000);
+        //set up token based on code
+        $.ajax({
+          url: `https://accounts.spotify.com/api/token`,
+          type: "POST",
+          data: {
+              grant_type: "authorization_code",
+              code: code.code,
+              client_secret: clientSecret,
+              client_id: clientId,
+              redirect_uri: redirectUri,
+              scope: scopes.join("%20")
+          },
+          success: (data) => {
+              console.log("successfully logged in with code");
+              console.log(data);
+              if(data){
+                  this.setState({
+                      token: data.access_token,
+                      refresh_token: data.refresh_token,
+                  });
+
+                  //start app
+                  window.onSpotifyWebPlaybackSDKReady = () => {
+                        let player = new window.Spotify.Player({
+                            name: 'Pickles Web Player',
+                            getOAuthToken: cb => cb(data.access_token)
+                        });
+
+                        // Error handling
+                        player.addListener('initialization_error', message => console.error(message));
+                        player.addListener('authentication_error', message => console.error(message));
+                        player.addListener('account_error', message => console.error(message));
+                        player.addListener('playback_error', message => console.error(message));
+
+                        // Playback status updates
+                        player.addListener('player_state_changed', state => this.updatePlaying(false, true));
+
+                        //On Autoplay failure
+                        player.addListener('autoplay_failed', () => console.log('Autoplay is not allowed by the browser'));
+
+                        // Ready
+                        player.addListener('ready', ({ device_id }) => {
+                            console.log('Ready with Device ID', device_id);
+                            this.setState({
+                                deviceID: device_id
+                            })
+                        });
+
+                        // Not Ready
+                        player.addListener('not_ready', ({ device_id }) => {
+                            console.log('Device ID has gone offline', device_id);
+                        });
+
+                        // Connect to the player!
+                        player.connect();
+
+        
+                        //set up /me
+                        fetch(`https://api.spotify.com/v1/me`, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${data.access_token}`,
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("successfully set up spotify player");
+                            this.setState({
+                                userID: data.id,
+                                player: player
+                            });
+                        })
+                        .catch((error) => {console.log(error)});
+                  };
+              }
+              
+              //start tick
+              this.timerID = setInterval(() => this.tick(data.access_token), 1000);
+          },
+          error: () =>{
+            console.log("failured to login with code");
+          }
+        });
+    }
  }
 
  render() {
  /*
- Initial functions run once the main component renders (after mount(?))
+ Funtion which runs every time this component renders or rerenders due to a state change (called once before componentDidMount)
  */
-
-    if(this.state.token){
-    /*    
-    Initializatiopn after checking if user is already logged in
-    */
-
-        //start app
-        window.onSpotifyWebPlaybackSDKReady = () => {
-            const token = this.state.token;
-            let player = new window.Spotify.Player({
-                name: 'Pickles Web Player',
-                getOAuthToken: cb => cb(token)
-            });
-
-            // Error handling
-            player.addListener('initialization_error', message => console.error(message));
-            player.addListener('authentication_error', message => console.error(message));
-            player.addListener('account_error', message => console.error(message));
-            player.addListener('playback_error', message => console.error(message));
-
-            // Playback status updates
-            player.addListener('player_state_changed', state => this.updatePlaying(false, true));
-
-            //On Autoplay failure
-            player.addListener('autoplay_failed', () => console.log('Autoplay is not allowed by the browser'));
-
-            // Ready
-            player.addListener('ready', ({ device_id }) => {
-                console.log('Ready with Device ID', device_id);
-                this.setState({
-                    deviceID: device_id
-                })
-            });
-
-            // Not Ready
-            player.addListener('not_ready', ({ device_id }) => {
-                console.log('Device ID has gone offline', device_id);
-            });
-
-            // Connect to the player!
-            player.connect();
-
-        
-            //set up /me
-            fetch(`https://api.spotify.com/v1/me`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.state.token}`,
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                this.setState({
-                    userID: data.id,
-                    player: player
-                });
-            })
-            .catch((error) => {console.log(error)});
-        };
-    }
-    
     // Show search results
     let card;
     if(this.state.searchResults.length > 0){
@@ -484,25 +502,16 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           
           {/* token doesn't exist, then load login screen */}
-          {(!this.state.token && !this.state.code) && (
+          {!this.state.code && (
               <a  className="btn btn--loginApp-link"
-                  href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=code&show_dialog=false`}
+                  href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=code&show_dialog=true`}
               >
                   Login to Spotify
               </a>
           )}
-
-          {(!this.state.token && this.state.code) && (
-              <a  className="btn btn--loginApp-link"
-                  href={`${tokenEndpoint}?grant_type=authorization_code&redirect_uri=${redirectUri}&code=${this.state.code}`}
-              >
-                  Confirm Login
-              </a>
-          )}
-
           {/* token does exist, then load player */}
           {/* TODO: confirm all these state properties are needed */}
-          {this.state.token && (
+          {this.state.code && (
               <div style={{zIndex: 10, width: "100%", height: "100%"}}>
                   
                   {/* Song Queue */}
