@@ -1,5 +1,6 @@
 import React from "react";
 import "./Player.css";
+import refresh_btn from "./images/refresh.png";
 import 'antd/dist/antd.css';
 
 const NextPlayer = props => {
@@ -39,7 +40,19 @@ return (
                     {props.next[2].artists[0].name}
                   </div>
                 </div>
-              </div> 
+              </div>
+              <div id ="refresh_btn_div"  
+                style={{
+                    display: 'block',
+                    float: 'left',
+                    margin: 'auto' 
+                }}>
+                <img id="refresh_btn" 
+                    alt="refresh recommendations" 
+                    src={refresh_btn}
+                    onClick={() => {props.refreshFunc(true)}}
+                />
+              </div>
           </React.Fragment>
        )}
     </div>

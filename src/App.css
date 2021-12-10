@@ -134,6 +134,7 @@
 }
 #currentPlayer{
     height: 70%;
+    padding-top: 25px;
 }
 
 canvas{
@@ -210,8 +211,7 @@ canvas{
 	float: left;
     flex-direction: row;
     display: flex;
-    width: 80%;
-    max-height: 30%;
+    width: 100%;
 }
 #queue {
 	max-height: 100%;

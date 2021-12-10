@@ -75,14 +75,13 @@ class App extends Component {
   /*
   Create search items and then add to state total queue
   */
-    const access_token = this.state.token;
     const searchQuery = query;
     const fetchURL = encodeURI(`q=${searchQuery}`);
 
     //search with spotify api
     fetch(`https://api.spotify.com/v1/search?${fetchURL}&type=track`, {
         method: "GET",
-        headers: { Authorization: `Bearer ${access_token}` }
+        headers: { Authorization: `Bearer ${this.state.token}` }
     })
     .then(response => {
       if(!response.ok){ throw Error("Response Not Ok") }
@@ -175,23 +174,29 @@ class App extends Component {
   /*
   Call spotify api to play song via current web player (calls update playing function)
   */
-
-    this.state.player._options.getOAuthToken(access_token => {
-        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceID}`,{
-            method: 'PUT',
-            body: JSON.stringify({ uris: [this.state.total_queue[queuePosition]?.uri] }),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${access_token}`,
-            }
-        })
-        .then(response => response.text())
-        .then(data => {
-            this.setState({queue_pos: queuePosition});
-            this.updatePlaying(true);
-        })
-        .catch((error) => {console.log(error)});
-    });
+    if(queuePosition >= 0){
+        if(queuePosition >= this.state.total_queue.length){
+            this.queue(this.state.next[0], this.state.total_queue.length, true);
+        }
+        else{
+            this.state.player._options.getOAuthToken(access_token => {
+                fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceID}`,{
+                    method: 'PUT',
+                    body: JSON.stringify({ uris: [this.state.total_queue[queuePosition]?.uri] }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${access_token}`,
+                    }
+                })
+                .then(response => response.text())
+                .then(data => {
+                    this.setState({queue_pos: queuePosition});
+                    this.updatePlaying(true);
+                })
+                .catch((error) => {console.log(error)});
+            });
+        }
+    }
   }; 
 
   updatePlaying = (refreshSelections, setItemBoolean=true) => {
@@ -216,10 +221,12 @@ class App extends Component {
                 is_playing: data?.is_playing ?? this.state.is_playing,
                 progress_ms: data?.progress_ms ?? this.state.progress_ms,
             })
+            console.log(data?.is_playing); 
         }
         if(refreshSelections){
             this.getRecs(data?.item.artists[0].id, data?.item.id);
         }
+        this.updateScrollPosition();
       },
       error: (e) =>{
         console.log("Failure getting player info");
@@ -266,10 +273,6 @@ class App extends Component {
         
         if(nextSecond > currentSongDuration){
             this.play(this.state.queue_pos + 1);
-            this.setState({
-                progress_ms: 0,
-                queue_pos: this.state.queue_pos + 1
-            })
         }
         else{
             this.setState({
@@ -332,8 +335,9 @@ class App extends Component {
   */
     let el1 = document.querySelector('.main-wrapper');
     let el2 = document.querySelector('#played_queue_card');
+    let el3 = document.querySelector('#queue');
     if(el1 && el2){
-            el1.scrollLeft = el2.offsetWidth - (window.innerWidth  * .1) ;
+        el1.scrollLeft = el2.offsetWidth - Math.min(window.innerWidth  * .1, el3.offsetWidth) ;
     }
   }
 
@@ -352,15 +356,14 @@ class App extends Component {
       },
       success: (data) => {
       console.log("successfully refreshed token");
-      console.log(data.access_token);
-        if(data){ 
-            this.setState({
-                token: data.access_token,
-                refresh_token: data.refresh_token
-              });
+      console.log(data);
+        if(data){
+              this.setState({
+                    token: data.access_token
+                  });
         }
       },
-      error: () =>{
+      error: () => {
             if(x < 10){
                 console.log("failured to refresh token, trying again");
                 console.log(x);
@@ -370,20 +373,140 @@ class App extends Component {
     });
   }
 
+  async waitForSpotifyWebPlaybackSDKToLoad (data) {
+        if (window.Spotify) {
+          let access_token = data.access_token;
+          let refresh_token = data.refresh_token;
+                  
+          let player = new window.Spotify.Player({
+             name: 'Pickles Web Player',
+            getOAuthToken: cb => cb(access_token)
+          });
+
+          // Error handling
+          player.addListener('initialization_error', message => console.error(message));
+          player.addListener('authentication_error', message => console.error(message));
+          player.addListener('account_error', message => console.error(message));
+          player.addListener('playback_error', message => console.error(message));
+
+          // Playback status updates
+          player.addListener('player_state_changed', state => this.updatePlaying(false, true));
+
+          //On Autoplay failure
+          player.addListener('autoplay_failed', () => console.log('Autoplay is not allowed by the browser'));
+
+          // Ready
+          player.addListener('ready', ({ device_id }) => {
+            console.log('Ready with Device ID', device_id);
+            this.setState({
+                deviceID: device_id
+            })
+          });
+
+          // Not Ready
+          player.addListener('not_ready', ({ device_id }) => {
+            console.log('Device ID has gone offline', device_id);
+          });
+
+          // Connect to the player!
+          player.connect();
+
+          //set up /me
+          fetch(`https://api.spotify.com/v1/me`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${access_token}`,
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+                console.log("successfully set up spotify player");
+                this.setState({
+                    userID: data.id,
+                    player: player,
+                    token: access_token,
+                    refresh_token: refresh_token,
+                    code: code.code,
+                });
+          })
+          .catch((error) => {console.log(error); console.log("Failed to set up player")});
+        } else {
+          window.onSpotifyWebPlaybackSDKReady = () => {
+            let access_token = data.access_token;
+            let refresh_token = data.refresh_token;
+                  
+            let player = new window.Spotify.Player({
+                name: 'Pickles Web Player',
+                getOAuthToken: cb => cb(access_token)
+            });
+
+            // Error handling
+            player.addListener('initialization_error', message => console.error(message));
+            player.addListener('authentication_error', message => console.error(message));
+            player.addListener('account_error', message => console.error(message));
+            player.addListener('playback_error', message => console.error(message));
+
+            // Playback status updates
+            player.addListener('player_state_changed', state => this.updatePlaying(false, true));
+
+            //On Autoplay failure
+            player.addListener('autoplay_failed', () => console.log('Autoplay is not allowed by the browser'));
+
+            // Ready
+            player.addListener('ready', ({ device_id }) => {
+                console.log('Ready with Device ID', device_id);
+                this.setState({
+                    deviceID: device_id
+                })
+            });
+
+            // Not Ready
+            player.addListener('not_ready', ({ device_id }) => {
+                console.log('Device ID has gone offline', device_id);
+            });
+
+            // Connect to the player!
+            player.connect();
+
+            //set up /me
+            fetch(`https://api.spotify.com/v1/me`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${access_token}`,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("successfully set up spotify player");
+                this.setState({
+                    userID: data.id,
+                    player: player,
+                    token: access_token,
+                    refresh_token: refresh_token,
+                    code: code.code,
+                });
+            })
+            .catch((error) => {console.log(error); console.log("Failed to set up player")});
+          };
+        }
+  }
+
  componentDidMount() {
  /*
  Initial functions run once this component mounts (will only be called once after the first render)
  */
     //run particles
     particlesJS.load('particles-js', 'particles.json', function() {/*callback*/});
+    //window.location.search = "";
+    window.history.replaceState(this.state, "Pickles", "index.html");
+
 
     //use code from url
     console.log(code);
     if (code.code) {
-        this.setState({
-          code: code.code,
-        });
-        console.log(`set Code ${code.code}`);
+        console.log("code exists");
 
         //set up token based on code
         $.ajax({
@@ -401,66 +524,9 @@ class App extends Component {
               console.log("successfully logged in with code");
               console.log(data);
               if(data){
-                  this.setState({
-                      token: data.access_token,
-                      refresh_token: data.refresh_token,
-                  });
-
-                  //start app
-                  window.onSpotifyWebPlaybackSDKReady = () => {
-                        let player = new window.Spotify.Player({
-                            name: 'Pickles Web Player',
-                            getOAuthToken: cb => cb(data.access_token)
-                        });
-
-                        // Error handling
-                        player.addListener('initialization_error', message => console.error(message));
-                        player.addListener('authentication_error', message => console.error(message));
-                        player.addListener('account_error', message => console.error(message));
-                        player.addListener('playback_error', message => console.error(message));
-
-                        // Playback status updates
-                        player.addListener('player_state_changed', state => this.updatePlaying(false, true));
-
-                        //On Autoplay failure
-                        player.addListener('autoplay_failed', () => console.log('Autoplay is not allowed by the browser'));
-
-                        // Ready
-                        player.addListener('ready', ({ device_id }) => {
-                            console.log('Ready with Device ID', device_id);
-                            this.setState({
-                                deviceID: device_id
-                            })
-                        });
-
-                        // Not Ready
-                        player.addListener('not_ready', ({ device_id }) => {
-                            console.log('Device ID has gone offline', device_id);
-                        });
-
-                        // Connect to the player!
-                        player.connect();
-
-        
-                        //set up /me
-                        fetch(`https://api.spotify.com/v1/me`, {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${data.access_token}`,
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log("successfully set up spotify player");
-                            this.setState({
-                                userID: data.id,
-                                player: player
-                            });
-                        })
-                        .catch((error) => {console.log(error)});
-                  };
-              }
+                  this.waitForSpotifyWebPlaybackSDKToLoad(data);
+                  console.log("The Web Playback SDK has loaded.");
+              };
               
               //start tick
               this.timerID = setInterval(() => this.tick(data.access_token), 1000);
@@ -502,16 +568,16 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           
           {/* token doesn't exist, then load login screen */}
-          {!this.state.code && (
+          {!code.code && (
               <a  className="btn btn--loginApp-link"
-                  href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=code&show_dialog=true`}
+                  href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=code&show_dialog=false`}
               >
                   Login to Spotify
               </a>
           )}
           {/* token does exist, then load player */}
           {/* TODO: confirm all these state properties are needed */}
-          {this.state.code && (
+          {code.code && (
               <div style={{zIndex: 10, width: "100%", height: "100%"}}>
                   
                   {/* Song Queue */}
@@ -542,22 +608,12 @@ class App extends Component {
                       next={this.state.next}
                       queue_pos={this.state.queue_pos}
                       total_queue={this.state.total_queue}
+                      refreshFunc={this.updatePlaying}
                   />
 
                   {/* Refresh Recomendations Button */}
                   {/* TODO: move all styles to css */}
-                  <div id ="refresh_btn_div"  
-                      style={{
-                          display: (!this.state.total_queue[this.state.queue_pos]?.id ? 'none' :'block'),
-                          float: (!this.state.total_queue[this.state.queue_pos]?.id ? 'none' :'left'),
-                          margin: 'auto' 
-                      }}>
-                      <img id="refresh_btn" 
-                        alt="refresh recommendations" 
-                        src={refresh_btn}
-                        onClick={() => {this.updatePlaying(true)}}
-                      />
-                  </div>
+
 
                   {/* Song Search Field & Results */}
                   <div className="Search">
@@ -578,15 +634,23 @@ class App extends Component {
                   </div>
 
                   {/* Clear Button */}
-                   <Button 
+                   <div
                        style={{
                             margin: 'auto',
+                            paddingBottom: '50px',
+                            display: 'inline-block'
+                       }}>
+                    <Button 
+                       style={{
                             display: (!this.state.total_queue[this.state.queue_pos]?.id ? 'none' :'block')
                        }} 
-                       onClick={() => {this.clearQueue();}} danger>Clear Queue
-                   </Button>
-
+                       onClick={() => {this.clearQueue();}} danger>
+                       Clear Queue
+                    </Button>
+                   </div>
+                   <script src="https://sdk.scdn.co/spotify-player.js"></script>
               </div>
+
           )}
         </div>
       </div>

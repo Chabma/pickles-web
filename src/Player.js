@@ -67,6 +67,22 @@ const Player = props => {
         })
     }
 
+  const add_song_to_playlist = (playlist_id, i) => {
+        fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?uris=spotify%3Atrack%3A${props.total_queue[i].id}`, {
+                  method: 'POST',
+                  headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${props.the_token}`,
+                  }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                      add_song_to_playlist(playlist_id, i);
+                    }
+                })
+  }
+
   const add_playlist_btn_func = (playlist_name, user_id) => {
         console.log(playlist_name);
         let playlist_id = "";
@@ -88,19 +104,13 @@ const Player = props => {
         .then(data => { 
             playlist_id = data.id;
             for (var i = 0; i < props.total_queue.length; i++){
-                fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?uris=spotify%3Atrack%3A${props.total_queue[i].id}`, {
-                  method: 'POST',
-                  headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${props.the_token}`,
-                  }
-                })
+                add_song_to_playlist(playlist_id, i); 
             }
+            alert("Playlist Uploaded Succesfully");
         })
-        .catch((error) => {console.log(error)});
-        
+        .catch((error) => {console.log(error); alert("Error Creating Playlist")});
   }
+
 
   const progressBarStyles = {width: (props.progress_ms * 100 / props.total_queue[props.queue_pos]?.songDuration) + '%'};
 
@@ -217,11 +227,8 @@ const Player = props => {
     </div>
         )
         :(<>
-        <h3 style={{display: ((!props.total_queue[props.queue_pos]?.id) ? 'block' :'none')}}>
+        <h3 style={{display:'block'}}>
         Play a song to start your playlist:
-        </h3>
-        <h3 style={{display: ((props.total_queue[props.queue_pos]?.id) ? 'block' :'none')}}>
-        Current session detected, click the refresh icon to load:
         </h3>
     </>)}
   </>
