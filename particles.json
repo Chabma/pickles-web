@@ -80,6 +80,15 @@
       },
       "resize": true
     },
+    rotate: {
+      random: true,
+      direction: "clockwise",
+      animation: {
+        enable: true,
+        speed: 50,
+        sync: false
+      }
+    },
     "modes": {
       "grab": {
         "distance": 800,
