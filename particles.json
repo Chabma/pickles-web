@@ -7,13 +7,13 @@
         "value_area": 1000
       }
     },
-    rotate: {
-      random: true,
-      direction: "clockwise",
-      animation: {
-        enable: true,
-        speed: 50,
-        sync: false
+    "rotate": {
+      "random": true,
+      "direction": "clockwise",
+      "animation": {
+        "enable": true,
+        "speed": 50,
+        "sync": false
       }
     },
     "color": {
