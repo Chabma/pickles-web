@@ -83,7 +83,7 @@
     "events": {
       "onClick": {
         "enable": true,
-        "mode": "trail"
+        "mode": "push"
       },
       "resize": true
     }
