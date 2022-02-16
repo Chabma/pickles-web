@@ -11,7 +11,7 @@
       "value": "#1E1B96"
     },
     "shape": {
-      "type": "image",
+      "type": "circle",
       "stroke": {
         "width": 0.3,
         "color": "#000000"
@@ -32,15 +32,6 @@
         "enable": false,
         "speed": 1,
         "opacity_min": 0.3,
-        "sync": false
-      }
-    },
-    "rotate": {
-      "random": true,
-      "direction": "clockwise",
-      "animation": {
-        "enable": true,
-        "speed": 50,
         "sync": false
       }
     },
