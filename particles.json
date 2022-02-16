@@ -37,7 +37,7 @@
     },
     "rotate": {
       "random": true,
-      "direction": "clockwise",
+      "direction": "random",
       "animation": {
         "enable": true,
         "speed": 50,
