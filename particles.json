@@ -81,11 +81,7 @@
   "interactivity": {
     "detect_on": "window",
     "events": {
-      "onhover": {
-        "enable": false,
-        "mode": "repulse"
-      },
-      "onclick": {
+      "onClick": {
         "enable": true,
         "mode": "trail"
       },
