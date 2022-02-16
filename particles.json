@@ -42,7 +42,7 @@
       "direction": "random",
       "animation": {
         "enable": true,
-        "speed": 50,
+        "speed": 35,
         "sync": false
       }
     },
