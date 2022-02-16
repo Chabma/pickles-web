@@ -7,22 +7,13 @@
         "value_area": 1000
       }
     },
-    "rotate": {
-      "random": true,
-      "direction": "clockwise",
-      "animation": {
-        "enable": true,
-        "speed": 50,
-        "sync": false
-      }
-    },
     "color": {
       "value": "#1E1B96"
     },
     "shape": {
       "type": "image",
       "stroke": {
-        "width": 0.5,
+        "width": 0.3,
         "color": "#000000"
       },
       "polygon": {
@@ -41,6 +32,15 @@
         "enable": false,
         "speed": 1,
         "opacity_min": 0.3,
+        "sync": false
+      }
+    },
+    "rotate": {
+      "random": true,
+      "direction": "clockwise",
+      "animation": {
+        "enable": true,
+        "speed": 50,
         "sync": false
       }
     },
@@ -88,7 +88,7 @@
         "mode": "push"
       },
       "resize": true
-    }
+    },
     "modes": {
       "grab": {
         "distance": 800,
