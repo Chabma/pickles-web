@@ -7,6 +7,15 @@
         "value_area": 1000
       }
     },
+    rotate: {
+      random: true,
+      direction: "clockwise",
+      animation: {
+        enable: true,
+        speed: 50,
+        sync: false
+      }
+    },
     "color": {
       "value": "#1E1B96"
     },
@@ -79,16 +88,7 @@
         "mode": "push"
       },
       "resize": true
-    },
-    rotate: {
-      random: true,
-      direction: "clockwise",
-      animation: {
-        enable: true,
-        speed: 50,
-        sync: false
-      }
-    },
+    }
     "modes": {
       "grab": {
         "distance": 800,
