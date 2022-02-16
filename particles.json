@@ -45,7 +45,7 @@
       }
     },
     "size": {
-      "value": 15,
+      "value": 25,
       "random": true,
       "anim": {
         "enable": false,
