@@ -86,31 +86,6 @@
         "mode": "trail"
       },
       "resize": true
-    },
-    "modes": {
-      "grab": {
-        "distance": 800,
-        "line_linked": {
-          "opacity": 1
-        }
-      },
-      "bubble": {
-        "distance": 80,
-        "size": 80,
-        "duration": 2,
-        "opacity": 0.8,
-        "speed": 3
-      },
-      "repulse": {
-        "distance": 80,
-        "duration": 0.2
-      },
-      "push": {
-        "particles_nb": 1
-      },
-      "remove": {
-        "particles_nb": 1
-      }
     }
   },
   "retina_detect": true
