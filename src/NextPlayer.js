@@ -1,5 +1,5 @@
 import React from "react";
-import "./Player.css";
+import "./App.css";
 import refresh_btn from "./images/refresh.png";
 import 'antd/dist/antd.css';
 
@@ -17,6 +17,9 @@ return (
                   <div className="next-playing__artist">
                     {props.next[0].artists[0].name}
                   </div>
+                  <div style={{fontSize: 'calc(10px + 1vmin)'}}>
+                    {props.next_features[0]}
+                  </div>
                 </div>
               </div>
               <div className="next-wrapper" onClick={function(){props.queueFunc(props.next[1], props.total_queue.length)}}>
@@ -27,6 +30,9 @@ return (
                   <div className="next-playing__name">{props.next[1].name}</div>
                   <div className="next-playing__artist">
                     {props.next[1].artists[0].name}
+                  </div>
+                  <div style={{fontSize: 'calc(10px + 1vmin)'}}>
+                    {props.next_features[1]}
                   </div>
                 </div>
               </div>
@@ -39,13 +45,15 @@ return (
                   <div className="next-playing__artist">
                     {props.next[2].artists[0].name}
                   </div>
+                  <div style={{fontSize: 'calc(10px + 1vmin)'}}>
+                    {props.next_features[2]}
+                  </div>
                 </div>
               </div>
               <div id ="refresh_btn_div"  
                 style={{
                     display: 'block',
-                    float: 'left',
-                    margin: 'auto' 
+                    float: 'left'
                 }}>
                 <img id="refresh_btn" 
                     alt="refresh recommendations" 

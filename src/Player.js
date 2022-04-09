@@ -1,6 +1,6 @@
 import React from "react";
-import "./Player.css";
-import { Input, Card} from 'antd';
+import "./App.css";
+import {Card} from 'antd';
 import 'antd/dist/antd.css';
 import play_btn from "./images/play.png";
 import pause_btn from "./images/pause.png";
@@ -8,7 +8,6 @@ import next_btn from "./images/next.png";
 import previous_btn from "./images/previous.png";
 import add_to_library from "./images/addToLibrary.png";
 import checked_library from "./images/checkToLibrary.png";
-const { Search } = Input;
 
 
 const Player = props => {
@@ -48,12 +47,14 @@ const Player = props => {
     }
 
   const next_btn_func = (device) => {
+        document.getElementById('library_btn_div').src = add_to_library;
         props.playFunc(props.queue_pos + 1);
-    }
+  }
 
   const previous_btn_func = (device) => {
+        document.getElementById('library_btn_div').src = add_to_library;
         props.playFunc(props.queue_pos - 1);
-    }
+  }
 
   const add_to_library_btn_func = (track) => {
         document.getElementById('library_btn_div').src = checked_library;
@@ -144,29 +145,17 @@ const Player = props => {
     {props.next ? (
     <div id="currentPlayer">
       <div  style={{height:"100%"}}>
-         <div> 
-             <Search
-                className="Search"
-                style={{margin: "auto", padding: "0", height: "10%", fontFamily: "Roboto", maxWidth: "85%", width: "700px"}}
-                type="text" id="playlist_name" 
-                placeholder="Playlist Name"
-                enterButton="Save Session as Playlist"
-                onSearch={function(){
-                    add_playlist_btn_func(document.getElementById("playlist_name").value, props.user );
-                }}
-              />
-          </div>
           <div className="main-wrapper">
             <div id="played_queue">
                 {played_queue_card}
             </div>
             <div className="now-playing__side">
-              <div style={{maxWidth: "100%", display: "flex", height: "75%", margin: "auto"}}>
+              <div style={{maxWidth: "100%", display: "flex", height: "70%", margin: "auto"}}>
                 <img style={{maxWidth: "100%", maxHeight: "100%", margin: "auto"}}
                     src={props.total_queue[props.queue_pos]?.image.url}  alt="player" 
                 />
               </div>
-              <svg viewBox="0 0 75 5" style={{overflow: "visible", float: "left", height:"10%"}}>
+              <svg viewBox="0 0 75 5" style={{overflow: "visible", float: "left", height:"10%", fontWeight:"bold"}}>
                 <text x="0" y="100%" textLength="100%" fontSize=".25em">
                     {props.total_queue[props.queue_pos]?.name}
                 </text>
@@ -201,7 +190,7 @@ const Player = props => {
                     alt="next song"
                     className="button_img"
                     src={next_btn}
-                    onClick={function(){next_btn_func(props.device)}}
+                    onClick={function(){next_btn_func(props.device);}}
                 />
                 <img id="library_btn_div"
                     alt="add song to library"
@@ -218,17 +207,21 @@ const Player = props => {
                   style={progressBarStyles}
                 />
               </div>
+              <div>
+                {props.additionalFeatureString}
+              </div>
             </div>
             <div id="queue">
                 {queue_card}
             </div>
           </div>
+
       </div>
     </div>
         )
         :(<>
         <h3 style={{display:'block'}}>
-        Play a song to start your playlist:
+        Search for a song to start your playlist:
         </h3>
     </>)}
   </>

@@ -19,9 +19,7 @@
 
 .App-header {
   border-bottom: 1px solid #d9dadc;
-  padding-bottom: 20%;
   overflow-x: hidden;
-  padding: 10px 0 20vh 0;
   margin-bottom: 30px;
   background-color: rgba(255, 0, 0, 0.0);
   height: 100vh;
@@ -30,7 +28,6 @@
   flex-direction: column;
   align-items: center;
   font-size: calc(10px + 2vmin);
-  color: rgba(255, 0, 0, 0.0);
   justify-content: flex-start;
 }
 
@@ -40,8 +37,8 @@
 
 .main-wrapper {
   width: 100%;
-  height: 90%;
-  padding-bottom: 1%;
+  height: 95%;
+  padding-bottom: 5%;
   margin: auto;
   box-sizing: border-box;
   display: flex;
@@ -126,6 +123,8 @@
     width: 100%;
     float: left;
     margin: auto;
+    max-width: 150px;
+    max-height: 150px;
 }
 
 #refresh_btn_div{
@@ -133,7 +132,7 @@
     width: 20%;
 }
 #currentPlayer{
-    height: 70%;
+    height: 65%;
     padding-top: 25px;
 }
 
@@ -260,4 +259,142 @@ canvas{
 ::-webkit-scrollbar-thumb:hover {
   background: #0005;
   /*background: #1E1B96;*/ 
+}
+/** Now Playing **/
+.now-playing__name {
+  font-size: calc(18px + 2.5vw);
+  color: purple;
+  height: 10%;
+  margin: auto;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.5vw;  
+}
+.now-playing__artist {
+  font-size: calc(12px + 1.5vw);
+  margin-bottom: 0em;
+  color: purple;
+  height: 5%;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1vw;  
+}
+.now-playing__img {
+  float: left;
+  text-align: right;
+  width: 50%;
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+}
+.now-playing__img img {
+  max-width: 400px;
+  width: 100%;
+  margin: auto;
+}
+.now-playing__side {
+  float: left;
+  margin: auto;
+  height: 95%;
+  min-width: 80%;
+}
+/** Progress **/
+.progress {
+  border: 1px solid #000;
+  height: 5%;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress__bar {
+  background-color: #1E1B96;
+  height: 100%;
+}
+
+.next-playing__img img {
+  max-width: 150px;
+  max-height: 150px;
+}
+.next-playing__side {
+  float: left;
+  margin: auto;
+  width: 100%;
+  padding: 10px;
+}
+.next-playing__name {
+  font-size: 0.5em;
+  margin-bottom: 0.1em;
+  color: #1E1B96;
+}
+.next-playing__artist {
+  font-size: 0.7em;
+  margin-bottom: 0.1em;
+  color: #1E1B96;
+}
+#queue {
+	height: 100%;
+	float: left;
+}
+#played_queue {
+	min-width: 10%;
+	height: 100%;
+	float: right;
+	display: inline-table;
+}
+#played_queue_card .ant-card-body{
+	float: right;
+	display: block;
+	padding: 0px;
+}
+
+#buttons{
+	display: flex;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	height: 10%;
+	padding-top: 5px;
+}
+#buttons_two{
+	flex-direction: column; 
+	display: flex;
+	height: 100px;
+}
+.button_img{
+	width: auto;
+	height: 100%;
+	margin: auto;
+}
+.ant-card-body{
+	height: 100%;
+	max-height: 500px;
+	box-sizing: border-box;
+}
+.ant-list-item-meta-avatar{
+	height: 100%;
+}
+.ant-input-affix-wrapper{
+	border: none;
+	background: #00000000;
+}
+#searchInput{
+	background: #00000000;
+	color: black;
+}
+input::-webkit-input-placeholder {
+    color:black;
+}
+
+input:-moz-placeholder {
+    color:black;
+}
+
+input::-ms-placeholder {
+    color:black;
+}
+::placeholder {
+  color: black;
+  opacity: 1; /* Firefox */
+}
+svg {
+  width: 100%;
 }
