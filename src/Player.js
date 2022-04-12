@@ -26,6 +26,25 @@ const Player = props => {
         .then(data => props.updateFunc(false))
     }
 
+  const seek_func = (device, event_offset) => {
+        let box = document.querySelector('.now-playing__side');
+        let width = box.offsetWidth;
+
+        let duration = props.total_queue[props.queue_pos]?.songDuration;
+
+        let pos = Math.round((event_offset / width) * duration);
+        
+        fetch(`https://api.spotify.com/v1/me/player/seek?position_ms=${pos}&device_id=${device}`, {
+          method: 'PUT',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${props.the_token}`,
+          }
+        })
+        .then(data => props.updateFunc(false))
+  }
+
 
   const pause_btn_func = (device, updateBoolean) => {
         fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${device}`, {
@@ -184,7 +203,11 @@ const Player = props => {
                     className="button_img"
                     src={play_btn}
                     style={{display: (props.is_playing ? 'none' :'block')}}
-                    onClick={function(){play_btn_func(props.device)}}
+                    onClick={function(){
+                        props.player.activateElement().then(() => {
+                            play_btn_func(props.device)
+                        });
+                    }}
                 />
                 <img id="forward_btn_div"
                     alt="next song"
@@ -201,10 +224,14 @@ const Player = props => {
                     }}
                 />
               </div>
-              <div className="progress">
+              <div className="progress"
+                   onClick={function(event){
+                        seek_func(props.device, event.nativeEvent.offsetX);
+                   }}>
                 <div
                   className="progress__bar"
                   style={progressBarStyles}
+
                 />
               </div>
               <div>

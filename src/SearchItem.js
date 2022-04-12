@@ -15,7 +15,9 @@ const SearchItem = props => {
                     style={{display: (props.total_queue?.length > 0 ? 'none' :'block'), width: "30px"}} 
                     onClick={() => {
                         props.setFunc("",[]);
-                        props.queueFunc(props.element, props.queue_pos, true);
+                        props.player.activateElement().then(() => {
+                            props.queueFunc(props.element, props.queue_pos, true);
+                        });
                     }}
                 />
             ]}
@@ -25,8 +27,10 @@ const SearchItem = props => {
                     style={{display: (props.total_queue?.length > 0 ? 'block' :'none'), width: "30px"}}
                     onClick={() => {
                         props.setFunc("",[]);
-                        props.queueFunc(props.element, props.queue_pos, true);
-                        props.playFunc();
+                        props.player.activateElement().then(() => {
+                            props.queueFunc(props.element, props.queue_pos, true);
+                            props.playFunc();
+                        });
                     }}
                 />,
                 <img id="list_queue_start_btn" alt="add song to start of queue"

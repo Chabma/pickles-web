@@ -52,6 +52,26 @@ const code = window.location.search
     return initial;
   }, {});
 
+  // ======= Debounce =======
+const debounce = (context, func, delay) => {
+  let timeout;
+
+  return (...args) => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+
+    timeout = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
+};
+
+const click_delay = 600;
+ let last_click = 0;
+ let current_click = new Date();
+ let pause_switch = false;
+
 class App extends Component {
 
   constructor() {
@@ -77,14 +97,12 @@ class App extends Component {
       additionalFeatureString: "",
     };
   }
+
   
   getSearchResults(query){
   /*
   Create search items and then add to state total queue
   */
-    if(query == null){
-        return
-    }
     const searchQuery = query;
     const fetchURL = encodeURI(`q=${searchQuery}`);
 
@@ -119,6 +137,7 @@ class App extends Component {
             }}
             playFunc={this.play}
             queueFunc={this.queue}
+            player={this.state.player}
           />
         );
       });
@@ -258,6 +277,7 @@ class App extends Component {
                     is_playing: data?.is_playing ?? this.state.is_playing,
                     progress_ms: data?.progress_ms ?? this.state.progress_ms,
                 })
+
                 //console.log(data?.is_playing); 
             }
             if(refreshSelections){
@@ -482,6 +502,7 @@ class App extends Component {
             }
         });
     }
+
   }
 
   updateScrollPosition = () => {
@@ -539,13 +560,30 @@ class App extends Component {
           });
 
           // Error handling
-          player.addListener('initialization_error', message => alert(message));
-          player.addListener('authentication_error', message => alert(message));
-          player.addListener('account_error', message => alert(message));
-          player.addListener('playback_error', message => alert(message));
+          player.addListener('initialization_error', message => alert(message.message));
+          player.addListener('authentication_error', message =>  alert(message.message));
+          player.addListener('account_error', message =>  alert(message.message));
+          player.addListener('playback_error', message =>  alert(message.message));
 
           // Playback status updates
-          player.addListener('player_state_changed', state => this.updatePlaying(false, true));
+          player.addListener('player_state_changed', state => {
+                this.updatePlaying(false, true)
+               
+                if(pause_switch != state.paused ){
+                    pause_switch = state.paused
+                        
+                      // add double press detection
+                      last_click = current_click;
+                      current_click = new Date();
+                      if (current_click - last_click < click_delay) {
+                        this.play(this.state.queue_pos + 1);
+                      }
+                }
+                else{
+                    pause_switch = state.paused
+                }
+
+          });
 
           //On Autoplay failure
           player.addListener('autoplay_failed', () => console.log('Autoplay is not allowed by the browser'));
@@ -584,18 +622,21 @@ class App extends Component {
                     refresh_token: refresh_token,
                     code: code.code,
                 });
+                this.getDevices();
           })
           .catch((error) => {console.log(error); console.log("Failed to set up player")});
   }
 
-  async waitForSpotifyWebPlaybackSDKToLoad(data) {
+  waitForSpotifyWebPlaybackSDKToLoad(data) {
   /*
   Wait for Spotify to load and update parameters once loaded 
   */
         if (window.Spotify) {
+          console.log("window.Spotify exists")
           this.setUpPlayer(data);
         } else {
           window.onSpotifyWebPlaybackSDKReady = () => {
+            console.log("entering spotify webplayback sdk ready")
             this.setUpPlayer(data);
           };
         }
@@ -726,6 +767,7 @@ class App extends Component {
     }
 
 
+
     //return web page
     return ( 
       <div className="App">
@@ -764,6 +806,7 @@ class App extends Component {
                       updateFunc={this.updatePlaying}
                       nextFunc={this.playNextSong}
                       prevFunc={this.playPreviousSong}
+                      player={this.state.player}
                       device={this.state.deviceID}
                       user={this.state.userID}
                       total_queue={this.state.total_queue}
@@ -800,7 +843,7 @@ class App extends Component {
                           size="large"
                           onChange={value => {
                                 this.setState({searchValue: value.target.value});
-                                this.getSearchResults(value.target.value)
+                                debounce(this,this.getSearchResults(value.target.value),10000);
                           }}
                           allowClear={true}
                           value={this.state.searchValue}
@@ -849,7 +892,7 @@ class App extends Component {
 > Save to Spotify:</h4>
                      <Search
                         className="Search"
-                        style={{margin: "auto", padding: "0", height: "10%", fontFamily: "Roboto", maxWidth: "85%", width: "50%", display: (!this.state.total_queue[this.state.queue_pos]?.id ? 'none' :'block')}}
+                        style={{margin: "auto", padding: "0", height: "10%", fontFamily: "Roboto", maxWidth: "85%", width: "700px", display: (!this.state.total_queue[this.state.queue_pos]?.id ? 'none' :'block')}}
                         type="text" id="playlist_name" 
                         placeholder="Playlist Name"
                         enterButton="Save Session as Playlist"
@@ -869,13 +912,12 @@ class App extends Component {
                       Advanced Settings
                  </Button>
                  <div id="advanced_setting">
-                  <h4 style={{display: (!this.state.total_queue[this.state.queue_pos]?.id ? 'none' :'block')}}
-> Device Chooser:</h4>
+                  <h4> Device Chooser:</h4>
                    <Select 
                             name="available_devices"
                             id="available_devices"
                             placeholder="Pickles Web Player"
-                            style={{margin: "auto", padding: "0", height: "10%", fontFamily: "Roboto", maxWidth: "85%", width: "50%", display: (!this.state.total_queue[this.state.queue_pos]?.id ? 'none' :'block')}}
+                            style={{margin: "auto", padding: "0", height: "10%", fontFamily: "Roboto", maxWidth: "85%", width: "50%"}}
                             onChange={(value) => {
                                     this.setState({
                                         deviceID: value

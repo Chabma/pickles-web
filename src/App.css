@@ -174,13 +174,13 @@ canvas{
 /** Progress **/
 .progress {
   border: 1px solid #000;
-  height: 6px;
+  height: 10px;
   border-radius: 3px;
   overflow: hidden;
 }
 .progress__bar {
   background-color: #1E1B96;
-  height: 6px;
+  height: 10px;
 }
 
 .next-wrapper{
