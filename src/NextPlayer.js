@@ -5,10 +5,15 @@ import 'antd/dist/antd.css';
 
 const NextPlayer = props => {
 return (
-    <div id ="nextPlayer">
+    <div id="nextPlayer">
+        {!props.next && (
+            <React.Fragment>
+                <p>loading recommendations...</p>
+            </React.Fragment>
+        )}
        {props.next && (
           <React.Fragment>
-              <div className="next-wrapper" onClick={function(){props.queueFunc(props.next[0], props.total_queue.length)}}>
+              <div className="next-wrapper" onClick={function(){props.queueFunc(props.next[0], props.total_queue.length, props.isFirst)}}>
                 <div className="next-playing__img">
                   <img src={props.next[0].album.images[0].url}  alt="player" />
                 </div> 
@@ -22,7 +27,7 @@ return (
                   </div>
                 </div>
               </div>
-              <div className="next-wrapper" onClick={function(){props.queueFunc(props.next[1], props.total_queue.length)}}>
+                <div className="next-wrapper" onClick={function () { props.queueFunc(props.next[1], props.total_queue.length, props.isFirst)}}>
                 <div className="next-playing__img">
                   <img src={props.next[1].album.images[0].url}  alt="player" />
                 </div>
@@ -36,7 +41,7 @@ return (
                   </div>
                 </div>
               </div>
-              <div className="next-wrapper" onClick={function(){props.queueFunc(props.next[2], props.total_queue.length)}}>
+                <div className="next-wrapper" onClick={function () { props.queueFunc(props.next[2], props.total_queue.length, props.isFirst)}}>
                 <div className="next-playing__img">
                   <img src={props.next[2].album.images[0].url}  alt="player" />
                 </div>

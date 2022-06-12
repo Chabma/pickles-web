@@ -35,6 +35,7 @@ const scopes = [
   "user-library-modify",
   "playlist-modify-public",
   "playlist-modify-private",
+  "user-top-read",
 ];
 
 // set up particlesJS
@@ -81,7 +82,7 @@ class App extends Component {
       code: null,
       refresh_token: null,
       player: null,
-      deviceID: "",
+      deviceID: null,
       devices: [],
       searchValue: "",
       searchResults: [],
@@ -91,10 +92,14 @@ class App extends Component {
       queue_pos: 0,
       userID: "",
       next: null,
+      current: false,
       next_features : [],
       additionalFeatures : [],
       current_time: Date.now(),
-      additionalFeatureString: "",
+        additionalFeatureString: "",
+        playlock: false,
+        playbackSession: null,
+          isPicklesPlayer: true,
     };
   }
 
@@ -227,30 +232,42 @@ class App extends Component {
   /*
   Call spotify api to play the song at `queuePosition` via current web player (calls update playing function)
   */
-    if(queuePosition >= 0){
-        if(queuePosition >= this.state.total_queue.length){
-            this.queue(this.state.next[0], this.state.total_queue.length, true);
-        }
-        else{
-            this.state.player._options.getOAuthToken(access_token => {
-                fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceID}`,{
-                    method: 'PUT',
-                    body: JSON.stringify({ uris: [this.state.total_queue[queuePosition]?.uri] }),
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${access_token}`,
-                    }
-                })
-                .then(response => response.text())
-                .then(data => {
-                    this.setState({queue_pos: queuePosition},
-                        () => {this.updatePlaying(true)});
-                    
-                })
-                .catch((error) => {console.log(error)});
-            });
-        }
-    }
+          if (queuePosition >= 0) {
+              if (queuePosition >= this.state.total_queue.length) {
+                  this.queue(this.state.next[0], this.state.total_queue.length, true);
+              }
+              else {
+                  if (!this.playLock) {
+                      this.setState({
+                          //deviceID: data?.device.id ?? this.state.deviceID,
+                          playLock: true,
+                      })
+                      this.state.player._options.getOAuthToken(access_token => {
+                          fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceID}`, {
+                              method: 'PUT',
+                              body: JSON.stringify({ uris: [this.state.total_queue[queuePosition]?.uri] }),
+                              headers: {
+                                  'Content-Type': 'application/json',
+                                  'Authorization': `Bearer ${access_token}`,
+                              }
+                          })
+                              .then(response => response.text())
+                              .then(data => {
+                                  this.setState({
+                                      queue_pos: queuePosition,
+                                      playLock: false,
+                                  },
+                                      () => {
+                                          //console.log("updating based on play function")
+                                          if (!this.state.isPicklesPlayer) { this.updatePlaying(false) }
+                                      });
+
+                              })
+                              .catch((error) => { console.log(error) });
+                      });
+                  }
+              }
+          }
   }; 
 
   updatePlaying = (refreshSelections, setItemBoolean=true) => {
@@ -262,45 +279,72 @@ class App extends Component {
     //can this line be moved to init?
     this.enableHorizontalScroll();
 
-    //update player info based on spotify's latest info
-    $.ajax({
-      url: "https://api.spotify.com/v1/me/player",
-      type: "GET",
-      beforeSend: (xhr) => {
-        xhr.setRequestHeader("Authorization", "Bearer " + this.state.token);
-      },
-      success: (data) => {
-        if(data?.device.id != null){
-            if(setItemBoolean){
-                this.setState({
-                    //deviceID: data?.device.id ?? this.state.deviceID,
-                    is_playing: data?.is_playing ?? this.state.is_playing,
-                    progress_ms: data?.progress_ms ?? this.state.progress_ms,
-                })
+      fetch(`https://api.spotify.com/v1/me/player/devices`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${this.state.token}` }
+      })
+      .then(response => {
+              if (!response.ok) { throw Error("DEVICE Response Not Ok") }
+              return response;
+          })
+          .then(response => response.json())
+          .then(data => {
+              //update search results
+              console.log(data)
+              this.setState({
+                  devices: data.devices
+              });
+              let deviceIDs = data.devices.map(x => x.id);
+              console.log(deviceIDs);
+              console.log(deviceIDs.includes(this.state.deviceID));
+              console.log("test");
+              if (deviceIDs.includes(this.state.deviceID)) {
+                  //update player info based on spotify's latest info
+                  $.ajax({
+                      url: "https://api.spotify.com/v1/me/player",
+                      type: "GET",
+                      beforeSend: (xhr) => {
+                          xhr.setRequestHeader("Authorization", "Bearer " + this.state.token);
+                      },
+                      success: (data) => {
+                          if (setItemBoolean) {
+                              console.log("here in setItemBoolean for update")
+                              console.log(data);
+                                  this.setState({
+                                      //deviceID: data?.device.id ?? this.state.deviceID,
+                                      is_playing: data?.is_playing ?? this.state.is_playing,
+                                      progress_ms: data?.progress_ms ?? this.state.progress_ms,
+                                  })
 
-                //console.log(data?.is_playing); 
-            }
-            if(refreshSelections){
-                this.getRecs();
-            }
-        }
-        else{
-            this.setUpPlayer({
-                access_token: this.state.token, 
-                refresh_token: this.state.refresh_token
-            });
-        }
-        this.updateScrollPosition();
-        this.getDevices();
-      },
-      error: (e) =>{
-        console.log("Failure getting player info");
-        console.log(e.responseText);
-      }
-    });
+                              console.log(data?.is_playing);
+                              console.log(this.state.is_playing);
+                              }
+                              if (refreshSelections) {
+                                  this.getRecs();
+                              }
+                          this.updateScrollPosition();
+                      },
+                      error: (e) => {
+                          console.log("Failure getting player info");
+                          console.log(e.responseText);
+                      }
+                  });
+              }
+              else {
+                  console.log("another player created")
+                  console.log(data)
+                  this.setUpPlayer({
+                      access_token: this.state.token,
+                      refresh_token: this.state.refresh_token
+                  }, true);
+              }
+          })
+          .catch(error => this.setState({
+              devices: []
+          }))
   }
 
-  getRecs = () => {
+  getRecs = (firstSongs=null) => {
   /*
   Calls recomendation api with last 5 songs and updates the three recommendations
   */
@@ -309,10 +353,12 @@ class App extends Component {
     let additionalFeatures = this.state.additionalFeatures;
     let primaryFeature = $('#primary_features').val();
     let additionalFeatureValues = {};
-
     let all_tracks = this.state.total_queue.map(x => x.id);
     let all_artists = this.state.total_queue.map(x => x.artists[0].id);
-    
+    if (firstSongs != null) {
+        all_tracks = firstSongs.map(x => x.id)
+        all_artists = firstSongs.map(x => x.artists[0].id)
+    }
     let tracks_string = "seed_tracks=" + all_tracks.slice(-3).join('%2C');
     let feature_tracks_string = "ids=" + all_tracks.slice(-25).join('%2C');
     let artists_string = "seed_artists=" + all_artists.slice(-3).join('%2C');
@@ -392,6 +438,11 @@ class App extends Component {
                 this.setState({
                     next: recSongs,
                 })
+                if (!firstSongs) {
+                    this.setState({
+                        current: true,
+                    })
+                }
 
                 $.ajax({
                   url: featureRequestString,
@@ -446,7 +497,7 @@ class App extends Component {
         let nextSecond = this.state.progress_ms + 1000;
         let currentSongDuration = this.state.total_queue[this.state.queue_pos]?.songDuration; 
         
-        if(nextSecond > currentSongDuration){
+        if(nextSecond + 1000 >= currentSongDuration){
             this.play(this.state.queue_pos + 1);
         }
         else{
@@ -477,7 +528,9 @@ class App extends Component {
       next: null,
       total_queue: [],
       queue_pos: 0,
+      current: false,
     })
+      this.getFirstRecs();
   }
 
   enableHorizontalScroll = () => {
@@ -550,12 +603,12 @@ class App extends Component {
     });
   }
 
-  setUpPlayer(data){
+  setUpPlayer(data, playAfter=false){
    let access_token = data.access_token;
           let refresh_token = data.refresh_token;
                   
-          let player = new window.Spotify.Player({
-            name: 'Pickles Web Player',
+      let player = new window.Spotify.Player({
+          name: 'Pickles Web Player',
             getOAuthToken: cb => cb(access_token)
           });
 
@@ -565,19 +618,32 @@ class App extends Component {
           player.addListener('account_error', message =>  alert(message.message));
           player.addListener('playback_error', message =>  alert(message.message));
 
-          // Playback status updates
+          // Playback status updates based on headphone buttons
           player.addListener('player_state_changed', state => {
-                this.updatePlaying(false, true)
+              console.log("updating based on player state changed listener")
+              console.log(state)
+              this.updatePlaying(false, false)
+              this.setState({
+                  //deviceID: data?.device.id ?? this.state.deviceID,
+                  is_playing: !state?.paused ?? this.state.is_playing,
+                  progress_ms: state?.position ?? this.state.progress_ms,
+              })
+
+              if (state.position >= this.state.total_queue[this.state.queue_pos]?.songDuration - 2000){
+                  this.play(this.state.queue_pos + 1)
+                }
                
                 if(pause_switch != state.paused ){
                     pause_switch = state.paused
                         
-                      // add double press detection
+                    /*
+                    // add double press detection
                       last_click = current_click;
                       current_click = new Date();
                       if (current_click - last_click < click_delay) {
                         this.play(this.state.queue_pos + 1);
-                      }
+                    }
+                    */
                 }
                 else{
                     pause_switch = state.paused
@@ -621,11 +687,30 @@ class App extends Component {
                     token: access_token,
                     refresh_token: refresh_token,
                     code: code.code,
-                });
-                this.getDevices();
+                }, this.getFirstRecs);
+              this.getDevices();
+
+              if (playAfter) {
+                  this.play();
+              }
           })
           .catch((error) => {console.log(error); console.log("Failed to set up player")});
   }
+
+    getFirstRecs() {
+        fetch(`https://api.spotify.com/v1/me/top/tracks?time_range=short_term`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.state.token}`,
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+                this.getRecs(data.items)
+        })
+
+    }
 
   waitForSpotifyWebPlaybackSDKToLoad(data) {
   /*
@@ -678,6 +763,7 @@ class App extends Component {
               
               //start tick
               this.timerID = setInterval(() => this.tick(data.access_token), 1000);
+              this.timerID = setInterval(() => this.updatePlaying(false), 15000);
           },
           error: () =>{
             console.log("failured to login with code");
@@ -705,7 +791,7 @@ class App extends Component {
               "name":  playlist_name,
               "description": "Made by Pickles, d'illest playlist creator web app",
               "public": false
-          };
+        };
         fetch(`https://api.spotify.com/v1/users/${user_id}/playlists`, {
           method: 'POST',
           body: JSON.stringify(data),
@@ -718,19 +804,16 @@ class App extends Component {
         .then(response => response.json())
         .then(data => { 
             playlist_id = data.id;
-            for (var i = 0; i < this.state.total_queue.length; i++){
-                this.add_song_to_playlist(playlist_id, i); 
-            }
-            alert("Playlist Uploaded Succesfully");
+            this.add_songs_to_playlist(playlist_id); 
         })
         .catch((error) => {console.log(error); alert("Error Creating Playlist")});
-  }
+ }
 
-  add_song_to_playlist (playlist_id, i) {
+  add_songs_to_playlist (playlist_id) {
   /*
   Function to add a single song to a playlist (called for every song when creating a new playlist)
   */
-    fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?uris=spotify%3Atrack%3A${this.state.total_queue[i].id}`, {
+      fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks?uris=${this.state.total_queue.map(x => "spotify%3Atrack%3A"+x.id)}`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -740,7 +823,10 @@ class App extends Component {
     })
     .then(response => {
         if (!response.ok) {
-            this.add_song_to_playlist(playlist_id, i);
+            this.add_songs_to_playlist(playlist_id);
+        }
+        else {
+            alert("Playlist Uploaded Succesfully");
         }
     })
   }
@@ -798,36 +884,50 @@ class App extends Component {
                   
                   {/* Song Queue */}
                   <Player 
-                      is_playing={this.state.is_playing}
-                      progress_ms={this.state.progress_ms}
-                      next={this.state.next}
-                      the_token={this.state.token}
-                      playFunc={this.play}
-                      updateFunc={this.updatePlaying}
-                      nextFunc={this.playNextSong}
-                      prevFunc={this.playPreviousSong}
-                      player={this.state.player}
-                      device={this.state.deviceID}
-                      user={this.state.userID}
-                      total_queue={this.state.total_queue}
-                      queue_pos={this.state.queue_pos}
-                      clearQueue={this.clearQueue}
-                      additionalFeatureString={this.state.additionalFeatureString}
+                            is_playing={this.state.is_playing}
+                            progress_ms={this.state.progress_ms}
+                            next={this.state.next}
+                            current={this.state.current}
+                            the_token={this.state.token}
+                            playFunc={this.play}
+                            updateFunc={(bool) => {
+                                console.log("updating because of player js");
+                                this.updatePlaying(bool);
+                            }}
+                            nextFunc={this.playNextSong}
+                            prevFunc={this.playPreviousSong}
+                            player={this.state.player}
+                            device={this.state.deviceID}
+                            user={this.state.userID}
+                            total_queue={this.state.total_queue}
+                            queue_pos={this.state.queue_pos}
+                            clearQueue={this.clearQueue}
+                            additionalFeatureString={this.state.additionalFeatureString}
+                            isPicklesPlayer={this.state.isPicklesPlayer}
                   />
 
                   {/* Song recomendations */}
                   <NextPlayer
-                      is_playing={this.state.is_playing}
-                      progress_ms={this.state.progress_ms}
-                      playFunc={this.play}
-                      queueFunc={this.queue}
-                      device={this.state.deviceID}
-                      user={this.state.userID}
-                      next={this.state.next}
-                      next_features={this.state.next_features}
-                      queue_pos={this.state.queue_pos}
-                      total_queue={this.state.total_queue}
-                      refreshFunc={this.updatePlaying}
+                            is_playing={this.state.is_playing}
+                            progress_ms={this.state.progress_ms}
+                            playFunc={this.play}
+                            queueFunc={this.queue}
+                            device={this.state.deviceID}
+                            user={this.state.userID}
+                            next={this.state.next}
+                            next_features={this.state.next_features}
+                            queue_pos={this.state.queue_pos}
+                            total_queue={this.state.total_queue}
+                            isFirst={!this.state.current}
+                            refreshFunc={(bool) => {
+                                if (this.state.current) {
+                                    console.log("updating based on next player js")
+                                    this.updatePlaying(bool);
+                                }
+                                else {
+                                    this.getFirstRecs();
+                                }
+                            }}
                   />
 
                   {/* Refresh Recomendations Button */}
@@ -852,11 +952,11 @@ class App extends Component {
                       {card}
                   </div>
 
-                  <h4> Adjust Recommendation Logic: </h4>
-                      <label for="primary_features">Select a primary feature to match (choose one):</label>
+                  <h4> Recommendation Logic: </h4>
+                      <label for="primary_features">Match Target: </label>
                         <select name="primary_features" id="primary_features">
-                          <option value="song">Song</option>
-                          <option value="artist">Artist</option>
+                          <option value="song">Songs</option>
+                          <option value="artist">Artists</option>
                         </select>
                         <br />
                         <Select 
@@ -864,8 +964,8 @@ class App extends Component {
                             id="additional_features"
                             mode="multiple"
                             allowClear
-                            placeholder="Additional features to match (choose Multiple)"
-                            style={{width: '50%'}}
+                            placeholder="Audio features to match (choose Multiple)"
+                            style={{width: '80%'}}
                             onChange={(value) => {
                                 this.setState({additionalFeatures: value});
                             }}
@@ -877,7 +977,6 @@ class App extends Component {
                           <option value="key">Key</option>
                           <option value="liveness">Liveness</option>
                           <option value="loudness">Loudness</option>
-                          <option value="popularity">Popularity</option>
                           <option value="speechiness">Speechiness</option>
                           <option value="tempo">Tempo</option>
                           <option value="valence">Valence</option>
@@ -911,25 +1010,38 @@ class App extends Component {
                       >
                       Advanced Settings
                  </Button>
-                 <div id="advanced_setting">
-                  <h4> Device Chooser:</h4>
-                   <Select 
-                            name="available_devices"
-                            id="available_devices"
-                            placeholder="Pickles Web Player"
-                            style={{margin: "auto", padding: "0", height: "10%", fontFamily: "Roboto", maxWidth: "85%", width: "50%"}}
-                            onChange={(value) => {
-                                    this.setState({
-                                        deviceID: value
-                                    });
-                                    console.log(value);
-                            }}
-                   >
-                    {this.state.devices.map(option=> (
-                        <option value={option.id}>{option.name}</option>
-                    ))}
-                   </Select>
+                        {this.state.deviceID && (
+                        <div id="advanced_setting">
+                            
+                                <h4> Device Chooser:</h4>
+                                    <Select
+                                    labelInValue
+                                    name="available_devices"
+                                    id="available_devices"
+                                        defaultValue={{
+                                            value: this.state.deviceID,
+                                            label: 'Pickles Web Player - ' + this.state.deviceID.slice(0, 3) ,
+                                    }}
+                                    style={{margin: "auto", padding: "0", height: "10%", fontFamily: "Roboto", maxWidth: "85%", width: "50%"}}
+                                    onChange={(value) => {
+                                        this.setState({
+                                            deviceID: value.value[0]
+                                        });
+                                        if (value.value[1] != "Pickles Web Player") {
+                                            this.setState({
+                                                isPicklesPlayer: false
+                                            })
+                                        }
+                                        console.log(value.value);
+
+                                    }}
+                           >
+                            {this.state.devices.map(option=> (
+                                <option value={[option.id, option.name]} label={option.name + " - " + option.id.slice(0, 3)}>{option.name + " - " + option.id.slice(0, 3)}</option>
+                            ))}
+                           </Select>
                   </div>
+                        )}
                   <br />
                   {/* Clear Button */}
                    <div

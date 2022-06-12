@@ -23,7 +23,7 @@ const Player = props => {
             'Authorization': `Bearer ${props.the_token}`,
           }
         })
-        .then(data => props.updateFunc(false))
+            .then(data => { if (!props.isPicklesPlayer) { props.updateFunc(false) } })
     }
 
   const seek_func = (device, event_offset) => {
@@ -42,7 +42,7 @@ const Player = props => {
             'Authorization': `Bearer ${props.the_token}`,
           }
         })
-        .then(data => props.updateFunc(false))
+        .then(data => { if (!props.isPicklesPlayer) { props.updateFunc(false) } })
   }
 
 
@@ -57,7 +57,7 @@ const Player = props => {
         })
         .then(data => {
             if(updateBoolean){
-                props.updateFunc(false);
+                if (!props.isPicklesPlayer) { props.updateFunc(false) }
             }
             else{
                 props.clearQueue();
@@ -161,7 +161,7 @@ const Player = props => {
 
   return (
   <>
-    {props.next ? (
+    {props.current ? (
     <div id="currentPlayer">
       <div  style={{height:"100%"}}>
           <div className="main-wrapper">
@@ -248,7 +248,7 @@ const Player = props => {
         )
         :(<>
         <h3 style={{display:'block'}}>
-        Search for a song to start your playlist:
+        Select a recommendation or search for a song to start your playlist:
         </h3>
     </>)}
   </>
