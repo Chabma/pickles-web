@@ -5,9 +5,11 @@ import type { RecursivePartial } from "../../../../Types";
 /**
  * @category Polygon Mask Plugin
  */
-export declare class PolygonMaskMove implements IPolygonMaskMove, IOptionLoader<IPolygonMaskMove> {
-    radius: number;
-    type: PolygonMaskMoveType | keyof typeof PolygonMaskMoveType;
-    constructor();
-    load(data?: RecursivePartial<IPolygonMaskMove>): void;
+export declare class PolygonMaskMove
+  implements IPolygonMaskMove, IOptionLoader<IPolygonMaskMove>
+{
+  radius: number;
+  type: PolygonMaskMoveType | keyof typeof PolygonMaskMoveType;
+  constructor();
+  load(data?: RecursivePartial<IPolygonMaskMove>): void;
 }

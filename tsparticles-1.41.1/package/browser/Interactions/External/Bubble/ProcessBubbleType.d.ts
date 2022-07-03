@@ -2,7 +2,7 @@
  * @category Enums
  */
 export declare const enum ProcessBubbleType {
-    color = "color",
-    opacity = "opacity",
-    size = "size"
+  color = "color",
+  opacity = "opacity",
+  size = "size",
 }

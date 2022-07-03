@@ -1,49 +1,55 @@
 (function webpackUniversalModuleDefinition(root, factory) {
-  if (typeof exports === "object" && typeof module === "object") module.exports = factory(); else if (typeof define === "function" && define.amd) define([], factory); else {
+  if (typeof exports === "object" && typeof module === "object")
+    module.exports = factory();
+  else if (typeof define === "function" && define.amd) define([], factory);
+  else {
     var a = factory();
     for (var i in a) (typeof exports === "object" ? exports : root)[i] = a[i];
   }
-})(window, (function() {
-  return function() {
+})(window, function () {
+  return (function () {
     "use strict";
     var __webpack_require__ = {};
-    !function() {
-      __webpack_require__.d = function(exports, definition) {
+    !(function () {
+      __webpack_require__.d = function (exports, definition) {
         for (var key in definition) {
-          if (__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+          if (
+            __webpack_require__.o(definition, key) &&
+            !__webpack_require__.o(exports, key)
+          ) {
             Object.defineProperty(exports, key, {
               enumerable: true,
-              get: definition[key]
+              get: definition[key],
             });
           }
         }
       };
-    }();
-    !function() {
-      __webpack_require__.o = function(obj, prop) {
+    })();
+    !(function () {
+      __webpack_require__.o = function (obj, prop) {
         return Object.prototype.hasOwnProperty.call(obj, prop);
       };
-    }();
-    !function() {
-      __webpack_require__.r = function(exports) {
+    })();
+    !(function () {
+      __webpack_require__.r = function (exports) {
         if (typeof Symbol !== "undefined" && Symbol.toStringTag) {
           Object.defineProperty(exports, Symbol.toStringTag, {
-            value: "Module"
+            value: "Module",
           });
         }
         Object.defineProperty(exports, "__esModule", {
-          value: true
+          value: true,
         });
       };
-    }();
+    })();
     var __webpack_exports__ = {};
     __webpack_require__.r(__webpack_exports__);
     __webpack_require__.d(__webpack_exports__, {
-      loadOpacityUpdater: function() {
+      loadOpacityUpdater: function () {
         return loadOpacityUpdater;
-      }
+      },
     });
-    class Circle_Circle extends(null && Range){
+    class Circle_Circle extends (null && Range) {
       constructor(x, y, radius) {
         super(x, y);
         this.radius = radius;
@@ -78,13 +84,13 @@
         return false;
       }
     }
-    class CircleWarp_CircleWarp extends(null && Circle){
+    class CircleWarp_CircleWarp extends (null && Circle) {
       constructor(x, y, radius, canvasSize) {
         super(x, y, radius);
         this.canvasSize = canvasSize;
         this.canvasSize = {
           height: canvasSize.height,
-          width: canvasSize.width
+          width: canvasSize.width,
         };
       }
       contains(point) {
@@ -93,21 +99,21 @@
         }
         const posNE = {
           x: point.x - this.canvasSize.width,
-          y: point.y
+          y: point.y,
         };
         if (super.contains(posNE)) {
           return true;
         }
         const posSE = {
           x: point.x - this.canvasSize.width,
-          y: point.y - this.canvasSize.height
+          y: point.y - this.canvasSize.height,
         };
         if (super.contains(posSE)) {
           return true;
         }
         const posSW = {
           x: point.x,
-          y: point.y - this.canvasSize.height
+          y: point.y - this.canvasSize.height,
         };
         return super.contains(posSW);
       }
@@ -119,13 +125,22 @@
         const circle = range;
         const newPos = {
           x: range.position.x - this.canvasSize.width,
-          y: range.position.y - this.canvasSize.height
+          y: range.position.y - this.canvasSize.height,
         };
         if (circle.radius !== undefined) {
-          const biggerCircle = new Circle(newPos.x, newPos.y, circle.radius * 2);
+          const biggerCircle = new Circle(
+            newPos.x,
+            newPos.y,
+            circle.radius * 2
+          );
           return super.intersects(biggerCircle);
         } else if (rect.size !== undefined) {
-          const rectSW = new Rectangle(newPos.x, newPos.y, rect.size.width * 2, rect.size.height * 2);
+          const rectSW = new Rectangle(
+            newPos.x,
+            newPos.y,
+            rect.size.width * 2,
+            rect.size.height * 2
+          );
           return super.intersects(rectSW);
         }
         return false;
@@ -147,11 +162,12 @@
     Constants_Constants.resizeEvent = "resize";
     Constants_Constants.visibilityChangeEvent = "visibilitychange";
     Constants_Constants.noPolygonDataLoaded = "No polygon data loaded.";
-    Constants_Constants.noPolygonFound = "No polygon found, you need to specify SVG url in config.";
+    Constants_Constants.noPolygonFound =
+      "No polygon found, you need to specify SVG url in config.";
     function manageListener(element, event, handler, add, options) {
       if (add) {
         let addOptions = {
-          passive: true
+          passive: true,
         };
         if (typeof options === "boolean") {
           addOptions.capture = options;
@@ -168,18 +184,18 @@
       constructor(container) {
         this.container = container;
         this.canPush = true;
-        this.mouseMoveHandler = e => this.mouseTouchMove(e);
-        this.touchStartHandler = e => this.mouseTouchMove(e);
-        this.touchMoveHandler = e => this.mouseTouchMove(e);
+        this.mouseMoveHandler = (e) => this.mouseTouchMove(e);
+        this.touchStartHandler = (e) => this.mouseTouchMove(e);
+        this.touchMoveHandler = (e) => this.mouseTouchMove(e);
         this.touchEndHandler = () => this.mouseTouchFinish();
         this.mouseLeaveHandler = () => this.mouseTouchFinish();
         this.touchCancelHandler = () => this.mouseTouchFinish();
-        this.touchEndClickHandler = e => this.mouseTouchClick(e);
-        this.mouseUpHandler = e => this.mouseTouchClick(e);
+        this.touchEndClickHandler = (e) => this.mouseTouchClick(e);
+        this.mouseUpHandler = (e) => this.mouseTouchClick(e);
         this.mouseDownHandler = () => this.mouseDown();
         this.visibilityChangeHandler = () => this.handleVisibilityChange();
-        this.themeChangeHandler = e => this.handleThemeChange(e);
-        this.oldThemeChangeHandler = e => this.handleThemeChange(e);
+        this.themeChangeHandler = (e) => this.handleThemeChange(e);
+        this.oldThemeChangeHandler = (e) => this.handleThemeChange(e);
         this.resizeHandler = () => this.handleWindowResize();
       }
       addListeners() {
@@ -199,11 +215,17 @@
           mouseLeaveEvent = Constants.mouseOutEvent;
         } else if (detectType === "parent" && container.canvas.element) {
           const canvasEl = container.canvas.element;
-          container.interactivity.element = (_a = canvasEl.parentElement) !== null && _a !== void 0 ? _a : canvasEl.parentNode;
+          container.interactivity.element =
+            (_a = canvasEl.parentElement) !== null && _a !== void 0
+              ? _a
+              : canvasEl.parentNode;
         } else {
           container.interactivity.element = container.canvas.element;
         }
-        const mediaMatch = !isSsr() && typeof matchMedia !== "undefined" && matchMedia("(prefers-color-scheme: dark)");
+        const mediaMatch =
+          !isSsr() &&
+          typeof matchMedia !== "undefined" &&
+          matchMedia("(prefers-color-scheme: dark)");
         if (mediaMatch) {
           if (mediaMatch.addEventListener !== undefined) {
             manageListener(mediaMatch, "change", this.themeChangeHandler, add);
@@ -220,22 +242,71 @@
           return;
         }
         const html = interactivityEl;
-        if (options.interactivity.events.onHover.enable || options.interactivity.events.onClick.enable) {
-          manageListener(interactivityEl, Constants.mouseMoveEvent, this.mouseMoveHandler, add);
-          manageListener(interactivityEl, Constants.touchStartEvent, this.touchStartHandler, add);
-          manageListener(interactivityEl, Constants.touchMoveEvent, this.touchMoveHandler, add);
+        if (
+          options.interactivity.events.onHover.enable ||
+          options.interactivity.events.onClick.enable
+        ) {
+          manageListener(
+            interactivityEl,
+            Constants.mouseMoveEvent,
+            this.mouseMoveHandler,
+            add
+          );
+          manageListener(
+            interactivityEl,
+            Constants.touchStartEvent,
+            this.touchStartHandler,
+            add
+          );
+          manageListener(
+            interactivityEl,
+            Constants.touchMoveEvent,
+            this.touchMoveHandler,
+            add
+          );
           if (!options.interactivity.events.onClick.enable) {
-            manageListener(interactivityEl, Constants.touchEndEvent, this.touchEndHandler, add);
+            manageListener(
+              interactivityEl,
+              Constants.touchEndEvent,
+              this.touchEndHandler,
+              add
+            );
           } else {
-            manageListener(interactivityEl, Constants.touchEndEvent, this.touchEndClickHandler, add);
-            manageListener(interactivityEl, Constants.mouseUpEvent, this.mouseUpHandler, add);
-            manageListener(interactivityEl, Constants.mouseDownEvent, this.mouseDownHandler, add);
+            manageListener(
+              interactivityEl,
+              Constants.touchEndEvent,
+              this.touchEndClickHandler,
+              add
+            );
+            manageListener(
+              interactivityEl,
+              Constants.mouseUpEvent,
+              this.mouseUpHandler,
+              add
+            );
+            manageListener(
+              interactivityEl,
+              Constants.mouseDownEvent,
+              this.mouseDownHandler,
+              add
+            );
           }
-          manageListener(interactivityEl, mouseLeaveEvent, this.mouseLeaveHandler, add);
-          manageListener(interactivityEl, Constants.touchCancelEvent, this.touchCancelHandler, add);
+          manageListener(
+            interactivityEl,
+            mouseLeaveEvent,
+            this.mouseLeaveHandler,
+            add
+          );
+          manageListener(
+            interactivityEl,
+            Constants.touchCancelEvent,
+            this.touchCancelHandler,
+            add
+          );
         }
         if (container.canvas.element) {
-          container.canvas.element.style.pointerEvents = html === container.canvas.element ? "initial" : "none";
+          container.canvas.element.style.pointerEvents =
+            html === container.canvas.element ? "initial" : "none";
         }
         if (options.interactivity.events.resize) {
           if (typeof ResizeObserver !== "undefined") {
@@ -245,22 +316,39 @@
               }
               this.resizeObserver.disconnect();
               delete this.resizeObserver;
-            } else if (!this.resizeObserver && add && container.canvas.element) {
-              this.resizeObserver = new ResizeObserver((entries => {
-                const entry = entries.find((e => e.target === container.canvas.element));
+            } else if (
+              !this.resizeObserver &&
+              add &&
+              container.canvas.element
+            ) {
+              this.resizeObserver = new ResizeObserver((entries) => {
+                const entry = entries.find(
+                  (e) => e.target === container.canvas.element
+                );
                 if (!entry) {
                   return;
                 }
                 this.handleWindowResize();
-              }));
+              });
               this.resizeObserver.observe(container.canvas.element);
             }
           } else {
-            manageListener(window, Constants.resizeEvent, this.resizeHandler, add);
+            manageListener(
+              window,
+              Constants.resizeEvent,
+              this.resizeHandler,
+              add
+            );
           }
         }
         if (document) {
-          manageListener(document, Constants.visibilityChangeEvent, this.visibilityChangeHandler, add, false);
+          manageListener(
+            document,
+            Constants.visibilityChangeEvent,
+            this.visibilityChangeHandler,
+            add,
+            false
+          );
         }
       }
       handleWindowResize() {
@@ -268,10 +356,12 @@
           clearTimeout(this.resizeTimeout);
           delete this.resizeTimeout;
         }
-        this.resizeTimeout = setTimeout((async () => {
+        this.resizeTimeout = setTimeout(async () => {
           var _a;
-          return await ((_a = this.container.canvas) === null || _a === void 0 ? void 0 : _a.windowResize());
-        }), 500);
+          return await ((_a = this.container.canvas) === null || _a === void 0
+            ? void 0
+            : _a.windowResize());
+        }, 500);
       }
       handleVisibilityChange() {
         const container = this.container;
@@ -280,7 +370,9 @@
         if (!options.pauseOnBlur) {
           return;
         }
-        if (document === null || document === void 0 ? void 0 : document.hidden) {
+        if (
+          document === null || document === void 0 ? void 0 : document.hidden
+        ) {
           container.pageHidden = true;
           container.pause();
         } else {
@@ -304,7 +396,11 @@
         var _a, _b, _c, _d, _e, _f, _g;
         const container = this.container;
         const options = container.actualOptions;
-        if (((_a = container.interactivity) === null || _a === void 0 ? void 0 : _a.element) === undefined) {
+        if (
+          ((_a = container.interactivity) === null || _a === void 0
+            ? void 0
+            : _a.element) === undefined
+        ) {
           return;
         }
         container.interactivity.mouse.inside = true;
@@ -318,7 +414,7 @@
               const clientRect = canvas.getBoundingClientRect();
               pos = {
                 x: mouseEvent.clientX - clientRect.left,
-                y: mouseEvent.clientY - clientRect.top
+                y: mouseEvent.clientY - clientRect.top,
               };
             }
           } else if (options.interactivity.detectsOn === "parent") {
@@ -330,20 +426,38 @@
               const targetRect = target.getBoundingClientRect();
               const canvasRect = canvasEl.getBoundingClientRect();
               pos = {
-                x: mouseEvent.offsetX + 2 * sourceRect.left - (targetRect.left + canvasRect.left),
-                y: mouseEvent.offsetY + 2 * sourceRect.top - (targetRect.top + canvasRect.top)
+                x:
+                  mouseEvent.offsetX +
+                  2 * sourceRect.left -
+                  (targetRect.left + canvasRect.left),
+                y:
+                  mouseEvent.offsetY +
+                  2 * sourceRect.top -
+                  (targetRect.top + canvasRect.top),
               };
             } else {
               pos = {
-                x: (_b = mouseEvent.offsetX) !== null && _b !== void 0 ? _b : mouseEvent.clientX,
-                y: (_c = mouseEvent.offsetY) !== null && _c !== void 0 ? _c : mouseEvent.clientY
+                x:
+                  (_b = mouseEvent.offsetX) !== null && _b !== void 0
+                    ? _b
+                    : mouseEvent.clientX,
+                y:
+                  (_c = mouseEvent.offsetY) !== null && _c !== void 0
+                    ? _c
+                    : mouseEvent.clientY,
               };
             }
           } else {
             if (mouseEvent.target === container.canvas.element) {
               pos = {
-                x: (_d = mouseEvent.offsetX) !== null && _d !== void 0 ? _d : mouseEvent.clientX,
-                y: (_e = mouseEvent.offsetY) !== null && _e !== void 0 ? _e : mouseEvent.clientY
+                x:
+                  (_d = mouseEvent.offsetX) !== null && _d !== void 0
+                    ? _d
+                    : mouseEvent.clientX,
+                y:
+                  (_e = mouseEvent.offsetY) !== null && _e !== void 0
+                    ? _e
+                    : mouseEvent.clientY,
               };
             }
           }
@@ -351,10 +465,27 @@
           this.canPush = e.type !== "touchmove";
           const touchEvent = e;
           const lastTouch = touchEvent.touches[touchEvent.touches.length - 1];
-          const canvasRect = canvas === null || canvas === void 0 ? void 0 : canvas.getBoundingClientRect();
+          const canvasRect =
+            canvas === null || canvas === void 0
+              ? void 0
+              : canvas.getBoundingClientRect();
           pos = {
-            x: lastTouch.clientX - ((_f = canvasRect === null || canvasRect === void 0 ? void 0 : canvasRect.left) !== null && _f !== void 0 ? _f : 0),
-            y: lastTouch.clientY - ((_g = canvasRect === null || canvasRect === void 0 ? void 0 : canvasRect.top) !== null && _g !== void 0 ? _g : 0)
+            x:
+              lastTouch.clientX -
+              ((_f =
+                canvasRect === null || canvasRect === void 0
+                  ? void 0
+                  : canvasRect.left) !== null && _f !== void 0
+                ? _f
+                : 0),
+            y:
+              lastTouch.clientY -
+              ((_g =
+                canvasRect === null || canvasRect === void 0
+                  ? void 0
+                  : canvasRect.top) !== null && _g !== void 0
+                ? _g
+                : 0),
           };
         }
         const pxRatio = container.retina.pixelRatio;
@@ -385,7 +516,10 @@
         mouse.inside = true;
         let handled = false;
         const mousePosition = mouse.position;
-        if (mousePosition === undefined || !options.interactivity.events.onClick.enable) {
+        if (
+          mousePosition === undefined ||
+          !options.interactivity.events.onClick.enable
+        ) {
           return;
         }
         for (const [, plugin] of container.plugins) {
@@ -409,12 +543,12 @@
           if (mousePos) {
             container.interactivity.mouse.clickPosition = {
               x: mousePos.x,
-              y: mousePos.y
+              y: mousePos.y,
             };
           } else {
             return;
           }
-          container.interactivity.mouse.clickTime = (new Date).getTime();
+          container.interactivity.mouse.clickTime = new Date().getTime();
           const onClick = options.interactivity.events.onClick;
           if (onClick.mode instanceof Array) {
             for (const mode of onClick.mode) {
@@ -425,13 +559,17 @@
           }
         }
         if (e.type === "touchend") {
-          setTimeout((() => this.mouseTouchFinish()), 500);
+          setTimeout(() => this.mouseTouchFinish(), 500);
         }
       }
       handleThemeChange(e) {
         const mediaEvent = e;
-        const themeName = mediaEvent.matches ? this.container.options.defaultDarkTheme : this.container.options.defaultLightTheme;
-        const theme = this.container.options.themes.find((theme => theme.name === themeName));
+        const themeName = mediaEvent.matches
+          ? this.container.options.defaultDarkTheme
+          : this.container.options.defaultLightTheme;
+        const theme = this.container.options.themes.find(
+          (theme) => theme.name === themeName
+        );
         if (theme && theme.default.auto) {
           this.container.loadTheme(themeName);
         }
@@ -442,62 +580,69 @@
         const pushNb = options.interactivity.modes.push.quantity;
         const removeNb = options.interactivity.modes.remove.quantity;
         switch (mode) {
-         case "push":
-          {
+          case "push": {
             if (pushNb > 0) {
               const pushOptions = options.interactivity.modes.push;
-              const group = itemFromArray([ undefined, ...pushOptions.groups ]);
-              const groupOptions = group !== undefined ? container.actualOptions.particles.groups[group] : undefined;
-              container.particles.push(pushNb, container.interactivity.mouse, groupOptions, group);
+              const group = itemFromArray([undefined, ...pushOptions.groups]);
+              const groupOptions =
+                group !== undefined
+                  ? container.actualOptions.particles.groups[group]
+                  : undefined;
+              container.particles.push(
+                pushNb,
+                container.interactivity.mouse,
+                groupOptions,
+                group
+              );
             }
             break;
           }
 
-         case "remove":
-          container.particles.removeQuantity(removeNb);
-          break;
+          case "remove":
+            container.particles.removeQuantity(removeNb);
+            break;
 
-         case "bubble":
-          container.bubble.clicking = true;
-          break;
+          case "bubble":
+            container.bubble.clicking = true;
+            break;
 
-         case "repulse":
-          container.repulse.clicking = true;
-          container.repulse.count = 0;
-          for (const particle of container.repulse.particles) {
-            particle.velocity.setTo(particle.initialVelocity);
-          }
-          container.repulse.particles = [];
-          container.repulse.finish = false;
-          setTimeout((() => {
-            if (!container.destroyed) {
-              container.repulse.clicking = false;
+          case "repulse":
+            container.repulse.clicking = true;
+            container.repulse.count = 0;
+            for (const particle of container.repulse.particles) {
+              particle.velocity.setTo(particle.initialVelocity);
             }
-          }), options.interactivity.modes.repulse.duration * 1e3);
-          break;
+            container.repulse.particles = [];
+            container.repulse.finish = false;
+            setTimeout(() => {
+              if (!container.destroyed) {
+                container.repulse.clicking = false;
+              }
+            }, options.interactivity.modes.repulse.duration * 1e3);
+            break;
 
-         case "attract":
-          container.attract.clicking = true;
-          container.attract.count = 0;
-          for (const particle of container.attract.particles) {
-            particle.velocity.setTo(particle.initialVelocity);
-          }
-          container.attract.particles = [];
-          container.attract.finish = false;
-          setTimeout((() => {
-            if (!container.destroyed) {
-              container.attract.clicking = false;
+          case "attract":
+            container.attract.clicking = true;
+            container.attract.count = 0;
+            for (const particle of container.attract.particles) {
+              particle.velocity.setTo(particle.initialVelocity);
             }
-          }), options.interactivity.modes.attract.duration * 1e3);
-          break;
+            container.attract.particles = [];
+            container.attract.finish = false;
+            setTimeout(() => {
+              if (!container.destroyed) {
+                container.attract.clicking = false;
+              }
+            }, options.interactivity.modes.attract.duration * 1e3);
+            break;
 
-         case "pause":
-          if (container.getAnimationStatus()) {
-            container.pause();
-          } else {
-            container.play();
-          }
-          break;
+          case "pause":
+            if (container.getAnimationStatus()) {
+              container.pause();
+            } else {
+              container.play();
+            }
+            break;
         }
         for (const [, plugin] of container.plugins) {
           if (plugin.handleClickMode) {
@@ -506,18 +651,50 @@
         }
       }
     }
-    var __classPrivateFieldSet = undefined && undefined.__classPrivateFieldSet || function(receiver, state, value, kind, f) {
-      if (kind === "m") throw new TypeError("Private method is not writable");
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-      return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), 
-      value;
-    };
-    var __classPrivateFieldGet = undefined && undefined.__classPrivateFieldGet || function(receiver, state, kind, f) {
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-      return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-    };
+    var __classPrivateFieldSet =
+      (undefined && undefined.__classPrivateFieldSet) ||
+      function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a setter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot write private member to an object whose class did not declare it"
+          );
+        return (
+          kind === "a"
+            ? f.call(receiver, value)
+            : f
+            ? (f.value = value)
+            : state.set(receiver, value),
+          value
+        );
+      };
+    var __classPrivateFieldGet =
+      (undefined && undefined.__classPrivateFieldGet) ||
+      function (receiver, state, kind, f) {
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a getter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot read private member from an object whose class did not declare it"
+          );
+        return kind === "m"
+          ? f
+          : kind === "a"
+          ? f.call(receiver)
+          : f
+          ? f.value
+          : state.get(receiver);
+      };
     var _InteractionManager_engine;
     class InteractionManager_InteractionManager {
       constructor(engine, container) {
@@ -529,18 +706,22 @@
         this.init();
       }
       init() {
-        const interactors = __classPrivateFieldGet(this, _InteractionManager_engine, "f").plugins.getInteractors(this.container, true);
+        const interactors = __classPrivateFieldGet(
+          this,
+          _InteractionManager_engine,
+          "f"
+        ).plugins.getInteractors(this.container, true);
         this.externalInteractors = [];
         this.particleInteractors = [];
         for (const interactor of interactors) {
           switch (interactor.type) {
-           case 0:
-            this.externalInteractors.push(interactor);
-            break;
+            case 0:
+              this.externalInteractors.push(interactor);
+              break;
 
-           case 1:
-            this.particleInteractors.push(interactor);
-            break;
+            case 1:
+              this.particleInteractors.push(interactor);
+              break;
           }
         }
       }
@@ -562,32 +743,55 @@
         }
       }
     }
-    _InteractionManager_engine = new WeakMap;
+    _InteractionManager_engine = new WeakMap();
     function applyDistance(particle) {
       const initialPosition = particle.initialPosition;
-      const {dx: dx, dy: dy} = getDistances(initialPosition, particle.position);
-      const dxFixed = Math.abs(dx), dyFixed = Math.abs(dy);
+      const { dx: dx, dy: dy } = getDistances(
+        initialPosition,
+        particle.position
+      );
+      const dxFixed = Math.abs(dx),
+        dyFixed = Math.abs(dy);
       const hDistance = particle.retina.maxDistance.horizontal;
       const vDistance = particle.retina.maxDistance.vertical;
       if (!hDistance && !vDistance) {
         return;
       }
-      if ((hDistance && dxFixed >= hDistance || vDistance && dyFixed >= vDistance) && !particle.misplaced) {
-        particle.misplaced = !!hDistance && dxFixed > hDistance || !!vDistance && dyFixed > vDistance;
+      if (
+        ((hDistance && dxFixed >= hDistance) ||
+          (vDistance && dyFixed >= vDistance)) &&
+        !particle.misplaced
+      ) {
+        particle.misplaced =
+          (!!hDistance && dxFixed > hDistance) ||
+          (!!vDistance && dyFixed > vDistance);
         if (hDistance) {
           particle.velocity.x = particle.velocity.y / 2 - particle.velocity.x;
         }
         if (vDistance) {
           particle.velocity.y = particle.velocity.x / 2 - particle.velocity.y;
         }
-      } else if ((!hDistance || dxFixed < hDistance) && (!vDistance || dyFixed < vDistance) && particle.misplaced) {
+      } else if (
+        (!hDistance || dxFixed < hDistance) &&
+        (!vDistance || dyFixed < vDistance) &&
+        particle.misplaced
+      ) {
         particle.misplaced = false;
       } else if (particle.misplaced) {
-        const pos = particle.position, vel = particle.velocity;
-        if (hDistance && (pos.x < initialPosition.x && vel.x < 0 || pos.x > initialPosition.x && vel.x > 0)) {
+        const pos = particle.position,
+          vel = particle.velocity;
+        if (
+          hDistance &&
+          ((pos.x < initialPosition.x && vel.x < 0) ||
+            (pos.x > initialPosition.x && vel.x > 0))
+        ) {
           vel.x *= -Math.random();
         }
-        if (vDistance && (pos.y < initialPosition.y && vel.y < 0 || pos.y > initialPosition.y && vel.y > 0)) {
+        if (
+          vDistance &&
+          ((pos.y < initialPosition.y && vel.y < 0) ||
+            (pos.y > initialPosition.y && vel.y > 0))
+        ) {
           vel.y *= -Math.random();
         }
       }
@@ -611,29 +815,67 @@
         if (!moveOptions.enable) {
           return;
         }
-        const container = this.container, slowFactor = this.getProximitySpeedFactor(particle), baseSpeed = ((_a = (_d = particle.retina).moveSpeed) !== null && _a !== void 0 ? _a : _d.moveSpeed = getRangeValue(moveOptions.speed) * container.retina.pixelRatio) * container.retina.reduceFactor, moveDrift = (_b = (_e = particle.retina).moveDrift) !== null && _b !== void 0 ? _b : _e.moveDrift = getRangeValue(particle.options.move.drift) * container.retina.pixelRatio, maxSize = getRangeMax(particleOptions.size.value) * container.retina.pixelRatio, sizeFactor = moveOptions.size ? particle.getRadius() / maxSize : 1, diffFactor = 2, speedFactor = sizeFactor * slowFactor * (delta.factor || 1) / diffFactor, moveSpeed = baseSpeed * speedFactor;
+        const container = this.container,
+          slowFactor = this.getProximitySpeedFactor(particle),
+          baseSpeed =
+            ((_a = (_d = particle.retina).moveSpeed) !== null && _a !== void 0
+              ? _a
+              : (_d.moveSpeed =
+                  getRangeValue(moveOptions.speed) *
+                  container.retina.pixelRatio)) * container.retina.reduceFactor,
+          moveDrift =
+            (_b = (_e = particle.retina).moveDrift) !== null && _b !== void 0
+              ? _b
+              : (_e.moveDrift =
+                  getRangeValue(particle.options.move.drift) *
+                  container.retina.pixelRatio),
+          maxSize =
+            getRangeMax(particleOptions.size.value) *
+            container.retina.pixelRatio,
+          sizeFactor = moveOptions.size ? particle.getRadius() / maxSize : 1,
+          diffFactor = 2,
+          speedFactor =
+            (sizeFactor * slowFactor * (delta.factor || 1)) / diffFactor,
+          moveSpeed = baseSpeed * speedFactor;
         this.applyPath(particle, delta);
         const gravityOptions = moveOptions.gravity;
-        const gravityFactor = gravityOptions.enable && gravityOptions.inverse ? -1 : 1;
+        const gravityFactor =
+          gravityOptions.enable && gravityOptions.inverse ? -1 : 1;
         if (gravityOptions.enable && moveSpeed) {
-          particle.velocity.y += gravityFactor * (gravityOptions.acceleration * delta.factor) / (60 * moveSpeed);
+          particle.velocity.y +=
+            (gravityFactor * (gravityOptions.acceleration * delta.factor)) /
+            (60 * moveSpeed);
         }
         if (moveDrift && moveSpeed) {
-          particle.velocity.x += moveDrift * delta.factor / (60 * moveSpeed);
+          particle.velocity.x += (moveDrift * delta.factor) / (60 * moveSpeed);
         }
         const decay = particle.moveDecay;
         if (decay != 1) {
           particle.velocity.multTo(decay);
         }
         const velocity = particle.velocity.mult(moveSpeed);
-        const maxSpeed = (_c = particle.retina.maxSpeed) !== null && _c !== void 0 ? _c : container.retina.maxSpeed;
-        if (gravityOptions.enable && gravityOptions.maxSpeed > 0 && (!gravityOptions.inverse && velocity.y >= 0 && velocity.y >= maxSpeed || gravityOptions.inverse && velocity.y <= 0 && velocity.y <= -maxSpeed)) {
+        const maxSpeed =
+          (_c = particle.retina.maxSpeed) !== null && _c !== void 0
+            ? _c
+            : container.retina.maxSpeed;
+        if (
+          gravityOptions.enable &&
+          gravityOptions.maxSpeed > 0 &&
+          ((!gravityOptions.inverse &&
+            velocity.y >= 0 &&
+            velocity.y >= maxSpeed) ||
+            (gravityOptions.inverse &&
+              velocity.y <= 0 &&
+              velocity.y <= -maxSpeed))
+        ) {
           velocity.y = gravityFactor * maxSpeed;
           if (moveSpeed) {
             particle.velocity.y = velocity.y / moveSpeed;
           }
         }
-        const zIndexOptions = particle.options.zIndex, zVelocityFactor = (1 - particle.zIndexFactor) ** zIndexOptions.velocityRate;
+        const zIndexOptions = particle.options.zIndex,
+          zVelocityFactor =
+            (1 - particle.zIndexFactor) ** zIndexOptions.velocityRate;
         if (moveOptions.spin.enable) {
           this.spin(particle, moveSpeed);
         } else {
@@ -642,8 +884,12 @@
           }
           particle.position.addTo(velocity);
           if (moveOptions.vibrate) {
-            particle.position.x += Math.sin(particle.position.x * Math.cos(particle.position.y));
-            particle.position.y += Math.cos(particle.position.y * Math.sin(particle.position.x));
+            particle.position.x += Math.sin(
+              particle.position.x * Math.cos(particle.position.y)
+            );
+            particle.position.y += Math.cos(
+              particle.position.y * Math.sin(particle.position.x)
+            );
           }
         }
         applyDistance(particle);
@@ -655,12 +901,19 @@
         }
         const updateFunc = {
           x: particle.spin.direction === "clockwise" ? Math.cos : Math.sin,
-          y: particle.spin.direction === "clockwise" ? Math.sin : Math.cos
+          y: particle.spin.direction === "clockwise" ? Math.sin : Math.cos,
         };
-        particle.position.x = particle.spin.center.x + particle.spin.radius * updateFunc.x(particle.spin.angle);
-        particle.position.y = particle.spin.center.y + particle.spin.radius * updateFunc.y(particle.spin.angle);
+        particle.position.x =
+          particle.spin.center.x +
+          particle.spin.radius * updateFunc.x(particle.spin.angle);
+        particle.position.y =
+          particle.spin.center.y +
+          particle.spin.radius * updateFunc.y(particle.spin.angle);
         particle.spin.radius += particle.spin.acceleration;
-        const maxCanvasSize = Math.max(container.canvas.size.width, container.canvas.size.height);
+        const maxCanvasSize = Math.max(
+          container.canvas.size.width,
+          container.canvas.size.height
+        );
         if (particle.spin.radius > maxCanvasSize / 2) {
           particle.spin.radius = maxCanvasSize / 2;
           particle.spin.acceleration *= -1;
@@ -668,7 +921,8 @@
           particle.spin.radius = 0;
           particle.spin.acceleration *= -1;
         }
-        particle.spin.angle += moveSpeed / 100 * (1 - particle.spin.radius / maxCanvasSize);
+        particle.spin.angle +=
+          (moveSpeed / 100) * (1 - particle.spin.radius / maxCanvasSize);
       }
       applyPath(particle, delta) {
         const particlesOptions = particle.options;
@@ -696,20 +950,22 @@
         if (isSsr() || !options.interactivity.events.onHover.parallax.enable) {
           return;
         }
-        const parallaxForce = options.interactivity.events.onHover.parallax.force;
+        const parallaxForce =
+          options.interactivity.events.onHover.parallax.force;
         const mousePos = container.interactivity.mouse.position;
         if (!mousePos) {
           return;
         }
         const canvasCenter = {
           x: container.canvas.size.width / 2,
-          y: container.canvas.size.height / 2
+          y: container.canvas.size.height / 2,
         };
-        const parallaxSmooth = options.interactivity.events.onHover.parallax.smooth;
+        const parallaxSmooth =
+          options.interactivity.events.onHover.parallax.smooth;
         const factor = particle.getRadius() / parallaxForce;
         const tmp = {
           x: (mousePos.x - canvasCenter.x) * factor,
-          y: (mousePos.y - canvasCenter.y) * factor
+          y: (mousePos.y - canvasCenter.y) * factor,
         };
         particle.offset.x += (tmp.x - particle.offset.x) / parallaxSmooth;
         particle.offset.y += (tmp.y - particle.offset.y) / parallaxSmooth;
@@ -717,7 +973,10 @@
       getProximitySpeedFactor(particle) {
         const container = this.container;
         const options = container.actualOptions;
-        const active = isInArray("slow", options.interactivity.events.onHover.mode);
+        const active = isInArray(
+          "slow",
+          options.interactivity.events.onHover.mode
+        );
         if (!active) {
           return 1;
         }
@@ -736,29 +995,45 @@
         return proximityFactor / slowFactor;
       }
     }
-    var Plugins_classPrivateFieldSet = undefined && undefined.__classPrivateFieldSet || function(receiver, state, value, kind, f) {
-      if (kind === "m") throw new TypeError("Private method is not writable");
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-      return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), 
-      value;
-    };
+    var Plugins_classPrivateFieldSet =
+      (undefined && undefined.__classPrivateFieldSet) ||
+      function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a setter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot write private member to an object whose class did not declare it"
+          );
+        return (
+          kind === "a"
+            ? f.call(receiver, value)
+            : f
+            ? (f.value = value)
+            : state.set(receiver, value),
+          value
+        );
+      };
     var _Plugins_engine;
     class Plugins {
       constructor(engine) {
         _Plugins_engine.set(this, void 0);
         Plugins_classPrivateFieldSet(this, _Plugins_engine, engine, "f");
         this.plugins = [];
-        this.interactorsInitializers = new Map;
-        this.updatersInitializers = new Map;
-        this.interactors = new Map;
-        this.updaters = new Map;
-        this.presets = new Map;
-        this.drawers = new Map;
-        this.pathGenerators = new Map;
+        this.interactorsInitializers = new Map();
+        this.updatersInitializers = new Map();
+        this.interactors = new Map();
+        this.updaters = new Map();
+        this.presets = new Map();
+        this.drawers = new Map();
+        this.pathGenerators = new Map();
       }
       getPlugin(plugin) {
-        return this.plugins.find((t => t.id === plugin));
+        return this.plugins.find((t) => t.id === plugin);
       }
       addPlugin(plugin) {
         if (!this.getPlugin(plugin.id)) {
@@ -766,7 +1041,7 @@
         }
       }
       getAvailablePlugins(container) {
-        const res = new Map;
+        const res = new Map();
         for (const plugin of this.plugins) {
           if (!plugin.needsPlugin(container.actualOptions)) {
             continue;
@@ -810,7 +1085,9 @@
       getInteractors(container, force = false) {
         let res = this.interactors.get(container);
         if (!res || force) {
-          res = [ ...this.interactorsInitializers.values() ].map((t => t(container)));
+          res = [...this.interactorsInitializers.values()].map((t) =>
+            t(container)
+          );
           this.interactors.set(container, res);
         }
         return res;
@@ -821,7 +1098,9 @@
       getUpdaters(container, force = false) {
         let res = this.updaters.get(container);
         if (!res || force) {
-          res = [ ...this.updatersInitializers.values() ].map((t => t(container)));
+          res = [...this.updatersInitializers.values()].map((t) =>
+            t(container)
+          );
           this.updaters.set(container, res);
         }
         return res;
@@ -830,7 +1109,7 @@
         this.updatersInitializers.set(name, initUpdater);
       }
     }
-    _Plugins_engine = new WeakMap;
+    _Plugins_engine = new WeakMap();
     class QuadTree_QuadTree {
       constructor(rectangle, capacity) {
         this.rectangle = rectangle;
@@ -844,10 +1123,22 @@
         const w = this.rectangle.size.width;
         const h = this.rectangle.size.height;
         const capacity = this.capacity;
-        this.northEast = new QuadTree_QuadTree(new Rectangle(x, y, w / 2, h / 2), capacity);
-        this.northWest = new QuadTree_QuadTree(new Rectangle(x + w / 2, y, w / 2, h / 2), capacity);
-        this.southEast = new QuadTree_QuadTree(new Rectangle(x, y + h / 2, w / 2, h / 2), capacity);
-        this.southWest = new QuadTree_QuadTree(new Rectangle(x + w / 2, y + h / 2, w / 2, h / 2), capacity);
+        this.northEast = new QuadTree_QuadTree(
+          new Rectangle(x, y, w / 2, h / 2),
+          capacity
+        );
+        this.northWest = new QuadTree_QuadTree(
+          new Rectangle(x + w / 2, y, w / 2, h / 2),
+          capacity
+        );
+        this.southEast = new QuadTree_QuadTree(
+          new Rectangle(x, y + h / 2, w / 2, h / 2),
+          capacity
+        );
+        this.southWest = new QuadTree_QuadTree(
+          new Rectangle(x + w / 2, y + h / 2, w / 2, h / 2),
+          capacity
+        );
         this.divided = true;
       }
       insert(point) {
@@ -862,7 +1153,21 @@
         if (!this.divided) {
           this.subdivide();
         }
-        return (_e = ((_a = this.northEast) === null || _a === void 0 ? void 0 : _a.insert(point)) || ((_b = this.northWest) === null || _b === void 0 ? void 0 : _b.insert(point)) || ((_c = this.southEast) === null || _c === void 0 ? void 0 : _c.insert(point)) || ((_d = this.southWest) === null || _d === void 0 ? void 0 : _d.insert(point))) !== null && _e !== void 0 ? _e : false;
+        return (_e =
+          ((_a = this.northEast) === null || _a === void 0
+            ? void 0
+            : _a.insert(point)) ||
+          ((_b = this.northWest) === null || _b === void 0
+            ? void 0
+            : _b.insert(point)) ||
+          ((_c = this.southEast) === null || _c === void 0
+            ? void 0
+            : _c.insert(point)) ||
+          ((_d = this.southWest) === null || _d === void 0
+            ? void 0
+            : _d.insert(point))) !== null && _e !== void 0
+          ? _e
+          : false;
       }
       queryCircle(position, radius) {
         return this.query(new Circle(position.x, position.y, radius));
@@ -870,10 +1175,19 @@
       queryCircleWarp(position, radius, containerOrSize) {
         const container = containerOrSize;
         const size = containerOrSize;
-        return this.query(new CircleWarp(position.x, position.y, radius, container.canvas !== undefined ? container.canvas.size : size));
+        return this.query(
+          new CircleWarp(
+            position.x,
+            position.y,
+            radius,
+            container.canvas !== undefined ? container.canvas.size : size
+          )
+        );
       }
       queryRectangle(position, size) {
-        return this.query(new Rectangle(position.x, position.y, size.width, size.height));
+        return this.query(
+          new Rectangle(position.x, position.y, size.width, size.height)
+        );
       }
       query(range, found) {
         var _a, _b, _c, _d;
@@ -882,16 +1196,27 @@
           return [];
         } else {
           for (const p of this.points) {
-            if (!range.contains(p.position) && getDistance(range.position, p.position) > p.particle.getRadius()) {
+            if (
+              !range.contains(p.position) &&
+              getDistance(range.position, p.position) > p.particle.getRadius()
+            ) {
               continue;
             }
             res.push(p.particle);
           }
           if (this.divided) {
-            (_a = this.northEast) === null || _a === void 0 ? void 0 : _a.query(range, res);
-            (_b = this.northWest) === null || _b === void 0 ? void 0 : _b.query(range, res);
-            (_c = this.southEast) === null || _c === void 0 ? void 0 : _c.query(range, res);
-            (_d = this.southWest) === null || _d === void 0 ? void 0 : _d.query(range, res);
+            (_a = this.northEast) === null || _a === void 0
+              ? void 0
+              : _a.query(range, res);
+            (_b = this.northWest) === null || _b === void 0
+              ? void 0
+              : _b.query(range, res);
+            (_c = this.southEast) === null || _c === void 0
+              ? void 0
+              : _c.query(range, res);
+            (_d = this.southWest) === null || _d === void 0
+              ? void 0
+              : _d.query(range, res);
           }
         }
         return res;
@@ -902,7 +1227,7 @@
         this.container = container;
         this.size = {
           height: 0,
-          width: 0
+          width: 0,
         };
         this.context = null;
         this.generatedCanvas = false;
@@ -920,7 +1245,10 @@
         if (this.generatedCanvas) {
           (_a = this.element) === null || _a === void 0 ? void 0 : _a.remove();
         }
-        this.generatedCanvas = canvas.dataset && Constants.generatedAttribute in canvas.dataset ? canvas.dataset[Constants.generatedAttribute] === "true" : this.generatedCanvas;
+        this.generatedCanvas =
+          canvas.dataset && Constants.generatedAttribute in canvas.dataset
+            ? canvas.dataset[Constants.generatedAttribute] === "true"
+            : this.generatedCanvas;
         this.element = canvas;
         this.originalStyle = deepExtend({}, this.element.style);
         this.size.height = canvas.offsetHeight;
@@ -934,20 +1262,24 @@
         if (this.generatedCanvas) {
           (_a = this.element) === null || _a === void 0 ? void 0 : _a.remove();
         }
-        this.draw((ctx => {
+        this.draw((ctx) => {
           clear(ctx, this.size);
-        }));
+        });
       }
       paint() {
         const options = this.container.actualOptions;
-        this.draw((ctx => {
-          if (options.backgroundMask.enable && options.backgroundMask.cover && this.coverColor) {
+        this.draw((ctx) => {
+          if (
+            options.backgroundMask.enable &&
+            options.backgroundMask.cover &&
+            this.coverColor
+          ) {
             clear(ctx, this.size);
             this.paintBase(getStyleFromRgb(this.coverColor, this.coverColor.a));
           } else {
             this.paintBase();
           }
-        }));
+        });
       }
       clear() {
         const options = this.container.actualOptions;
@@ -955,11 +1287,13 @@
         if (options.backgroundMask.enable) {
           this.paint();
         } else if (trail.enable && trail.length > 0 && this.trailFillColor) {
-          this.paintBase(getStyleFromRgb(this.trailFillColor, 1 / trail.length));
+          this.paintBase(
+            getStyleFromRgb(this.trailFillColor, 1 / trail.length)
+          );
         } else {
-          this.draw((ctx => {
+          this.draw((ctx) => {
             clear(ctx, this.size);
-          }));
+          });
         }
       }
       async windowResize() {
@@ -988,7 +1322,7 @@
         const size = container.canvas.size;
         const oldSize = {
           width: size.width,
-          height: size.height
+          height: size.height,
         };
         size.width = this.element.offsetWidth * pxRatio;
         size.height = this.element.offsetHeight * pxRatio;
@@ -997,12 +1331,12 @@
         if (this.container.started) {
           this.resizeFactor = {
             width: size.width / oldSize.width,
-            height: size.height / oldSize.height
+            height: size.height / oldSize.height,
           };
         }
       }
       drawConnectLine(p1, p2) {
-        this.draw((ctx => {
+        this.draw((ctx) => {
           var _a;
           const lineStyle = this.lineStyle(p1, p2);
           if (!lineStyle) {
@@ -1010,16 +1344,33 @@
           }
           const pos1 = p1.getPosition();
           const pos2 = p2.getPosition();
-          drawConnectLine(ctx, (_a = p1.retina.linksWidth) !== null && _a !== void 0 ? _a : this.container.retina.linksWidth, lineStyle, pos1, pos2);
-        }));
+          drawConnectLine(
+            ctx,
+            (_a = p1.retina.linksWidth) !== null && _a !== void 0
+              ? _a
+              : this.container.retina.linksWidth,
+            lineStyle,
+            pos1,
+            pos2
+          );
+        });
       }
       drawGrabLine(particle, lineColor, opacity, mousePos) {
         const container = this.container;
-        this.draw((ctx => {
+        this.draw((ctx) => {
           var _a;
           const beginPos = particle.getPosition();
-          drawGrabLine(ctx, (_a = particle.retina.linksWidth) !== null && _a !== void 0 ? _a : container.retina.linksWidth, beginPos, mousePos, lineColor, opacity);
-        }));
+          drawGrabLine(
+            ctx,
+            (_a = particle.retina.linksWidth) !== null && _a !== void 0
+              ? _a
+              : container.retina.linksWidth,
+            beginPos,
+            mousePos,
+            lineColor,
+            opacity
+          );
+        });
       }
       drawParticle(particle, delta) {
         var _a, _b, _c, _d, _e, _f;
@@ -1027,7 +1378,10 @@
           return;
         }
         const pfColor = particle.getFillColor();
-        const psColor = (_a = particle.getStrokeColor()) !== null && _a !== void 0 ? _a : pfColor;
+        const psColor =
+          (_a = particle.getStrokeColor()) !== null && _a !== void 0
+            ? _a
+            : pfColor;
         if (!pfColor && !psColor) {
           return;
         }
@@ -1038,27 +1392,58 @@
         if (!fColor || !sColor) {
           const twinkleRgb = colorToHsl(twinkle.color);
           if (!fColor) {
-            fColor = twinkling && twinkleRgb !== undefined ? twinkleRgb : pfColor ? pfColor : undefined;
+            fColor =
+              twinkling && twinkleRgb !== undefined
+                ? twinkleRgb
+                : pfColor
+                ? pfColor
+                : undefined;
           }
           if (!sColor) {
-            sColor = twinkling && twinkleRgb !== undefined ? twinkleRgb : psColor ? psColor : undefined;
+            sColor =
+              twinkling && twinkleRgb !== undefined
+                ? twinkleRgb
+                : psColor
+                ? psColor
+                : undefined;
           }
         }
         const options = this.container.actualOptions;
         const zIndexOptions = particle.options.zIndex;
-        const zOpacityFactor = (1 - particle.zIndexFactor) ** zIndexOptions.opacityRate;
+        const zOpacityFactor =
+          (1 - particle.zIndexFactor) ** zIndexOptions.opacityRate;
         const radius = particle.getRadius();
-        const opacity = twinkling ? twinkle.opacity : (_d = (_b = particle.bubble.opacity) !== null && _b !== void 0 ? _b : (_c = particle.opacity) === null || _c === void 0 ? void 0 : _c.value) !== null && _d !== void 0 ? _d : 1;
-        const strokeOpacity = (_f = (_e = particle.stroke) === null || _e === void 0 ? void 0 : _e.opacity) !== null && _f !== void 0 ? _f : opacity;
+        const opacity = twinkling
+          ? twinkle.opacity
+          : (_d =
+              (_b = particle.bubble.opacity) !== null && _b !== void 0
+                ? _b
+                : (_c = particle.opacity) === null || _c === void 0
+                ? void 0
+                : _c.value) !== null && _d !== void 0
+          ? _d
+          : 1;
+        const strokeOpacity =
+          (_f =
+            (_e = particle.stroke) === null || _e === void 0
+              ? void 0
+              : _e.opacity) !== null && _f !== void 0
+            ? _f
+            : opacity;
         const zOpacity = opacity * zOpacityFactor;
-        const fillColorValue = fColor ? getStyleFromHsl(fColor, zOpacity) : undefined;
+        const fillColorValue = fColor
+          ? getStyleFromHsl(fColor, zOpacity)
+          : undefined;
         if (!fillColorValue && !sColor) {
           return;
         }
-        this.draw((ctx => {
-          const zSizeFactor = (1 - particle.zIndexFactor) ** zIndexOptions.sizeRate;
+        this.draw((ctx) => {
+          const zSizeFactor =
+            (1 - particle.zIndexFactor) ** zIndexOptions.sizeRate;
           const zStrokeOpacity = strokeOpacity * zOpacityFactor;
-          const strokeColorValue = sColor ? getStyleFromHsl(sColor, zStrokeOpacity) : fillColorValue;
+          const strokeColorValue = sColor
+            ? getStyleFromHsl(sColor, zStrokeOpacity)
+            : fillColorValue;
           if (radius <= 0) {
             return;
           }
@@ -1068,35 +1453,51 @@
               updater.beforeDraw(particle);
             }
           }
-          drawParticle(this.container, ctx, particle, delta, fillColorValue, strokeColorValue, options.backgroundMask.enable, options.backgroundMask.composite, radius * zSizeFactor, zOpacity, particle.options.shadow, particle.gradient);
+          drawParticle(
+            this.container,
+            ctx,
+            particle,
+            delta,
+            fillColorValue,
+            strokeColorValue,
+            options.backgroundMask.enable,
+            options.backgroundMask.composite,
+            radius * zSizeFactor,
+            zOpacity,
+            particle.options.shadow,
+            particle.gradient
+          );
           for (const updater of container.particles.updaters) {
             if (updater.afterDraw) {
               updater.afterDraw(particle);
             }
           }
-        }));
+        });
       }
       drawPlugin(plugin, delta) {
-        this.draw((ctx => {
+        this.draw((ctx) => {
           drawPlugin(ctx, plugin, delta);
-        }));
+        });
       }
       drawParticlePlugin(plugin, particle, delta) {
-        this.draw((ctx => {
+        this.draw((ctx) => {
           drawParticlePlugin(ctx, plugin, particle, delta);
-        }));
+        });
       }
       initBackground() {
         const options = this.container.actualOptions;
         const background = options.background;
         const element = this.element;
-        const elementStyle = element === null || element === void 0 ? void 0 : element.style;
+        const elementStyle =
+          element === null || element === void 0 ? void 0 : element.style;
         if (!elementStyle) {
           return;
         }
         if (background.color) {
           const color = colorToRgb(background.color);
-          elementStyle.backgroundColor = color ? getStyleFromRgb(color, background.opacity) : "";
+          elementStyle.backgroundColor = color
+            ? getStyleFromRgb(color, background.opacity)
+            : "";
         } else {
           elementStyle.backgroundColor = "";
         }
@@ -1121,7 +1522,7 @@
             r: coverRgb.r,
             g: coverRgb.g,
             b: coverRgb.b,
-            a: cover.opacity
+            a: cover.opacity,
           };
         }
       }
@@ -1135,7 +1536,7 @@
             r: fillColor.r,
             g: fillColor.g,
             b: fillColor.b,
-            a: 1 / trail.length
+            a: 1 / trail.length,
           };
         }
       }
@@ -1153,10 +1554,11 @@
             break;
           }
         }
-        return [ fColor, sColor ];
+        return [fColor, sColor];
       }
       initStyle() {
-        const element = this.element, options = this.container.actualOptions;
+        const element = this.element,
+          options = this.container.actualOptions;
         if (!element) {
           return;
         }
@@ -1164,7 +1566,11 @@
         if (options.fullScreen.enable) {
           this.originalStyle = deepExtend({}, element.style);
           element.style.setProperty("position", "fixed", "important");
-          element.style.setProperty("z-index", options.fullScreen.zIndex.toString(10), "important");
+          element.style.setProperty(
+            "z-index",
+            options.fullScreen.zIndex.toString(10),
+            "important"
+          );
           element.style.setProperty("top", "0", "important");
           element.style.setProperty("left", "0", "important");
           element.style.setProperty("width", "100%", "important");
@@ -1189,16 +1595,16 @@
         }
       }
       paintBase(baseColor) {
-        this.draw((ctx => {
+        this.draw((ctx) => {
           paintBase(ctx, this.size, baseColor);
-        }));
+        });
       }
       lineStyle(p1, p2) {
-        return this.draw((ctx => {
+        return this.draw((ctx) => {
           const options = this.container.actualOptions;
           const connectOptions = options.interactivity.modes.connect;
           return gradient(ctx, p1, p2, connectOptions.links.opacity);
-        }));
+        });
       }
     }
     class Trail_Trail {
@@ -1227,17 +1633,17 @@
     }
     class Modes_Modes {
       constructor() {
-        this.attract = new Attract;
-        this.bounce = new Bounce;
-        this.bubble = new Bubble;
-        this.connect = new Connect;
-        this.grab = new Grab;
-        this.light = new Light;
-        this.push = new Push;
-        this.remove = new Remove;
-        this.repulse = new Repulse;
-        this.slow = new Slow;
-        this.trail = new Trail;
+        this.attract = new Attract();
+        this.bounce = new Bounce();
+        this.bubble = new Bubble();
+        this.connect = new Connect();
+        this.grab = new Grab();
+        this.light = new Light();
+        this.push = new Push();
+        this.remove = new Remove();
+        this.repulse = new Repulse();
+        this.slow = new Slow();
+        this.trail = new Trail();
       }
       load(data) {
         if (data === undefined) {
@@ -1258,8 +1664,8 @@
     class Interactivity_Interactivity {
       constructor() {
         this.detectsOn = "window";
-        this.events = new Events;
-        this.modes = new Modes;
+        this.events = new Events();
+        this.modes = new Modes();
       }
       get detect_on() {
         return this.detectsOn;
@@ -1272,19 +1678,26 @@
         if (data === undefined) {
           return;
         }
-        const detectsOn = (_a = data.detectsOn) !== null && _a !== void 0 ? _a : data.detect_on;
+        const detectsOn =
+          (_a = data.detectsOn) !== null && _a !== void 0 ? _a : data.detect_on;
         if (detectsOn !== undefined) {
           this.detectsOn = detectsOn;
         }
         this.events.load(data.events);
         this.modes.load(data.modes);
-        if (((_c = (_b = data.modes) === null || _b === void 0 ? void 0 : _b.slow) === null || _c === void 0 ? void 0 : _c.active) === true) {
+        if (
+          ((_c =
+            (_b = data.modes) === null || _b === void 0 ? void 0 : _b.slow) ===
+            null || _c === void 0
+            ? void 0
+            : _c.active) === true
+        ) {
           if (this.events.onHover.mode instanceof Array) {
             if (this.events.onHover.mode.indexOf("slow") < 0) {
               this.events.onHover.mode.push("slow");
             }
           } else if (this.events.onHover.mode !== "slow") {
-            this.events.onHover.mode = [ this.events.onHover.mode, "slow" ];
+            this.events.onHover.mode = [this.events.onHover.mode, "slow"];
           }
         }
       }
@@ -1298,7 +1711,7 @@
         if (data.position !== undefined) {
           this.position = {
             x: (_a = data.position.x) !== null && _a !== void 0 ? _a : 50,
-            y: (_b = data.position.y) !== null && _b !== void 0 ? _b : 50
+            y: (_b = data.position.y) !== null && _b !== void 0 ? _b : 50,
           };
         }
         if (data.options !== undefined) {
@@ -1337,9 +1750,9 @@
     }
     class HslAnimation_HslAnimation {
       constructor() {
-        this.h = new ColorAnimation;
-        this.s = new ColorAnimation;
-        this.l = new ColorAnimation;
+        this.h = new ColorAnimation();
+        this.s = new ColorAnimation();
+        this.l = new ColorAnimation();
       }
       load(data) {
         if (!data) {
@@ -1350,18 +1763,18 @@
         this.l.load(data.l);
       }
     }
-    class AnimatableColor_AnimatableColor extends(null && OptionsColor){
+    class AnimatableColor_AnimatableColor extends (null && OptionsColor) {
       constructor() {
         super();
-        this.animation = new HslAnimation;
+        this.animation = new HslAnimation();
       }
       static create(source, data) {
-        const color = new AnimatableColor_AnimatableColor;
+        const color = new AnimatableColor_AnimatableColor();
         color.load(source);
         if (data !== undefined) {
           if (typeof data === "string" || data instanceof Array) {
             color.load({
-              value: data
+              value: data,
             });
           } else {
             color.load(data);
@@ -1386,7 +1799,7 @@
     }
     class AnimatableGradient_AnimatableGradient {
       constructor() {
-        this.angle = new GradientAngle;
+        this.angle = new GradientAngle();
         this.colors = [];
         this.type = "random";
       }
@@ -1396,11 +1809,11 @@
         }
         this.angle.load(data.angle);
         if (data.colors !== undefined) {
-          this.colors = data.colors.map((s => {
-            const tmp = new AnimatableGradientColor;
+          this.colors = data.colors.map((s) => {
+            const tmp = new AnimatableGradientColor();
             tmp.load(s);
             return tmp;
-          }));
+          });
         }
         if (data.type !== undefined) {
           this.type = data.type;
@@ -1410,7 +1823,7 @@
     class GradientAngle {
       constructor() {
         this.value = 0;
-        this.animation = new GradientAngleAnimation;
+        this.animation = new GradientAngleAnimation();
         this.direction = "clockwise";
       }
       load(data) {
@@ -1429,7 +1842,7 @@
     class GradientColorOpacity {
       constructor() {
         this.value = 0;
-        this.animation = new GradientColorOpacityAnimation;
+        this.animation = new GradientColorOpacityAnimation();
       }
       load(data) {
         if (!data) {
@@ -1444,7 +1857,7 @@
     class AnimatableGradientColor {
       constructor() {
         this.stop = 0;
-        this.value = new AnimatableColor;
+        this.value = new AnimatableColor();
       }
       load(data) {
         if (!data) {
@@ -1455,7 +1868,7 @@
         }
         this.value = AnimatableColor.create(this.value, data.value);
         if (data.opacity !== undefined) {
-          this.opacity = new GradientColorOpacity;
+          this.opacity = new GradientColorOpacity();
           if (typeof data.opacity === "number") {
             this.opacity.value = data.opacity;
           } else {
@@ -1520,7 +1933,7 @@
     }
     class ValueWithRandom_ValueWithRandom {
       constructor() {
-        this.random = new Random;
+        this.random = new Random();
         this.value = 0;
       }
       load(data) {
@@ -1533,21 +1946,24 @@
           this.random.load(data.random);
         }
         if (data.value !== undefined) {
-          this.value = setRangeValue(data.value, this.random.enable ? this.random.minimumValue : undefined);
+          this.value = setRangeValue(
+            data.value,
+            this.random.enable ? this.random.minimumValue : undefined
+          );
         }
       }
     }
-    class BounceFactor_BounceFactor extends(null && ValueWithRandom){
+    class BounceFactor_BounceFactor extends (null && ValueWithRandom) {
       constructor() {
         super();
-        this.random.minimumValue = .1;
+        this.random.minimumValue = 0.1;
         this.value = 1;
       }
     }
     class Bounce_Bounce {
       constructor() {
-        this.horizontal = new BounceFactor;
-        this.vertical = new BounceFactor;
+        this.horizontal = new BounceFactor();
+        this.vertical = new BounceFactor();
       }
       load(data) {
         if (!data) {
@@ -1559,10 +1975,10 @@
     }
     class Collisions_Collisions {
       constructor() {
-        this.bounce = new Bounce;
+        this.bounce = new Bounce();
         this.enable = false;
         this.mode = "bounce";
-        this.overlap = new CollisionsOverlap;
+        this.overlap = new CollisionsOverlap();
       }
       load(data) {
         if (data === undefined) {
@@ -1578,26 +1994,26 @@
         this.overlap.load(data.overlap);
       }
     }
-    class SplitFactor_SplitFactor extends(null && ValueWithRandom){
+    class SplitFactor_SplitFactor extends (null && ValueWithRandom) {
       constructor() {
         super();
         this.value = 3;
       }
     }
-    class SplitRate_SplitRate extends(null && ValueWithRandom){
+    class SplitRate_SplitRate extends (null && ValueWithRandom) {
       constructor() {
         super();
         this.value = {
           min: 4,
-          max: 9
+          max: 9,
         };
       }
     }
     class Split_Split {
       constructor() {
         this.count = 1;
-        this.factor = new SplitFactor;
-        this.rate = new SplitRate;
+        this.factor = new SplitFactor();
+        this.rate = new SplitRate();
         this.sizeOffset = true;
       }
       load(data) {
@@ -1620,7 +2036,7 @@
     class Destroy_Destroy {
       constructor() {
         this.mode = "none";
-        this.split = new Split;
+        this.split = new Split();
       }
       load(data) {
         if (!data) {
@@ -1632,7 +2048,7 @@
         this.split.load(data.split);
       }
     }
-    class LifeDelay_LifeDelay extends(null && ValueWithRandom){
+    class LifeDelay_LifeDelay extends (null && ValueWithRandom) {
       constructor() {
         super();
         this.sync = false;
@@ -1647,7 +2063,7 @@
         }
       }
     }
-    class LifeDuration_LifeDuration extends(null && ValueWithRandom){
+    class LifeDuration_LifeDuration extends (null && ValueWithRandom) {
       constructor() {
         super();
         this.random.minimumValue = 1e-4;
@@ -1666,8 +2082,8 @@
     class Life_Life {
       constructor() {
         this.count = 0;
-        this.delay = new LifeDelay;
-        this.duration = new LifeDuration;
+        this.delay = new LifeDelay();
+        this.duration = new LifeDuration();
       }
       load(data) {
         if (data === undefined) {
@@ -1680,7 +2096,7 @@
         this.duration.load(data.duration);
       }
     }
-    class PathDelay_PathDelay extends(null && ValueWithRandom){
+    class PathDelay_PathDelay extends (null && ValueWithRandom) {
       constructor() {
         super();
       }
@@ -1688,7 +2104,7 @@
     class Path_Path {
       constructor() {
         this.clamp = true;
-        this.delay = new PathDelay;
+        this.delay = new PathDelay();
         this.enable = false;
         this.options = {};
       }
@@ -1724,27 +2140,29 @@
         if (data.enable !== undefined) {
           this.enable = data.enable;
         }
-        this.position = data.position ? deepExtend({}, data.position) : undefined;
+        this.position = data.position
+          ? deepExtend({}, data.position)
+          : undefined;
       }
     }
     class Move_Move {
       constructor() {
-        this.angle = new MoveAngle;
-        this.attract = new Attract;
+        this.angle = new MoveAngle();
+        this.attract = new Attract();
         this.decay = 0;
         this.distance = {};
         this.direction = "none";
         this.drift = 0;
         this.enable = false;
-        this.gravity = new MoveGravity;
-        this.path = new Path;
-        this.outModes = new OutModes;
+        this.gravity = new MoveGravity();
+        this.path = new Path();
+        this.outModes = new OutModes();
         this.random = false;
         this.size = false;
         this.speed = 2;
-        this.spin = new Spin;
+        this.spin = new Spin();
         this.straight = false;
-        this.trail = new Trail;
+        this.trail = new Trail();
         this.vibrate = false;
         this.warp = false;
       }
@@ -1796,10 +2214,13 @@
           this.direction = data.direction;
         }
         if (data.distance !== undefined) {
-          this.distance = typeof data.distance === "number" ? {
-            horizontal: data.distance,
-            vertical: data.distance
-          } : deepExtend({}, data.distance);
+          this.distance =
+            typeof data.distance === "number"
+              ? {
+                  horizontal: data.distance,
+                  vertical: data.distance,
+                }
+              : deepExtend({}, data.distance);
         }
         if (data.drift !== undefined) {
           this.drift = setRangeValue(data.drift);
@@ -1808,17 +2229,24 @@
           this.enable = data.enable;
         }
         this.gravity.load(data.gravity);
-        const outMode = (_a = data.outMode) !== null && _a !== void 0 ? _a : data.out_mode;
+        const outMode =
+          (_a = data.outMode) !== null && _a !== void 0 ? _a : data.out_mode;
         if (data.outModes !== undefined || outMode !== undefined) {
-          if (typeof data.outModes === "string" || data.outModes === undefined && outMode !== undefined) {
+          if (
+            typeof data.outModes === "string" ||
+            (data.outModes === undefined && outMode !== undefined)
+          ) {
             this.outModes.load({
-              default: (_b = data.outModes) !== null && _b !== void 0 ? _b : outMode
+              default:
+                (_b = data.outModes) !== null && _b !== void 0 ? _b : outMode,
             });
           } else {
             this.outModes.load(data.outModes);
           }
         }
-        this.path.load((_c = data.path) !== null && _c !== void 0 ? _c : data.noise);
+        this.path.load(
+          (_c = data.path) !== null && _c !== void 0 ? _c : data.noise
+        );
         if (data.random !== undefined) {
           this.random = data.random;
         }
@@ -1841,11 +2269,11 @@
         }
       }
     }
-    class Opacity_Opacity extends(null && ValueWithRandom){
+    class Opacity_Opacity extends (null && ValueWithRandom) {
       constructor() {
         super();
-        this.animation = new OpacityAnimation;
-        this.random.minimumValue = .1;
+        this.animation = new OpacityAnimation();
+        this.random.minimumValue = 0.1;
         this.value = 1;
       }
       get anim() {
@@ -1860,14 +2288,18 @@
           return;
         }
         super.load(data);
-        const animation = (_a = data.animation) !== null && _a !== void 0 ? _a : data.anim;
+        const animation =
+          (_a = data.animation) !== null && _a !== void 0 ? _a : data.anim;
         if (animation !== undefined) {
           this.animation.load(animation);
-          this.value = setRangeValue(this.value, this.animation.enable ? this.animation.minimumValue : undefined);
+          this.value = setRangeValue(
+            this.value,
+            this.animation.enable ? this.animation.minimumValue : undefined
+          );
         }
       }
     }
-    class OrbitRotation_OrbitRotation extends(null && ValueWithRandom){
+    class OrbitRotation_OrbitRotation extends (null && ValueWithRandom) {
       constructor() {
         super();
         this.value = 45;
@@ -1883,10 +2315,10 @@
     }
     class Orbit_Orbit {
       constructor() {
-        this.animation = new AnimationOptions;
+        this.animation = new AnimationOptions();
         this.enable = false;
         this.opacity = 1;
-        this.rotation = new OrbitRotation;
+        this.rotation = new OrbitRotation();
         this.width = 1;
       }
       load(data) {
@@ -1912,7 +2344,7 @@
         }
       }
     }
-    class Repulse_Repulse extends(null && ValueWithRandom){
+    class Repulse_Repulse extends (null && ValueWithRandom) {
       constructor() {
         super();
         this.enabled = false;
@@ -1945,9 +2377,9 @@
     }
     class Roll_Roll {
       constructor() {
-        this.darken = new RollLight;
+        this.darken = new RollLight();
         this.enable = false;
-        this.enlighten = new RollLight;
+        this.enlighten = new RollLight();
         this.mode = "vertical";
         this.speed = 25;
       }
@@ -1971,10 +2403,10 @@
         }
       }
     }
-    class Rotate_Rotate extends(null && ValueWithRandom){
+    class Rotate_Rotate extends (null && ValueWithRandom) {
       constructor() {
         super();
-        this.animation = new RotateAnimation;
+        this.animation = new RotateAnimation();
         this.direction = "clockwise";
         this.path = false;
         this.value = 0;
@@ -2000,7 +2432,9 @@
       }
       get image() {
         var _a;
-        return (_a = this.options["image"]) !== null && _a !== void 0 ? _a : this.options["images"];
+        return (_a = this.options["image"]) !== null && _a !== void 0
+          ? _a
+          : this.options["images"];
       }
       set image(value) {
         this.options["image"] = value;
@@ -2024,7 +2458,9 @@
       set stroke(_value) {}
       get character() {
         var _a;
-        return (_a = this.options["character"]) !== null && _a !== void 0 ? _a : this.options["char"];
+        return (_a = this.options["character"]) !== null && _a !== void 0
+          ? _a
+          : this.options["char"];
       }
       set character(value) {
         this.options["character"] = value;
@@ -2032,7 +2468,9 @@
       }
       get polygon() {
         var _a;
-        return (_a = this.options["polygon"]) !== null && _a !== void 0 ? _a : this.options["star"];
+        return (_a = this.options["polygon"]) !== null && _a !== void 0
+          ? _a
+          : this.options["star"];
       }
       set polygon(value) {
         this.options["polygon"] = value;
@@ -2043,18 +2481,27 @@
         if (data === undefined) {
           return;
         }
-        const options = (_a = data.options) !== null && _a !== void 0 ? _a : data.custom;
+        const options =
+          (_a = data.options) !== null && _a !== void 0 ? _a : data.custom;
         if (options !== undefined) {
           for (const shape in options) {
             const item = options[shape];
             if (item !== undefined) {
-              this.options[shape] = deepExtend((_b = this.options[shape]) !== null && _b !== void 0 ? _b : {}, item);
+              this.options[shape] = deepExtend(
+                (_b = this.options[shape]) !== null && _b !== void 0 ? _b : {},
+                item
+              );
             }
           }
         }
         this.loadShape(data.character, "character", "char", true);
         this.loadShape(data.polygon, "polygon", "star", false);
-        this.loadShape((_c = data.image) !== null && _c !== void 0 ? _c : data.images, "image", "images", true);
+        this.loadShape(
+          (_c = data.image) !== null && _c !== void 0 ? _c : data.images,
+          "image",
+          "images",
+          true
+        );
         if (data.type !== undefined) {
           this.type = data.type;
         }
@@ -2071,9 +2518,15 @@
               this.options[altKey] = [];
             }
           }
-          this.options[mainKey] = deepExtend((_a = this.options[mainKey]) !== null && _a !== void 0 ? _a : [], item);
+          this.options[mainKey] = deepExtend(
+            (_a = this.options[mainKey]) !== null && _a !== void 0 ? _a : [],
+            item
+          );
           if (!this.options[altKey] || altOverride) {
-            this.options[altKey] = deepExtend((_b = this.options[altKey]) !== null && _b !== void 0 ? _b : [], item);
+            this.options[altKey] = deepExtend(
+              (_b = this.options[altKey]) !== null && _b !== void 0 ? _b : [],
+              item
+            );
           }
         } else {
           if (this.options[mainKey] instanceof Array) {
@@ -2082,17 +2535,23 @@
               this.options[altKey] = {};
             }
           }
-          this.options[mainKey] = deepExtend((_c = this.options[mainKey]) !== null && _c !== void 0 ? _c : {}, item);
+          this.options[mainKey] = deepExtend(
+            (_c = this.options[mainKey]) !== null && _c !== void 0 ? _c : {},
+            item
+          );
           if (!this.options[altKey] || altOverride) {
-            this.options[altKey] = deepExtend((_d = this.options[altKey]) !== null && _d !== void 0 ? _d : {}, item);
+            this.options[altKey] = deepExtend(
+              (_d = this.options[altKey]) !== null && _d !== void 0 ? _d : {},
+              item
+            );
           }
         }
       }
     }
-    class Size_Size extends(null && ValueWithRandom){
+    class Size_Size extends (null && ValueWithRandom) {
       constructor() {
         super();
-        this.animation = new SizeAnimation;
+        this.animation = new SizeAnimation();
         this.random.minimumValue = 1;
         this.value = 3;
       }
@@ -2108,10 +2567,14 @@
           return;
         }
         super.load(data);
-        const animation = (_a = data.animation) !== null && _a !== void 0 ? _a : data.anim;
+        const animation =
+          (_a = data.animation) !== null && _a !== void 0 ? _a : data.anim;
         if (animation !== undefined) {
           this.animation.load(animation);
-          this.value = setRangeValue(this.value, this.animation.enable ? this.animation.minimumValue : undefined);
+          this.value = setRangeValue(
+            this.value,
+            this.animation.enable ? this.animation.minimumValue : undefined
+          );
         }
       }
     }
@@ -2134,10 +2597,10 @@
         }
       }
     }
-    class Tilt_Tilt extends(null && ValueWithRandom){
+    class Tilt_Tilt extends (null && ValueWithRandom) {
       constructor() {
         super();
-        this.animation = new TiltAnimation;
+        this.animation = new TiltAnimation();
         this.direction = "clockwise";
         this.enable = false;
         this.value = 0;
@@ -2177,7 +2640,7 @@
         }
       }
     }
-    class ZIndex_ZIndex extends(null && ValueWithRandom){
+    class ZIndex_ZIndex extends (null && ValueWithRandom) {
       constructor() {
         super();
         this.opacityRate = 1;
@@ -2202,30 +2665,30 @@
     }
     class ParticlesOptions_ParticlesOptions {
       constructor() {
-        this.bounce = new Bounce;
-        this.collisions = new Collisions;
-        this.color = new AnimatableColor;
-        this.destroy = new Destroy;
+        this.bounce = new Bounce();
+        this.collisions = new Collisions();
+        this.color = new AnimatableColor();
+        this.destroy = new Destroy();
         this.gradient = [];
         this.groups = {};
-        this.life = new Life;
-        this.links = new Links;
-        this.move = new Move;
-        this.number = new ParticlesNumber;
-        this.opacity = new Opacity;
-        this.orbit = new Orbit;
+        this.life = new Life();
+        this.links = new Links();
+        this.move = new Move();
+        this.number = new ParticlesNumber();
+        this.opacity = new Opacity();
+        this.orbit = new Orbit();
         this.reduceDuplicates = false;
-        this.repulse = new Repulse;
-        this.roll = new Roll;
-        this.rotate = new Rotate;
-        this.shadow = new Shadow;
-        this.shape = new Shape;
-        this.size = new Size;
-        this.stroke = new Stroke;
-        this.tilt = new Tilt;
-        this.twinkle = new Twinkle;
-        this.wobble = new Wobble;
-        this.zIndex = new ZIndex;
+        this.repulse = new Repulse();
+        this.roll = new Roll();
+        this.rotate = new Rotate();
+        this.shadow = new Shadow();
+        this.shape = new Shape();
+        this.size = new Size();
+        this.stroke = new Stroke();
+        this.tilt = new Tilt();
+        this.twinkle = new Twinkle();
+        this.wobble = new Wobble();
+        this.zIndex = new ZIndex();
       }
       get line_linked() {
         return this.links;
@@ -2248,7 +2711,13 @@
         this.color.load(AnimatableColor.create(this.color, data.color));
         this.destroy.load(data.destroy);
         this.life.load(data.life);
-        const links = (_b = (_a = data.links) !== null && _a !== void 0 ? _a : data.lineLinked) !== null && _b !== void 0 ? _b : data.line_linked;
+        const links =
+          (_b =
+            (_a = data.links) !== null && _a !== void 0
+              ? _a
+              : data.lineLinked) !== null && _b !== void 0
+            ? _b
+            : data.line_linked;
         if (links !== undefined) {
           this.links.load(links);
         }
@@ -2256,7 +2725,10 @@
           for (const group in data.groups) {
             const item = data.groups[group];
             if (item !== undefined) {
-              this.groups[group] = deepExtend((_c = this.groups[group]) !== null && _c !== void 0 ? _c : {}, item);
+              this.groups[group] = deepExtend(
+                (_c = this.groups[group]) !== null && _c !== void 0 ? _c : {},
+                item
+              );
             }
           }
         }
@@ -2277,22 +2749,35 @@
         this.twinkle.load(data.twinkle);
         this.wobble.load(data.wobble);
         this.zIndex.load(data.zIndex);
-        const collisions = (_e = (_d = data.move) === null || _d === void 0 ? void 0 : _d.collisions) !== null && _e !== void 0 ? _e : (_f = data.move) === null || _f === void 0 ? void 0 : _f.bounce;
+        const collisions =
+          (_e =
+            (_d = data.move) === null || _d === void 0
+              ? void 0
+              : _d.collisions) !== null && _e !== void 0
+            ? _e
+            : (_f = data.move) === null || _f === void 0
+            ? void 0
+            : _f.bounce;
         if (collisions !== undefined) {
           this.collisions.enable = collisions;
         }
         this.collisions.load(data.collisions);
-        const strokeToLoad = (_g = data.stroke) !== null && _g !== void 0 ? _g : (_h = data.shape) === null || _h === void 0 ? void 0 : _h.stroke;
+        const strokeToLoad =
+          (_g = data.stroke) !== null && _g !== void 0
+            ? _g
+            : (_h = data.shape) === null || _h === void 0
+            ? void 0
+            : _h.stroke;
         if (strokeToLoad) {
           if (strokeToLoad instanceof Array) {
-            this.stroke = strokeToLoad.map((s => {
-              const tmp = new Stroke;
+            this.stroke = strokeToLoad.map((s) => {
+              const tmp = new Stroke();
               tmp.load(s);
               return tmp;
-            }));
+            });
           } else {
             if (this.stroke instanceof Array) {
-              this.stroke = new Stroke;
+              this.stroke = new Stroke();
             }
             this.stroke.load(strokeToLoad);
           }
@@ -2300,14 +2785,14 @@
         const gradientToLoad = data.gradient;
         if (gradientToLoad) {
           if (gradientToLoad instanceof Array) {
-            this.gradient = gradientToLoad.map((s => {
-              const tmp = new AnimatableGradient;
+            this.gradient = gradientToLoad.map((s) => {
+              const tmp = new AnimatableGradient();
               tmp.load(s);
               return tmp;
-            }));
+            });
           } else {
             if (this.gradient instanceof Array) {
-              this.gradient = new AnimatableGradient;
+              this.gradient = new AnimatableGradient();
             }
             this.gradient.load(gradientToLoad);
           }
@@ -2342,7 +2827,7 @@
     class Theme_Theme {
       constructor() {
         this.name = "";
-        this.default = new ThemeDefault;
+        this.default = new ThemeDefault();
       }
       load(data) {
         if (data === undefined) {
@@ -2357,18 +2842,50 @@
         }
       }
     }
-    var Options_classPrivateFieldSet = undefined && undefined.__classPrivateFieldSet || function(receiver, state, value, kind, f) {
-      if (kind === "m") throw new TypeError("Private method is not writable");
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-      return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), 
-      value;
-    };
-    var Options_classPrivateFieldGet = undefined && undefined.__classPrivateFieldGet || function(receiver, state, kind, f) {
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-      return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-    };
+    var Options_classPrivateFieldSet =
+      (undefined && undefined.__classPrivateFieldSet) ||
+      function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a setter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot write private member to an object whose class did not declare it"
+          );
+        return (
+          kind === "a"
+            ? f.call(receiver, value)
+            : f
+            ? (f.value = value)
+            : state.set(receiver, value),
+          value
+        );
+      };
+    var Options_classPrivateFieldGet =
+      (undefined && undefined.__classPrivateFieldGet) ||
+      function (receiver, state, kind, f) {
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a getter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot read private member from an object whose class did not declare it"
+          );
+        return kind === "m"
+          ? f
+          : kind === "a"
+          ? f.call(receiver)
+          : f
+          ? f.value
+          : state.get(receiver);
+      };
     var _Options_instances, _Options_engine, _Options_findDefaultTheme;
     class Options_Options {
       constructor(engine) {
@@ -2376,16 +2893,16 @@
         _Options_engine.set(this, void 0);
         Options_classPrivateFieldSet(this, _Options_engine, engine, "f");
         this.autoPlay = true;
-        this.background = new Background;
-        this.backgroundMask = new BackgroundMask;
-        this.fullScreen = new FullScreen;
+        this.background = new Background();
+        this.backgroundMask = new BackgroundMask();
+        this.fullScreen = new FullScreen();
         this.detectRetina = true;
         this.duration = 0;
         this.fpsLimit = 120;
-        this.interactivity = new Interactivity;
+        this.interactivity = new Interactivity();
         this.manualParticles = [];
-        this.motion = new Motion;
-        this.particles = new ParticlesOptions;
+        this.motion = new Motion();
+        this.particles = new ParticlesOptions();
         this.pauseOnBlur = true;
         this.pauseOnOutsideViewport = true;
         this.responsive = [];
@@ -2428,14 +2945,18 @@
         if (data.autoPlay !== undefined) {
           this.autoPlay = data.autoPlay;
         }
-        const detectRetina = (_a = data.detectRetina) !== null && _a !== void 0 ? _a : data.retina_detect;
+        const detectRetina =
+          (_a = data.detectRetina) !== null && _a !== void 0
+            ? _a
+            : data.retina_detect;
         if (detectRetina !== undefined) {
           this.detectRetina = detectRetina;
         }
         if (data.duration !== undefined) {
           this.duration = data.duration;
         }
-        const fpsLimit = (_b = data.fpsLimit) !== null && _b !== void 0 ? _b : data.fps_limit;
+        const fpsLimit =
+          (_b = data.fpsLimit) !== null && _b !== void 0 ? _b : data.fps_limit;
         if (fpsLimit !== undefined) {
           this.fpsLimit = fpsLimit;
         }
@@ -2449,7 +2970,10 @@
           this.zLayers = data.zLayers;
         }
         this.background.load(data.background);
-        const fullScreen = (_c = data.fullScreen) !== null && _c !== void 0 ? _c : data.backgroundMode;
+        const fullScreen =
+          (_c = data.fullScreen) !== null && _c !== void 0
+            ? _c
+            : data.backgroundMode;
         if (typeof fullScreen === "boolean") {
           this.fullScreen.enable = fullScreen;
         } else {
@@ -2458,42 +2982,71 @@
         this.backgroundMask.load(data.backgroundMask);
         this.interactivity.load(data.interactivity);
         if (data.manualParticles !== undefined) {
-          this.manualParticles = data.manualParticles.map((t => {
-            const tmp = new ManualParticle;
+          this.manualParticles = data.manualParticles.map((t) => {
+            const tmp = new ManualParticle();
             tmp.load(t);
             return tmp;
-          }));
+          });
         }
         this.motion.load(data.motion);
         this.particles.load(data.particles);
         this.style = deepExtend(this.style, data.style);
-        Options_classPrivateFieldGet(this, _Options_engine, "f").plugins.loadOptions(this, data);
+        Options_classPrivateFieldGet(
+          this,
+          _Options_engine,
+          "f"
+        ).plugins.loadOptions(this, data);
         if (data.responsive !== undefined) {
           for (const responsive of data.responsive) {
-            const optResponsive = new Responsive;
+            const optResponsive = new Responsive();
             optResponsive.load(responsive);
             this.responsive.push(optResponsive);
           }
         }
-        this.responsive.sort(((a, b) => a.maxWidth - b.maxWidth));
+        this.responsive.sort((a, b) => a.maxWidth - b.maxWidth);
         if (data.themes !== undefined) {
           for (const theme of data.themes) {
-            const optTheme = new Theme;
+            const optTheme = new Theme();
             optTheme.load(theme);
             this.themes.push(optTheme);
           }
         }
-        this.defaultDarkTheme = (_d = Options_classPrivateFieldGet(this, _Options_instances, "m", _Options_findDefaultTheme).call(this, "dark")) === null || _d === void 0 ? void 0 : _d.name;
-        this.defaultLightTheme = (_e = Options_classPrivateFieldGet(this, _Options_instances, "m", _Options_findDefaultTheme).call(this, "light")) === null || _e === void 0 ? void 0 : _e.name;
+        this.defaultDarkTheme =
+          (_d = Options_classPrivateFieldGet(
+            this,
+            _Options_instances,
+            "m",
+            _Options_findDefaultTheme
+          ).call(this, "dark")) === null || _d === void 0
+            ? void 0
+            : _d.name;
+        this.defaultLightTheme =
+          (_e = Options_classPrivateFieldGet(
+            this,
+            _Options_instances,
+            "m",
+            _Options_findDefaultTheme
+          ).call(this, "light")) === null || _e === void 0
+            ? void 0
+            : _e.name;
       }
       setTheme(name) {
         if (name) {
-          const chosenTheme = this.themes.find((theme => theme.name === name));
+          const chosenTheme = this.themes.find((theme) => theme.name === name);
           if (chosenTheme) {
             this.load(chosenTheme.options);
           }
         } else {
-          const mediaMatch = typeof matchMedia !== "undefined" && matchMedia("(prefers-color-scheme: dark)"), clientDarkMode = mediaMatch && mediaMatch.matches, defaultTheme = Options_classPrivateFieldGet(this, _Options_instances, "m", _Options_findDefaultTheme).call(this, clientDarkMode ? "dark" : "light");
+          const mediaMatch =
+              typeof matchMedia !== "undefined" &&
+              matchMedia("(prefers-color-scheme: dark)"),
+            clientDarkMode = mediaMatch && mediaMatch.matches,
+            defaultTheme = Options_classPrivateFieldGet(
+              this,
+              _Options_instances,
+              "m",
+              _Options_findDefaultTheme
+            ).call(this, clientDarkMode ? "dark" : "light");
           if (defaultTheme) {
             this.load(defaultTheme.options);
           }
@@ -2501,33 +3054,92 @@
       }
       setResponsive(width, pxRatio, defaultOptions) {
         this.load(defaultOptions);
-        const responsiveOptions = this.responsive.find((t => t.mode === "screen" && screen ? t.maxWidth * pxRatio > screen.availWidth : t.maxWidth * pxRatio > width));
-        this.load(responsiveOptions === null || responsiveOptions === void 0 ? void 0 : responsiveOptions.options);
-        return responsiveOptions === null || responsiveOptions === void 0 ? void 0 : responsiveOptions.maxWidth;
+        const responsiveOptions = this.responsive.find((t) =>
+          t.mode === "screen" && screen
+            ? t.maxWidth * pxRatio > screen.availWidth
+            : t.maxWidth * pxRatio > width
+        );
+        this.load(
+          responsiveOptions === null || responsiveOptions === void 0
+            ? void 0
+            : responsiveOptions.options
+        );
+        return responsiveOptions === null || responsiveOptions === void 0
+          ? void 0
+          : responsiveOptions.maxWidth;
       }
       importPreset(preset) {
-        this.load(Options_classPrivateFieldGet(this, _Options_engine, "f").plugins.getPreset(preset));
+        this.load(
+          Options_classPrivateFieldGet(
+            this,
+            _Options_engine,
+            "f"
+          ).plugins.getPreset(preset)
+        );
       }
     }
-    _Options_engine = new WeakMap, _Options_instances = new WeakSet, _Options_findDefaultTheme = function _Options_findDefaultTheme(mode) {
-      var _a;
-      return (_a = this.themes.find((theme => theme.default.value && theme.default.mode === mode))) !== null && _a !== void 0 ? _a : this.themes.find((theme => theme.default.value && theme.default.mode === "any"));
-    };
-    var Particle_classPrivateFieldSet = undefined && undefined.__classPrivateFieldSet || function(receiver, state, value, kind, f) {
-      if (kind === "m") throw new TypeError("Private method is not writable");
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-      return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), 
-      value;
-    };
-    var Particle_classPrivateFieldGet = undefined && undefined.__classPrivateFieldGet || function(receiver, state, kind, f) {
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-      return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-    };
+    (_Options_engine = new WeakMap()),
+      (_Options_instances = new WeakSet()),
+      (_Options_findDefaultTheme = function _Options_findDefaultTheme(mode) {
+        var _a;
+        return (_a = this.themes.find(
+          (theme) => theme.default.value && theme.default.mode === mode
+        )) !== null && _a !== void 0
+          ? _a
+          : this.themes.find(
+              (theme) => theme.default.value && theme.default.mode === "any"
+            );
+      });
+    var Particle_classPrivateFieldSet =
+      (undefined && undefined.__classPrivateFieldSet) ||
+      function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a setter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot write private member to an object whose class did not declare it"
+          );
+        return (
+          kind === "a"
+            ? f.call(receiver, value)
+            : f
+            ? (f.value = value)
+            : state.set(receiver, value),
+          value
+        );
+      };
+    var Particle_classPrivateFieldGet =
+      (undefined && undefined.__classPrivateFieldGet) ||
+      function (receiver, state, kind, f) {
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a getter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot read private member from an object whose class did not declare it"
+          );
+        return kind === "m"
+          ? f
+          : kind === "a"
+          ? f.call(receiver)
+          : f
+          ? f.value
+          : state.get(receiver);
+      };
     var _Particle_engine;
-    const fixOutMode = data => {
-      if (isInArray(data.outMode, data.checkModes) || isInArray(data.outMode, data.checkModes)) {
+    const fixOutMode = (data) => {
+      if (
+        isInArray(data.outMode, data.checkModes) ||
+        isInArray(data.outMode, data.checkModes)
+      ) {
         if (data.coord > data.maxCoord - data.radius * 2) {
           data.setCb(-data.radius);
         } else if (data.coord < data.radius * 2) {
@@ -2551,113 +3163,167 @@
         this.splitCount = 0;
         this.misplaced = false;
         this.retina = {
-          maxDistance: {}
+          maxDistance: {},
         };
         const pxRatio = container.retina.pixelRatio;
         const mainOptions = container.actualOptions;
-        const particlesOptions = new ParticlesOptions;
+        const particlesOptions = new ParticlesOptions();
         particlesOptions.load(mainOptions.particles);
         const shapeType = particlesOptions.shape.type;
         const reduceDuplicates = particlesOptions.reduceDuplicates;
-        this.shape = shapeType instanceof Array ? itemFromArray(shapeType, this.id, reduceDuplicates) : shapeType;
-        if (overrideOptions === null || overrideOptions === void 0 ? void 0 : overrideOptions.shape) {
+        this.shape =
+          shapeType instanceof Array
+            ? itemFromArray(shapeType, this.id, reduceDuplicates)
+            : shapeType;
+        if (
+          overrideOptions === null || overrideOptions === void 0
+            ? void 0
+            : overrideOptions.shape
+        ) {
           if (overrideOptions.shape.type) {
             const overrideShapeType = overrideOptions.shape.type;
-            this.shape = overrideShapeType instanceof Array ? itemFromArray(overrideShapeType, this.id, reduceDuplicates) : overrideShapeType;
+            this.shape =
+              overrideShapeType instanceof Array
+                ? itemFromArray(overrideShapeType, this.id, reduceDuplicates)
+                : overrideShapeType;
           }
-          const shapeOptions = new Shape;
+          const shapeOptions = new Shape();
           shapeOptions.load(overrideOptions.shape);
           if (this.shape) {
             this.shapeData = this.loadShapeData(shapeOptions, reduceDuplicates);
           }
         } else {
-          this.shapeData = this.loadShapeData(particlesOptions.shape, reduceDuplicates);
+          this.shapeData = this.loadShapeData(
+            particlesOptions.shape,
+            reduceDuplicates
+          );
         }
         if (overrideOptions !== undefined) {
           particlesOptions.load(overrideOptions);
         }
-        if (((_a = this.shapeData) === null || _a === void 0 ? void 0 : _a.particles) !== undefined) {
-          particlesOptions.load((_b = this.shapeData) === null || _b === void 0 ? void 0 : _b.particles);
+        if (
+          ((_a = this.shapeData) === null || _a === void 0
+            ? void 0
+            : _a.particles) !== undefined
+        ) {
+          particlesOptions.load(
+            (_b = this.shapeData) === null || _b === void 0
+              ? void 0
+              : _b.particles
+          );
         }
-        this.fill = (_d = (_c = this.shapeData) === null || _c === void 0 ? void 0 : _c.fill) !== null && _d !== void 0 ? _d : this.fill;
-        this.close = (_f = (_e = this.shapeData) === null || _e === void 0 ? void 0 : _e.close) !== null && _f !== void 0 ? _f : this.close;
+        this.fill =
+          (_d =
+            (_c = this.shapeData) === null || _c === void 0
+              ? void 0
+              : _c.fill) !== null && _d !== void 0
+            ? _d
+            : this.fill;
+        this.close =
+          (_f =
+            (_e = this.shapeData) === null || _e === void 0
+              ? void 0
+              : _e.close) !== null && _f !== void 0
+            ? _f
+            : this.close;
         this.options = particlesOptions;
         this.pathDelay = getValue(this.options.move.path.delay) * 1e3;
         const zIndexValue = getRangeValue(this.options.zIndex.value);
         container.retina.initParticle(this);
-        const sizeOptions = this.options.size, sizeRange = sizeOptions.value;
+        const sizeOptions = this.options.size,
+          sizeRange = sizeOptions.value;
         this.size = {
           enable: sizeOptions.animation.enable,
           value: getValue(sizeOptions) * container.retina.pixelRatio,
           max: getRangeMax(sizeRange) * pxRatio,
           min: getRangeMin(sizeRange) * pxRatio,
           loops: 0,
-          maxLoops: sizeOptions.animation.count
+          maxLoops: sizeOptions.animation.count,
         };
         const sizeAnimation = sizeOptions.animation;
         if (sizeAnimation.enable) {
           this.size.status = 0;
           switch (sizeAnimation.startValue) {
-           case "min":
-            this.size.value = this.size.min;
-            this.size.status = 0;
-            break;
+            case "min":
+              this.size.value = this.size.min;
+              this.size.status = 0;
+              break;
 
-           case "random":
-            this.size.value = randomInRange(this.size) * pxRatio;
-            this.size.status = Math.random() >= .5 ? 0 : 1;
-            break;
+            case "random":
+              this.size.value = randomInRange(this.size) * pxRatio;
+              this.size.status = Math.random() >= 0.5 ? 0 : 1;
+              break;
 
-           case "max":
-           default:
-            this.size.value = this.size.max;
-            this.size.status = 1;
-            break;
+            case "max":
+            default:
+              this.size.value = this.size.max;
+              this.size.status = 1;
+              break;
           }
-          this.size.velocity = ((_g = this.retina.sizeAnimationSpeed) !== null && _g !== void 0 ? _g : container.retina.sizeAnimationSpeed) / 100 * container.retina.reduceFactor;
+          this.size.velocity =
+            (((_g = this.retina.sizeAnimationSpeed) !== null && _g !== void 0
+              ? _g
+              : container.retina.sizeAnimationSpeed) /
+              100) *
+            container.retina.reduceFactor;
           if (!sizeAnimation.sync) {
             this.size.velocity *= Math.random();
           }
         }
         this.direction = getParticleDirectionAngle(this.options.move.direction);
         this.bubble = {
-          inRange: false
+          inRange: false,
         };
         this.initialVelocity = this.calculateVelocity();
         this.velocity = this.initialVelocity.copy();
         this.moveDecay = 1 - getRangeValue(this.options.move.decay);
-        this.position = this.calcPosition(container, position, clamp(zIndexValue, 0, container.zLayers));
+        this.position = this.calcPosition(
+          container,
+          position,
+          clamp(zIndexValue, 0, container.zLayers)
+        );
         this.initialPosition = this.position.copy();
         this.offset = Vector.origin;
         const particles = container.particles;
-        particles.needsSort = particles.needsSort || particles.lastZIndex < this.position.z;
+        particles.needsSort =
+          particles.needsSort || particles.lastZIndex < this.position.z;
         particles.lastZIndex = this.position.z;
         this.zIndexFactor = this.position.z / container.zLayers;
         this.sides = 24;
         let drawer = container.drawers.get(this.shape);
         if (!drawer) {
-          drawer = Particle_classPrivateFieldGet(this, _Particle_engine, "f").plugins.getShapeDrawer(this.shape);
+          drawer = Particle_classPrivateFieldGet(
+            this,
+            _Particle_engine,
+            "f"
+          ).plugins.getShapeDrawer(this.shape);
           if (drawer) {
             container.drawers.set(this.shape, drawer);
           }
         }
         if (drawer === null || drawer === void 0 ? void 0 : drawer.loadShape) {
-          drawer === null || drawer === void 0 ? void 0 : drawer.loadShape(this);
+          drawer === null || drawer === void 0
+            ? void 0
+            : drawer.loadShape(this);
         }
-        const sideCountFunc = drawer === null || drawer === void 0 ? void 0 : drawer.getSidesCount;
+        const sideCountFunc =
+          drawer === null || drawer === void 0 ? void 0 : drawer.getSidesCount;
         if (sideCountFunc) {
           this.sides = sideCountFunc(this);
         }
         this.life = this.loadLife();
         this.spawning = this.life.delay > 0;
         if (this.options.move.spin.enable) {
-          const spinPos = (_h = this.options.move.spin.position) !== null && _h !== void 0 ? _h : {
-            x: 50,
-            y: 50
-          };
+          const spinPos =
+            (_h = this.options.move.spin.position) !== null && _h !== void 0
+              ? _h
+              : {
+                  x: 50,
+                  y: 50,
+                };
           const spinCenter = {
-            x: spinPos.x / 100 * container.canvas.size.width,
-            y: spinPos.y / 100 * container.canvas.size.height
+            x: (spinPos.x / 100) * container.canvas.size.width,
+            y: (spinPos.y / 100) * container.canvas.size.height,
           };
           const pos = this.getPosition();
           const distance = getDistance(pos, spinCenter);
@@ -2666,7 +3332,10 @@
             direction: this.velocity.x >= 0 ? "clockwise" : "counter-clockwise",
             angle: this.velocity.angle,
             radius: distance,
-            acceleration: (_j = this.retina.spinAcceleration) !== null && _j !== void 0 ? _j : getRangeValue(this.options.move.spin.acceleration)
+            acceleration:
+              (_j = this.retina.spinAcceleration) !== null && _j !== void 0
+                ? _j
+                : getRangeValue(this.options.move.spin.acceleration),
           };
         }
         this.shadowColor = colorToRgb(this.options.shadow.color);
@@ -2690,7 +3359,12 @@
       isInsideCanvas() {
         const radius = this.getRadius();
         const canvasSize = this.container.canvas.size;
-        return this.position.x >= -radius && this.position.y >= -radius && this.position.y <= canvasSize.height + radius && this.position.x <= canvasSize.width + radius;
+        return (
+          this.position.x >= -radius &&
+          this.position.y >= -radius &&
+          this.position.y <= canvasSize.height + radius &&
+          this.position.x <= canvasSize.width + radius
+        );
       }
       draw(delta) {
         const container = this.container;
@@ -2703,27 +3377,45 @@
         return {
           x: this.position.x + this.offset.x,
           y: this.position.y + this.offset.y,
-          z: this.position.z
+          z: this.position.z,
         };
       }
       getRadius() {
         var _a;
-        return (_a = this.bubble.radius) !== null && _a !== void 0 ? _a : this.size.value;
+        return (_a = this.bubble.radius) !== null && _a !== void 0
+          ? _a
+          : this.size.value;
       }
       getMass() {
-        return this.getRadius() ** 2 * Math.PI / 2;
+        return (this.getRadius() ** 2 * Math.PI) / 2;
       }
       getFillColor() {
         var _a, _b, _c;
-        const color = (_a = this.bubble.color) !== null && _a !== void 0 ? _a : getHslFromAnimation(this.color);
+        const color =
+          (_a = this.bubble.color) !== null && _a !== void 0
+            ? _a
+            : getHslFromAnimation(this.color);
         if (color && this.roll && (this.backColor || this.roll.alter)) {
-          const rolled = Math.floor(((_c = (_b = this.roll) === null || _b === void 0 ? void 0 : _b.angle) !== null && _c !== void 0 ? _c : 0) / (Math.PI / 2)) % 2;
+          const rolled =
+            Math.floor(
+              ((_c =
+                (_b = this.roll) === null || _b === void 0
+                  ? void 0
+                  : _b.angle) !== null && _c !== void 0
+                ? _c
+                : 0) /
+                (Math.PI / 2)
+            ) % 2;
           if (rolled) {
             if (this.backColor) {
               return this.backColor;
             }
             if (this.roll.alter) {
-              return alterHsl(color, this.roll.alter.type, this.roll.alter.value);
+              return alterHsl(
+                color,
+                this.roll.alter.type,
+                this.roll.alter.value
+              );
             }
           }
         }
@@ -2731,7 +3423,12 @@
       }
       getStrokeColor() {
         var _a, _b;
-        return (_b = (_a = this.bubble.color) !== null && _a !== void 0 ? _a : getHslFromAnimation(this.strokeColor)) !== null && _b !== void 0 ? _b : this.getFillColor();
+        return (_b =
+          (_a = this.bubble.color) !== null && _a !== void 0
+            ? _a
+            : getHslFromAnimation(this.strokeColor)) !== null && _b !== void 0
+          ? _b
+          : this.getFillColor();
       }
       destroy(override) {
         this.destroyed = true;
@@ -2773,37 +3470,66 @@
       calcPosition(container, position, zIndex, tryCount = 0) {
         var _a, _b, _c, _d, _e, _f;
         for (const [, plugin] of container.plugins) {
-          const pluginPos = plugin.particlePosition !== undefined ? plugin.particlePosition(position, this) : undefined;
+          const pluginPos =
+            plugin.particlePosition !== undefined
+              ? plugin.particlePosition(position, this)
+              : undefined;
           if (pluginPos !== undefined) {
             return Vector3d.create(pluginPos.x, pluginPos.y, zIndex);
           }
         }
         const canvasSize = container.canvas.size;
-        const pos = Vector3d.create((_a = position === null || position === void 0 ? void 0 : position.x) !== null && _a !== void 0 ? _a : Math.random() * canvasSize.width, (_b = position === null || position === void 0 ? void 0 : position.y) !== null && _b !== void 0 ? _b : Math.random() * canvasSize.height, zIndex);
+        const pos = Vector3d.create(
+          (_a =
+            position === null || position === void 0 ? void 0 : position.x) !==
+            null && _a !== void 0
+            ? _a
+            : Math.random() * canvasSize.width,
+          (_b =
+            position === null || position === void 0 ? void 0 : position.y) !==
+            null && _b !== void 0
+            ? _b
+            : Math.random() * canvasSize.height,
+          zIndex
+        );
         const radius = this.getRadius();
-        const outModes = this.options.move.outModes, fixHorizontal = outMode => {
-          fixOutMode({
-            outMode: outMode,
-            checkModes: [ "bounce", "bounce-horizontal" ],
-            coord: pos.x,
-            maxCoord: container.canvas.size.width,
-            setCb: value => pos.x += value,
-            radius: radius
-          });
-        }, fixVertical = outMode => {
-          fixOutMode({
-            outMode: outMode,
-            checkModes: [ "bounce", "bounce-vertical" ],
-            coord: pos.y,
-            maxCoord: container.canvas.size.height,
-            setCb: value => pos.y += value,
-            radius: radius
-          });
-        };
-        fixHorizontal((_c = outModes.left) !== null && _c !== void 0 ? _c : outModes.default);
-        fixHorizontal((_d = outModes.right) !== null && _d !== void 0 ? _d : outModes.default);
-        fixVertical((_e = outModes.top) !== null && _e !== void 0 ? _e : outModes.default);
-        fixVertical((_f = outModes.bottom) !== null && _f !== void 0 ? _f : outModes.default);
+        const outModes = this.options.move.outModes,
+          fixHorizontal = (outMode) => {
+            fixOutMode({
+              outMode: outMode,
+              checkModes: ["bounce", "bounce-horizontal"],
+              coord: pos.x,
+              maxCoord: container.canvas.size.width,
+              setCb: (value) => (pos.x += value),
+              radius: radius,
+            });
+          },
+          fixVertical = (outMode) => {
+            fixOutMode({
+              outMode: outMode,
+              checkModes: ["bounce", "bounce-vertical"],
+              coord: pos.y,
+              maxCoord: container.canvas.size.height,
+              setCb: (value) => (pos.y += value),
+              radius: radius,
+            });
+          };
+        fixHorizontal(
+          (_c = outModes.left) !== null && _c !== void 0 ? _c : outModes.default
+        );
+        fixHorizontal(
+          (_d = outModes.right) !== null && _d !== void 0
+            ? _d
+            : outModes.default
+        );
+        fixVertical(
+          (_e = outModes.top) !== null && _e !== void 0 ? _e : outModes.default
+        );
+        fixVertical(
+          (_f = outModes.bottom) !== null && _f !== void 0
+            ? _f
+            : outModes.default
+        );
         if (this.checkOverlap(pos, tryCount)) {
           return this.calcPosition(container, undefined, zIndex, tryCount + 1);
         }
@@ -2825,7 +3551,10 @@
         }
         let overlaps = false;
         for (const particle of this.container.particles.array) {
-          if (getDistance(pos, particle.position) < radius + particle.getRadius()) {
+          if (
+            getDistance(pos, particle.position) <
+            radius + particle.getRadius()
+          ) {
             overlaps = true;
             break;
           }
@@ -2836,11 +3565,11 @@
         const baseVelocity = getParticleBaseVelocity(this.direction);
         const res = baseVelocity.copy();
         const moveOptions = this.options.move;
-        const rad = Math.PI / 180 * moveOptions.angle.value;
-        const radOffset = Math.PI / 180 * moveOptions.angle.offset;
+        const rad = (Math.PI / 180) * moveOptions.angle.value;
+        const radOffset = (Math.PI / 180) * moveOptions.angle.offset;
         const range = {
           left: radOffset - rad / 2,
-          right: radOffset + rad / 2
+          right: radOffset + rad / 2,
         };
         if (!moveOptions.straight) {
           res.angle += randomInRange(setRangeValue(range.left, range.right));
@@ -2853,7 +3582,12 @@
       loadShapeData(shapeOptions, reduceDuplicates) {
         const shapeData = shapeOptions.options[this.shape];
         if (shapeData) {
-          return deepExtend({}, shapeData instanceof Array ? itemFromArray(shapeData, this.id, reduceDuplicates) : shapeData);
+          return deepExtend(
+            {},
+            shapeData instanceof Array
+              ? itemFromArray(shapeData, this.id, reduceDuplicates)
+              : shapeData
+          );
         }
       }
       loadLife() {
@@ -2861,11 +3595,21 @@
         const particlesOptions = this.options;
         const lifeOptions = particlesOptions.life;
         const life = {
-          delay: container.retina.reduceFactor ? getRangeValue(lifeOptions.delay.value) * (lifeOptions.delay.sync ? 1 : Math.random()) / container.retina.reduceFactor * 1e3 : 0,
+          delay: container.retina.reduceFactor
+            ? ((getRangeValue(lifeOptions.delay.value) *
+                (lifeOptions.delay.sync ? 1 : Math.random())) /
+                container.retina.reduceFactor) *
+              1e3
+            : 0,
           delayTime: 0,
-          duration: container.retina.reduceFactor ? getRangeValue(lifeOptions.duration.value) * (lifeOptions.duration.sync ? 1 : Math.random()) / container.retina.reduceFactor * 1e3 : 0,
+          duration: container.retina.reduceFactor
+            ? ((getRangeValue(lifeOptions.duration.value) *
+                (lifeOptions.duration.sync ? 1 : Math.random())) /
+                container.retina.reduceFactor) *
+              1e3
+            : 0,
           time: 0,
-          count: particlesOptions.life.count
+          count: particlesOptions.life.count,
         };
         if (life.duration <= 0) {
           life.duration = -1;
@@ -2876,19 +3620,51 @@
         return life;
       }
     }
-    _Particle_engine = new WeakMap;
-    var Particles_classPrivateFieldSet = undefined && undefined.__classPrivateFieldSet || function(receiver, state, value, kind, f) {
-      if (kind === "m") throw new TypeError("Private method is not writable");
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-      return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), 
-      value;
-    };
-    var Particles_classPrivateFieldGet = undefined && undefined.__classPrivateFieldGet || function(receiver, state, kind, f) {
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-      return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-    };
+    _Particle_engine = new WeakMap();
+    var Particles_classPrivateFieldSet =
+      (undefined && undefined.__classPrivateFieldSet) ||
+      function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a setter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot write private member to an object whose class did not declare it"
+          );
+        return (
+          kind === "a"
+            ? f.call(receiver, value)
+            : f
+            ? (f.value = value)
+            : state.set(receiver, value),
+          value
+        );
+      };
+    var Particles_classPrivateFieldGet =
+      (undefined && undefined.__classPrivateFieldGet) ||
+      function (receiver, state, kind, f) {
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a getter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot read private member from an object whose class did not declare it"
+          );
+        return kind === "m"
+          ? f
+          : kind === "a"
+          ? f.call(receiver)
+          : f
+          ? f.value
+          : state.get(receiver);
+      };
     var _Particles_engine;
     class Particles_Particles {
       constructor(engine, container) {
@@ -2903,14 +3679,29 @@
         this.needsSort = false;
         this.lastZIndex = 0;
         this.freqs = {
-          links: new Map,
-          triangles: new Map
+          links: new Map(),
+          triangles: new Map(),
         };
-        this.interactionManager = new InteractionManager(Particles_classPrivateFieldGet(this, _Particles_engine, "f"), container);
+        this.interactionManager = new InteractionManager(
+          Particles_classPrivateFieldGet(this, _Particles_engine, "f"),
+          container
+        );
         const canvasSize = this.container.canvas.size;
-        this.linksColors = new Map;
-        this.quadTree = new QuadTree(new Rectangle(-canvasSize.width / 4, -canvasSize.height / 4, canvasSize.width * 3 / 2, canvasSize.height * 3 / 2), 4);
-        this.updaters = Particles_classPrivateFieldGet(this, _Particles_engine, "f").plugins.getUpdaters(container, true);
+        this.linksColors = new Map();
+        this.quadTree = new QuadTree(
+          new Rectangle(
+            -canvasSize.width / 4,
+            -canvasSize.height / 4,
+            (canvasSize.width * 3) / 2,
+            (canvasSize.height * 3) / 2
+          ),
+          4
+        );
+        this.updaters = Particles_classPrivateFieldGet(
+          this,
+          _Particles_engine,
+          "f"
+        ).plugins.getUpdaters(container, true);
       }
       get count() {
         return this.array.length;
@@ -2921,10 +3712,14 @@
         const options = container.actualOptions;
         this.lastZIndex = 0;
         this.needsSort = false;
-        this.freqs.links = new Map;
-        this.freqs.triangles = new Map;
+        this.freqs.links = new Map();
+        this.freqs.triangles = new Map();
         let handled = false;
-        this.updaters = Particles_classPrivateFieldGet(this, _Particles_engine, "f").plugins.getUpdaters(container, true);
+        this.updaters = Particles_classPrivateFieldGet(
+          this,
+          _Particles_engine,
+          "f"
+        ).plugins.getUpdaters(container, true);
         this.interactionManager.init();
         for (const [, plugin] of container.plugins) {
           if (plugin.particlesInitialization !== undefined) {
@@ -2938,8 +3733,14 @@
         if (!handled) {
           for (const group in options.particles.groups) {
             const groupOptions = options.particles.groups[group];
-            for (let i = this.count, j = 0; j < ((_a = groupOptions.number) === null || _a === void 0 ? void 0 : _a.value) && i < options.particles.number.value; i++, 
-            j++) {
+            for (
+              let i = this.count, j = 0;
+              j <
+                ((_a = groupOptions.number) === null || _a === void 0
+                  ? void 0
+                  : _a.value) && i < options.particles.number.value;
+              i++, j++
+            ) {
               this.addParticle(undefined, groupOptions, group);
             }
           }
@@ -2954,7 +3755,7 @@
         this.init();
         await this.draw({
           value: 0,
-          factor: 0
+          factor: 0,
         });
       }
       removeAt(index, quantity = 1, group, override) {
@@ -3026,10 +3827,20 @@
         const container = this.container;
         container.canvas.clear();
         const canvasSize = this.container.canvas.size;
-        this.quadTree = new QuadTree(new Rectangle(-canvasSize.width / 4, -canvasSize.height / 4, canvasSize.width * 3 / 2, canvasSize.height * 3 / 2), 4);
+        this.quadTree = new QuadTree(
+          new Rectangle(
+            -canvasSize.width / 4,
+            -canvasSize.height / 4,
+            (canvasSize.width * 3) / 2,
+            (canvasSize.height * 3) / 2
+          ),
+          4
+        );
         await this.update(delta);
         if (this.needsSort) {
-          this.zArray.sort(((a, b) => b.position.z - a.position.z || a.id - b.id));
+          this.zArray.sort(
+            (a, b) => b.position.z - a.position.z || a.id - b.id
+          );
           this.lastZIndex = this.zArray[this.zArray.length - 1].position.z;
           this.needsSort = false;
         }
@@ -3047,12 +3858,18 @@
       push(nb, mouse, overrideOptions, group) {
         this.pushing = true;
         for (let i = 0; i < nb; i++) {
-          this.addParticle(mouse === null || mouse === void 0 ? void 0 : mouse.position, overrideOptions, group);
+          this.addParticle(
+            mouse === null || mouse === void 0 ? void 0 : mouse.position,
+            overrideOptions,
+            group
+          );
         }
         this.pushing = false;
       }
       addParticle(position, overrideOptions, group) {
-        const container = this.container, options = container.actualOptions, limit = options.particles.number.limit * container.density;
+        const container = this.container,
+          options = container.actualOptions,
+          limit = options.particles.number.limit * container.density;
         if (limit > 0) {
           const countToRemove = this.count + 1 - limit;
           if (countToRemove > 0) {
@@ -3062,13 +3879,14 @@
         return this.pushParticle(position, overrideOptions, group);
       }
       addSplitParticle(parent) {
-        const splitOptions = parent.options.destroy.split, options = new ParticlesOptions;
+        const splitOptions = parent.options.destroy.split,
+          options = new ParticlesOptions();
         options.load(parent.options);
         const factor = getRangeValue(splitOptions.factor.value);
         options.color.load({
           value: {
-            hsl: parent.getFillColor()
-          }
+            hsl: parent.getFillColor(),
+          },
         });
         if (typeof options.size.value === "number") {
           options.size.value /= factor;
@@ -3077,29 +3895,39 @@
           options.size.value.max /= factor;
         }
         options.load(splitOptions.particles);
-        const offset = splitOptions.sizeOffset ? setRangeValue(-parent.size.value, parent.size.value) : 0;
+        const offset = splitOptions.sizeOffset
+          ? setRangeValue(-parent.size.value, parent.size.value)
+          : 0;
         const position = {
           x: parent.position.x + randomInRange(offset),
-          y: parent.position.y + randomInRange(offset)
+          y: parent.position.y + randomInRange(offset),
         };
-        return this.pushParticle(position, options, parent.group, (particle => {
-          if (particle.size.value < .5) {
-            return false;
+        return this.pushParticle(
+          position,
+          options,
+          parent.group,
+          (particle) => {
+            if (particle.size.value < 0.5) {
+              return false;
+            }
+            particle.velocity.length = randomInRange(
+              setRangeValue(parent.velocity.length, particle.velocity.length)
+            );
+            particle.splitCount = parent.splitCount + 1;
+            particle.unbreakable = true;
+            setTimeout(() => {
+              particle.unbreakable = false;
+            }, 500);
+            return true;
           }
-          particle.velocity.length = randomInRange(setRangeValue(parent.velocity.length, particle.velocity.length));
-          particle.splitCount = parent.splitCount + 1;
-          particle.unbreakable = true;
-          setTimeout((() => {
-            particle.unbreakable = false;
-          }), 500);
-          return true;
-        }));
+        );
       }
       removeQuantity(quantity, group) {
         this.removeAt(0, quantity, group);
       }
       getLinkFrequency(p1, p2) {
-        const range = setRangeValue(p1.id, p2.id), key = `${getRangeMin(range)}_${getRangeMax(range)}`;
+        const range = setRangeValue(p1.id, p2.id),
+          key = `${getRangeMin(range)}_${getRangeMax(range)}`;
         let res = this.freqs.links.get(key);
         if (res === undefined) {
           res = Math.random();
@@ -3108,15 +3936,15 @@
         return res;
       }
       getTriangleFrequency(p1, p2, p3) {
-        let [id1, id2, id3] = [ p1.id, p2.id, p3.id ];
+        let [id1, id2, id3] = [p1.id, p2.id, p3.id];
         if (id1 > id2) {
-          [id2, id1] = [ id1, id2 ];
+          [id2, id1] = [id1, id2];
         }
         if (id2 > id3) {
-          [id3, id2] = [ id2, id3 ];
+          [id3, id2] = [id2, id3];
         }
         if (id1 > id3) {
-          [id3, id1] = [ id1, id3 ];
+          [id3, id1] = [id1, id3];
         }
         const key = `${id1}_${id2}_${id3}`;
         let res = this.freqs.triangles.get(key);
@@ -3127,12 +3955,15 @@
         return res;
       }
       addManualParticles() {
-        const container = this.container, options = container.actualOptions;
+        const container = this.container,
+          options = container.actualOptions;
         for (const particle of options.manualParticles) {
-          const pos = particle.position ? {
-            x: particle.position.x * container.canvas.size.width / 100,
-            y: particle.position.y * container.canvas.size.height / 100
-          } : undefined;
+          const pos = particle.position
+            ? {
+                x: (particle.position.x * container.canvas.size.width) / 100,
+                y: (particle.position.y * container.canvas.size.height) / 100,
+              }
+            : undefined;
           this.addParticle(pos, particle.options);
         }
       }
@@ -3145,18 +3976,33 @@
       }
       applyDensity(options, manualCount, group) {
         var _a;
-        if (!((_a = options.number.density) === null || _a === void 0 ? void 0 : _a.enable)) {
+        if (
+          !((_a = options.number.density) === null || _a === void 0
+            ? void 0
+            : _a.enable)
+        ) {
           return;
         }
         const numberOptions = options.number;
         const densityFactor = this.initDensityFactor(numberOptions.density);
         const optParticlesNumber = numberOptions.value;
-        const optParticlesLimit = numberOptions.limit > 0 ? numberOptions.limit : optParticlesNumber;
-        const particlesNumber = Math.min(optParticlesNumber, optParticlesLimit) * densityFactor + manualCount;
-        const particlesCount = Math.min(this.count, this.array.filter((t => t.group === group)).length);
+        const optParticlesLimit =
+          numberOptions.limit > 0 ? numberOptions.limit : optParticlesNumber;
+        const particlesNumber =
+          Math.min(optParticlesNumber, optParticlesLimit) * densityFactor +
+          manualCount;
+        const particlesCount = Math.min(
+          this.count,
+          this.array.filter((t) => t.group === group).length
+        );
         this.limit = numberOptions.limit * densityFactor;
         if (particlesCount < particlesNumber) {
-          this.push(Math.abs(particlesNumber - particlesCount), undefined, options, group);
+          this.push(
+            Math.abs(particlesNumber - particlesCount),
+            undefined,
+            options,
+            group
+          );
         } else if (particlesCount > particlesNumber) {
           this.removeQuantity(particlesCount - particlesNumber, group);
         }
@@ -3166,12 +4012,23 @@
         if (!container.canvas.element || !densityOptions.enable) {
           return 1;
         }
-        const canvas = container.canvas.element, pxRatio = container.retina.pixelRatio;
-        return canvas.width * canvas.height / (densityOptions.factor * pxRatio ** 2 * densityOptions.area);
+        const canvas = container.canvas.element,
+          pxRatio = container.retina.pixelRatio;
+        return (
+          (canvas.width * canvas.height) /
+          (densityOptions.factor * pxRatio ** 2 * densityOptions.area)
+        );
       }
       pushParticle(position, overrideOptions, group, initializer) {
         try {
-          const particle = new Particle(Particles_classPrivateFieldGet(this, _Particles_engine, "f"), this.nextId, this.container, position, overrideOptions, group);
+          const particle = new Particle(
+            Particles_classPrivateFieldGet(this, _Particles_engine, "f"),
+            this.nextId,
+            this.container,
+            position,
+            overrideOptions,
+            group
+          );
           let canAdd = true;
           if (initializer) {
             canAdd = initializer(particle);
@@ -3189,7 +4046,7 @@
         }
       }
     }
-    _Particles_engine = new WeakMap;
+    _Particles_engine = new WeakMap();
     class Retina_Retina {
       constructor(container) {
         this.container = container;
@@ -3197,9 +4054,13 @@
       init() {
         const container = this.container;
         const options = container.actualOptions;
-        this.pixelRatio = !options.detectRetina || isSsr() ? 1 : window.devicePixelRatio;
+        this.pixelRatio =
+          !options.detectRetina || isSsr() ? 1 : window.devicePixelRatio;
         const motionOptions = this.container.actualOptions.motion;
-        if (motionOptions && (motionOptions.disable || motionOptions.reduce.value)) {
+        if (
+          motionOptions &&
+          (motionOptions.disable || motionOptions.reduce.value)
+        ) {
           if (isSsr() || typeof matchMedia === "undefined" || !matchMedia) {
             this.reduceFactor = 1;
           } else {
@@ -3208,7 +4069,7 @@
               this.handleMotionChange(mediaQuery);
               const handleChange = () => {
                 this.handleMotionChange(mediaQuery);
-                container.refresh().catch((() => {}));
+                container.refresh().catch(() => {});
               };
               if (mediaQuery.addEventListener !== undefined) {
                 mediaQuery.addEventListener("change", handleChange);
@@ -3233,7 +4094,8 @@
         this.sizeAnimationSpeed = particles.size.animation.speed * ratio;
         this.maxSpeed = particles.move.gravity.maxSpeed * ratio;
         if (particles.orbit.radius !== undefined) {
-          this.orbitRadius = particles.orbit.radius * this.container.retina.pixelRatio;
+          this.orbitRadius =
+            particles.orbit.radius * this.container.retina.pixelRatio;
         }
         const modes = options.interactivity.modes;
         this.connectModeDistance = modes.connect.distance * ratio;
@@ -3260,35 +4122,78 @@
         props.moveSpeed = getRangeValue(options.move.speed) * ratio;
         props.sizeAnimationSpeed = options.size.animation.speed * ratio;
         if (particle.spin) {
-          props.spinAcceleration = getRangeValue(options.move.spin.acceleration) * ratio;
+          props.spinAcceleration =
+            getRangeValue(options.move.spin.acceleration) * ratio;
         }
         const maxDistance = props.maxDistance;
-        maxDistance.horizontal = moveDistance.horizontal !== undefined ? moveDistance.horizontal * ratio : undefined;
-        maxDistance.vertical = moveDistance.vertical !== undefined ? moveDistance.vertical * ratio : undefined;
+        maxDistance.horizontal =
+          moveDistance.horizontal !== undefined
+            ? moveDistance.horizontal * ratio
+            : undefined;
+        maxDistance.vertical =
+          moveDistance.vertical !== undefined
+            ? moveDistance.vertical * ratio
+            : undefined;
         props.maxSpeed = options.move.gravity.maxSpeed * ratio;
       }
       handleMotionChange(mediaQuery) {
         const options = this.container.actualOptions;
         if (mediaQuery.matches) {
           const motion = options.motion;
-          this.reduceFactor = motion.disable ? 0 : motion.reduce.value ? 1 / motion.reduce.factor : 1;
+          this.reduceFactor = motion.disable
+            ? 0
+            : motion.reduce.value
+            ? 1 / motion.reduce.factor
+            : 1;
         } else {
           this.reduceFactor = 1;
         }
       }
     }
-    var Container_classPrivateFieldSet = undefined && undefined.__classPrivateFieldSet || function(receiver, state, value, kind, f) {
-      if (kind === "m") throw new TypeError("Private method is not writable");
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-      return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), 
-      value;
-    };
-    var Container_classPrivateFieldGet = undefined && undefined.__classPrivateFieldGet || function(receiver, state, kind, f) {
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-      return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-    };
+    var Container_classPrivateFieldSet =
+      (undefined && undefined.__classPrivateFieldSet) ||
+      function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a setter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot write private member to an object whose class did not declare it"
+          );
+        return (
+          kind === "a"
+            ? f.call(receiver, value)
+            : f
+            ? (f.value = value)
+            : state.set(receiver, value),
+          value
+        );
+      };
+    var Container_classPrivateFieldGet =
+      (undefined && undefined.__classPrivateFieldGet) ||
+      function (receiver, state, kind, f) {
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a getter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot read private member from an object whose class did not declare it"
+          );
+        return kind === "m"
+          ? f
+          : kind === "a"
+          ? f.call(receiver)
+          : f
+          ? f.value
+          : state.get(receiver);
+      };
     var _Container_engine;
     class Container_Container {
       constructor(engine, id, sourceOptions, ...presets) {
@@ -3309,7 +4214,10 @@
         this._initialSourceOptions = sourceOptions;
         this.retina = new Retina(this);
         this.canvas = new Canvas(this);
-        this.particles = new Particles(Container_classPrivateFieldGet(this, _Container_engine, "f"), this);
+        this.particles = new Particles(
+          Container_classPrivateFieldGet(this, _Container_engine, "f"),
+          this
+        );
         this.drawer = new FrameManager(this);
         this.presets = presets;
         this.pathGenerator = {
@@ -3320,29 +4228,38 @@
             return v;
           },
           init: () => {},
-          update: () => {}
+          update: () => {},
         };
         this.interactivity = {
           mouse: {
             clicking: false,
-            inside: false
-          }
+            inside: false,
+          },
         };
         this.bubble = {};
         this.repulse = {
-          particles: []
+          particles: [],
         };
         this.attract = {
-          particles: []
+          particles: [],
         };
-        this.plugins = new Map;
-        this.drawers = new Map;
+        this.plugins = new Map();
+        this.drawers = new Map();
         this.density = 1;
-        this._options = new Options(Container_classPrivateFieldGet(this, _Container_engine, "f"));
-        this.actualOptions = new Options(Container_classPrivateFieldGet(this, _Container_engine, "f"));
+        this._options = new Options(
+          Container_classPrivateFieldGet(this, _Container_engine, "f")
+        );
+        this.actualOptions = new Options(
+          Container_classPrivateFieldGet(this, _Container_engine, "f")
+        );
         this.eventListeners = new EventListeners(this);
-        if (typeof IntersectionObserver !== "undefined" && IntersectionObserver) {
-          this.intersectionObserver = new IntersectionObserver((entries => this.intersectionManager(entries)));
+        if (
+          typeof IntersectionObserver !== "undefined" &&
+          IntersectionObserver
+        ) {
+          this.intersectionObserver = new IntersectionObserver((entries) =>
+            this.intersectionManager(entries)
+          );
         }
       }
       get options() {
@@ -3388,13 +4305,13 @@
       }
       draw(force) {
         let refreshTime = force;
-        this.drawAnimationFrame = animate()((async timestamp => {
+        this.drawAnimationFrame = animate()(async (timestamp) => {
           if (refreshTime) {
             this.lastFrameTime = undefined;
             refreshTime = false;
           }
           await this.drawer.nextFrame(timestamp);
-        }));
+        });
       }
       getAnimationStatus() {
         return !this.paused && !this.pageHidden;
@@ -3418,7 +4335,8 @@
         } else {
           const oldGenerator = this.pathGenerator;
           this.pathGenerator = pathOrGenerator;
-          (_a = this.pathGenerator).generate || (_a.generate = oldGenerator.generate);
+          (_a = this.pathGenerator).generate ||
+            (_a.generate = oldGenerator.generate);
           (_b = this.pathGenerator).init || (_b.init = oldGenerator.init);
           (_c = this.pathGenerator).update || (_c.update = oldGenerator.update);
         }
@@ -3441,7 +4359,13 @@
       }
       exportImage(callback, type, quality) {
         var _a;
-        return (_a = this.canvas.element) === null || _a === void 0 ? void 0 : _a.toBlob(callback, type !== null && type !== void 0 ? type : "image/png", quality);
+        return (_a = this.canvas.element) === null || _a === void 0
+          ? void 0
+          : _a.toBlob(
+              callback,
+              type !== null && type !== void 0 ? type : "image/png",
+              quality
+            );
       }
       exportConfiguration() {
         return JSON.stringify(this.actualOptions, undefined, 2);
@@ -3451,7 +4375,9 @@
         return this.start();
       }
       reset() {
-        this._options = new Options(Container_classPrivateFieldGet(this, _Container_engine, "f"));
+        this._options = new Options(
+          Container_classPrivateFieldGet(this, _Container_engine, "f")
+        );
         return this.refresh();
       }
       stop() {
@@ -3464,7 +4390,10 @@
         this.pause();
         this.particles.clear();
         this.canvas.clear();
-        if (this.interactivity.element instanceof HTMLElement && this.intersectionObserver) {
+        if (
+          this.interactivity.element instanceof HTMLElement &&
+          this.intersectionObserver
+        ) {
           this.intersectionObserver.unobserve(this.interactivity.element);
         }
         for (const [, plugin] of this.plugins) {
@@ -3475,7 +4404,7 @@
         for (const key of this.plugins.keys()) {
           this.plugins.delete(key);
         }
-        this.particles.linksColors = new Map;
+        this.particles.linksColors = new Map();
         delete this.particles.grabLineColor;
         delete this.particles.linksColor;
         this._sourceOptions = this._options;
@@ -3491,7 +4420,10 @@
         await this.init();
         this.started = true;
         this.eventListeners.addListeners();
-        if (this.interactivity.element instanceof HTMLElement && this.intersectionObserver) {
+        if (
+          this.interactivity.element instanceof HTMLElement &&
+          this.intersectionObserver
+        ) {
           this.intersectionObserver.observe(this.interactivity.element);
         }
         for (const [, plugin] of this.plugins) {
@@ -3512,20 +4444,25 @@
           if (this.destroyed) {
             return;
           }
-          const pxRatio = this.retina.pixelRatio, posRetina = {
-            x: pos.x * pxRatio,
-            y: pos.y * pxRatio
-          }, particles = this.particles.quadTree.queryCircle(posRetina, radius * pxRatio);
+          const pxRatio = this.retina.pixelRatio,
+            posRetina = {
+              x: pos.x * pxRatio,
+              y: pos.y * pxRatio,
+            },
+            particles = this.particles.quadTree.queryCircle(
+              posRetina,
+              radius * pxRatio
+            );
           callback(e, particles);
         };
-        const clickHandler = e => {
+        const clickHandler = (e) => {
           if (this.destroyed) {
             return;
           }
           const mouseEvent = e;
           const pos = {
             x: mouseEvent.offsetX || mouseEvent.clientX,
-            y: mouseEvent.offsetY || mouseEvent.clientY
+            y: mouseEvent.offsetY || mouseEvent.clientY,
           };
           clickOrTouchHandler(e, pos, 1);
         };
@@ -3542,7 +4479,7 @@
           }
           touchMoved = true;
         };
-        const touchEndHandler = e => {
+        const touchEndHandler = (e) => {
           var _a, _b, _c;
           if (this.destroyed) {
             return;
@@ -3551,17 +4488,39 @@
             const touchEvent = e;
             let lastTouch = touchEvent.touches[touchEvent.touches.length - 1];
             if (!lastTouch) {
-              lastTouch = touchEvent.changedTouches[touchEvent.changedTouches.length - 1];
+              lastTouch =
+                touchEvent.changedTouches[touchEvent.changedTouches.length - 1];
               if (!lastTouch) {
                 return;
               }
             }
-            const canvasRect = (_a = this.canvas.element) === null || _a === void 0 ? void 0 : _a.getBoundingClientRect();
+            const canvasRect =
+              (_a = this.canvas.element) === null || _a === void 0
+                ? void 0
+                : _a.getBoundingClientRect();
             const pos = {
-              x: lastTouch.clientX - ((_b = canvasRect === null || canvasRect === void 0 ? void 0 : canvasRect.left) !== null && _b !== void 0 ? _b : 0),
-              y: lastTouch.clientY - ((_c = canvasRect === null || canvasRect === void 0 ? void 0 : canvasRect.top) !== null && _c !== void 0 ? _c : 0)
+              x:
+                lastTouch.clientX -
+                ((_b =
+                  canvasRect === null || canvasRect === void 0
+                    ? void 0
+                    : canvasRect.left) !== null && _b !== void 0
+                  ? _b
+                  : 0),
+              y:
+                lastTouch.clientY -
+                ((_c =
+                  canvasRect === null || canvasRect === void 0
+                    ? void 0
+                    : canvasRect.top) !== null && _c !== void 0
+                  ? _c
+                  : 0),
             };
-            clickOrTouchHandler(e, pos, Math.max(lastTouch.radiusX, lastTouch.radiusY));
+            clickOrTouchHandler(
+              e,
+              pos,
+              Math.max(lastTouch.radiusX, lastTouch.radiusY)
+            );
           }
           touched = false;
           touchMoved = false;
@@ -3583,7 +4542,11 @@
       }
       updateActualOptions() {
         this.actualOptions.responsive = [];
-        const newMaxWidth = this.actualOptions.setResponsive(this.canvas.size.width, this.retina.pixelRatio, this._options);
+        const newMaxWidth = this.actualOptions.setResponsive(
+          this.canvas.size.width,
+          this.retina.pixelRatio,
+          this._options
+        );
         this.actualOptions.setTheme(this.currentTheme);
         if (this.responsiveMaxWidth != newMaxWidth) {
           this.responsiveMaxWidth = newMaxWidth;
@@ -3592,20 +4555,38 @@
         return false;
       }
       async init() {
-        this._options = new Options(Container_classPrivateFieldGet(this, _Container_engine, "f"));
+        this._options = new Options(
+          Container_classPrivateFieldGet(this, _Container_engine, "f")
+        );
         for (const preset of this.presets) {
-          this._options.load(Container_classPrivateFieldGet(this, _Container_engine, "f").plugins.getPreset(preset));
+          this._options.load(
+            Container_classPrivateFieldGet(
+              this,
+              _Container_engine,
+              "f"
+            ).plugins.getPreset(preset)
+          );
         }
-        const shapes = Container_classPrivateFieldGet(this, _Container_engine, "f").plugins.getSupportedShapes();
+        const shapes = Container_classPrivateFieldGet(
+          this,
+          _Container_engine,
+          "f"
+        ).plugins.getSupportedShapes();
         for (const type of shapes) {
-          const drawer = Container_classPrivateFieldGet(this, _Container_engine, "f").plugins.getShapeDrawer(type);
+          const drawer = Container_classPrivateFieldGet(
+            this,
+            _Container_engine,
+            "f"
+          ).plugins.getShapeDrawer(type);
           if (drawer) {
             this.drawers.set(type, drawer);
           }
         }
         this._options.load(this._initialSourceOptions);
         this._options.load(this._sourceOptions);
-        this.actualOptions = new Options(Container_classPrivateFieldGet(this, _Container_engine, "f"));
+        this.actualOptions = new Options(
+          Container_classPrivateFieldGet(this, _Container_engine, "f")
+        );
         this.actualOptions.load(this._options);
         this.retina.init();
         this.canvas.init();
@@ -3615,8 +4596,13 @@
         this.zLayers = this.actualOptions.zLayers;
         this.duration = getRangeValue(this.actualOptions.duration);
         this.lifeTime = 0;
-        this.fpsLimit = this.actualOptions.fpsLimit > 0 ? this.actualOptions.fpsLimit : 120;
-        const availablePlugins = Container_classPrivateFieldGet(this, _Container_engine, "f").plugins.getAvailablePlugins(this);
+        this.fpsLimit =
+          this.actualOptions.fpsLimit > 0 ? this.actualOptions.fpsLimit : 120;
+        const availablePlugins = Container_classPrivateFieldGet(
+          this,
+          _Container_engine,
+          "f"
+        ).plugins.getAvailablePlugins(this);
         for (const [id, plugin] of availablePlugins) {
           this.plugins.set(id, plugin);
         }
@@ -3634,7 +4620,13 @@
         }
         const pathOptions = this.actualOptions.particles.move.path;
         if (pathOptions.generator) {
-          this.setPath(Container_classPrivateFieldGet(this, _Container_engine, "f").plugins.getPathGenerator(pathOptions.generator));
+          this.setPath(
+            Container_classPrivateFieldGet(
+              this,
+              _Container_engine,
+              "f"
+            ).plugins.getPathGenerator(pathOptions.generator)
+          );
         }
         this.particles.init();
         this.particles.setDensity();
@@ -3660,19 +4652,51 @@
         }
       }
     }
-    _Container_engine = new WeakMap;
-    var Loader_classPrivateFieldSet = undefined && undefined.__classPrivateFieldSet || function(receiver, state, value, kind, f) {
-      if (kind === "m") throw new TypeError("Private method is not writable");
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-      return kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value), 
-      value;
-    };
-    var Loader_classPrivateFieldGet = undefined && undefined.__classPrivateFieldGet || function(receiver, state, kind, f) {
-      if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-      if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-      return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-    };
+    _Container_engine = new WeakMap();
+    var Loader_classPrivateFieldSet =
+      (undefined && undefined.__classPrivateFieldSet) ||
+      function (receiver, state, value, kind, f) {
+        if (kind === "m") throw new TypeError("Private method is not writable");
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a setter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot write private member to an object whose class did not declare it"
+          );
+        return (
+          kind === "a"
+            ? f.call(receiver, value)
+            : f
+            ? (f.value = value)
+            : state.set(receiver, value),
+          value
+        );
+      };
+    var Loader_classPrivateFieldGet =
+      (undefined && undefined.__classPrivateFieldGet) ||
+      function (receiver, state, kind, f) {
+        if (kind === "a" && !f)
+          throw new TypeError("Private accessor was defined without a getter");
+        if (
+          typeof state === "function"
+            ? receiver !== state || !f
+            : !state.has(receiver)
+        )
+          throw new TypeError(
+            "Cannot read private member from an object whose class did not declare it"
+          );
+        return kind === "m"
+          ? f
+          : kind === "a"
+          ? f.call(receiver)
+          : f
+          ? f.value
+          : state.get(receiver);
+      };
     var _Loader_engine;
     function fetchError(statusCode) {
       console.error(`Error tsParticles - fetch status: ${statusCode}`);
@@ -3696,17 +4720,26 @@
       }
       async loadOptions(params) {
         var _a, _b, _c;
-        const tagId = (_a = params.tagId) !== null && _a !== void 0 ? _a : `tsparticles${Math.floor(Math.random() * 1e4)}`;
-        const {options: options, index: index} = params;
-        let domContainer = (_b = params.element) !== null && _b !== void 0 ? _b : document.getElementById(tagId);
+        const tagId =
+          (_a = params.tagId) !== null && _a !== void 0
+            ? _a
+            : `tsparticles${Math.floor(Math.random() * 1e4)}`;
+        const { options: options, index: index } = params;
+        let domContainer =
+          (_b = params.element) !== null && _b !== void 0
+            ? _b
+            : document.getElementById(tagId);
         if (!domContainer) {
           domContainer = document.createElement("div");
           domContainer.id = tagId;
-          (_c = document.querySelector("body")) === null || _c === void 0 ? void 0 : _c.append(domContainer);
+          (_c = document.querySelector("body")) === null || _c === void 0
+            ? void 0
+            : _c.append(domContainer);
         }
-        const currentOptions = options instanceof Array ? itemFromArray(options, index) : options;
+        const currentOptions =
+          options instanceof Array ? itemFromArray(options, index) : options;
         const dom = this.dom();
-        const oldIndex = dom.findIndex((v => v.id === tagId));
+        const oldIndex = dom.findIndex((v) => v.id === tagId);
         if (oldIndex >= 0) {
           const old = this.domItem(oldIndex);
           if (old && !old.destroyed) {
@@ -3731,7 +4764,11 @@
             domContainer.appendChild(canvasEl);
           }
         }
-        const newItem = new Container(Loader_classPrivateFieldGet(this, _Loader_engine, "f"), tagId, currentOptions);
+        const newItem = new Container(
+          Loader_classPrivateFieldGet(this, _Loader_engine, "f"),
+          tagId,
+          currentOptions
+        );
         if (oldIndex >= 0) {
           dom.splice(oldIndex, 0, newItem);
         } else {
@@ -3742,8 +4779,9 @@
         return newItem;
       }
       async loadRemoteOptions(params) {
-        const {url: jsonUrl, index: index} = params;
-        const url = jsonUrl instanceof Array ? itemFromArray(jsonUrl, index) : jsonUrl;
+        const { url: jsonUrl, index: index } = params;
+        const url =
+          jsonUrl instanceof Array ? itemFromArray(jsonUrl, index) : jsonUrl;
         if (!url) {
           return;
         }
@@ -3757,12 +4795,12 @@
           tagId: params.tagId,
           element: params.element,
           index: index,
-          options: data
+          options: data,
         });
       }
       load(tagId, options, index) {
         const params = {
-          index: index
+          index: index,
         };
         if (typeof tagId === "string") {
           params.tagId = tagId;
@@ -3770,15 +4808,17 @@
           params.options = tagId;
         }
         if (typeof options === "number") {
-          params.index = options !== null && options !== void 0 ? options : params.index;
+          params.index =
+            options !== null && options !== void 0 ? options : params.index;
         } else {
-          params.options = options !== null && options !== void 0 ? options : params.options;
+          params.options =
+            options !== null && options !== void 0 ? options : params.options;
         }
         return this.loadOptions(params);
       }
       async set(id, domContainer, options, index) {
         const params = {
-          index: index
+          index: index,
         };
         if (typeof id === "string") {
           params.tagId = id;
@@ -3793,7 +4833,8 @@
         if (typeof options === "number") {
           params.index = options;
         } else {
-          params.options = options !== null && options !== void 0 ? options : params.options;
+          params.options =
+            options !== null && options !== void 0 ? options : params.options;
         }
         return this.loadOptions(params);
       }
@@ -3808,7 +4849,7 @@
         return this.loadRemoteOptions({
           tagId: id,
           url: url,
-          index: index
+          index: index,
         });
       }
       async setJSON(id, domContainer, jsonUrl, index) {
@@ -3827,25 +4868,29 @@
           tagId: newId,
           url: url,
           index: newIndex,
-          element: element
+          element: element,
         });
       }
       setOnClickHandler(callback) {
         const dom = this.dom();
         if (dom.length === 0) {
-          throw new Error("Can only set click handlers after calling tsParticles.load() or tsParticles.loadJSON()");
+          throw new Error(
+            "Can only set click handlers after calling tsParticles.load() or tsParticles.loadJSON()"
+          );
         }
         for (const domItem of dom) {
           domItem.addClickHandler(callback);
         }
       }
     }
-    _Loader_engine = new WeakMap;
+    _Loader_engine = new WeakMap();
     function NumberUtils_clamp(num, min, max) {
       return Math.min(Math.max(num, min), max);
     }
     function NumberUtils_mix(comp1, comp2, weight1, weight2) {
-      return Math.floor((comp1 * weight1 + comp2 * weight2) / (weight1 + weight2));
+      return Math.floor(
+        (comp1 * weight1 + comp2 * weight2) / (weight1 + weight2)
+      );
     }
     function NumberUtils_randomInRange(r) {
       const max = NumberUtils_getRangeMax(r);
@@ -3856,7 +4901,9 @@
       return Math.random() * (max - min) + min;
     }
     function NumberUtils_getRangeValue(value) {
-      return typeof value === "number" ? value : NumberUtils_randomInRange(value);
+      return typeof value === "number"
+        ? value
+        : NumberUtils_randomInRange(value);
     }
     function NumberUtils_getRangeMin(value) {
       return typeof value === "number" ? value : value.min;
@@ -3865,22 +4912,35 @@
       return typeof value === "number" ? value : value.max;
     }
     function NumberUtils_setRangeValue(source, value) {
-      if (source === value || value === undefined && typeof source === "number") {
+      if (
+        source === value ||
+        (value === undefined && typeof source === "number")
+      ) {
         return source;
       }
-      const min = NumberUtils_getRangeMin(source), max = NumberUtils_getRangeMax(source);
-      return value !== undefined ? {
-        min: Math.min(min, value),
-        max: Math.max(max, value)
-      } : NumberUtils_setRangeValue(min, max);
+      const min = NumberUtils_getRangeMin(source),
+        max = NumberUtils_getRangeMax(source);
+      return value !== undefined
+        ? {
+            min: Math.min(min, value),
+            max: Math.max(max, value),
+          }
+        : NumberUtils_setRangeValue(min, max);
     }
     function NumberUtils_getValue(options) {
       const random = options.random;
-      const {enable: enable, minimumValue: minimumValue} = typeof random === "boolean" ? {
-        enable: random,
-        minimumValue: 0
-      } : random;
-      return enable ? NumberUtils_getRangeValue(NumberUtils_setRangeValue(options.value, minimumValue)) : NumberUtils_getRangeValue(options.value);
+      const { enable: enable, minimumValue: minimumValue } =
+        typeof random === "boolean"
+          ? {
+              enable: random,
+              minimumValue: 0,
+            }
+          : random;
+      return enable
+        ? NumberUtils_getRangeValue(
+            NumberUtils_setRangeValue(options.value, minimumValue)
+          )
+        : NumberUtils_getRangeValue(options.value);
     }
     function NumberUtils_getDistances(pointA, pointB) {
       const dx = pointA.x - pointB.x;
@@ -3888,7 +4948,7 @@
       return {
         dx: dx,
         dy: dy,
-        distance: Math.sqrt(dx * dx + dy * dy)
+        distance: Math.sqrt(dx * dx + dy * dy),
       };
     }
     function NumberUtils_getDistance(pointA, pointB) {
@@ -3896,36 +4956,36 @@
     }
     function NumberUtils_getParticleDirectionAngle(direction) {
       if (typeof direction === "number") {
-        return direction * Math.PI / 180;
+        return (direction * Math.PI) / 180;
       } else {
         switch (direction) {
-         case "top":
-          return -Math.PI / 2;
+          case "top":
+            return -Math.PI / 2;
 
-         case "top-right":
-          return -Math.PI / 4;
+          case "top-right":
+            return -Math.PI / 4;
 
-         case "right":
-          return 0;
+          case "right":
+            return 0;
 
-         case "bottom-right":
-          return Math.PI / 4;
+          case "bottom-right":
+            return Math.PI / 4;
 
-         case "bottom":
-          return Math.PI / 2;
+          case "bottom":
+            return Math.PI / 2;
 
-         case "bottom-left":
-          return 3 * Math.PI / 4;
+          case "bottom-left":
+            return (3 * Math.PI) / 4;
 
-         case "left":
-          return Math.PI;
+          case "left":
+            return Math.PI;
 
-         case "top-left":
-          return -3 * Math.PI / 4;
+          case "top-left":
+            return (-3 * Math.PI) / 4;
 
-         case "none":
-         default:
-          return Math.random() * Math.PI * 2;
+          case "none":
+          default:
+            return Math.random() * Math.PI * 2;
         }
       }
     }
@@ -3936,48 +4996,69 @@
       return baseVelocity;
     }
     function NumberUtils_collisionVelocity(v1, v2, m1, m2) {
-      return Vector.create(v1.x * (m1 - m2) / (m1 + m2) + v2.x * 2 * m2 / (m1 + m2), v1.y);
+      return Vector.create(
+        (v1.x * (m1 - m2)) / (m1 + m2) + (v2.x * 2 * m2) / (m1 + m2),
+        v1.y
+      );
     }
     function calcEasing(value, type) {
       switch (type) {
-       case "ease-out-quad":
-        return 1 - (1 - value) ** 2;
+        case "ease-out-quad":
+          return 1 - (1 - value) ** 2;
 
-       case "ease-out-cubic":
-        return 1 - (1 - value) ** 3;
+        case "ease-out-cubic":
+          return 1 - (1 - value) ** 3;
 
-       case "ease-out-quart":
-        return 1 - (1 - value) ** 4;
+        case "ease-out-quart":
+          return 1 - (1 - value) ** 4;
 
-       case "ease-out-quint":
-        return 1 - (1 - value) ** 5;
+        case "ease-out-quint":
+          return 1 - (1 - value) ** 5;
 
-       case "ease-out-expo":
-        return value === 1 ? 1 : 1 - Math.pow(2, -10 * value);
+        case "ease-out-expo":
+          return value === 1 ? 1 : 1 - Math.pow(2, -10 * value);
 
-       case "ease-out-sine":
-        return Math.sin(value * Math.PI / 2);
+        case "ease-out-sine":
+          return Math.sin((value * Math.PI) / 2);
 
-       case "ease-out-back":
-        {
+        case "ease-out-back": {
           const c1 = 1.70158;
           const c3 = c1 + 1;
           return 1 + c3 * Math.pow(value - 1, 3) + c1 * Math.pow(value - 1, 2);
         }
 
-       case "ease-out-circ":
-        return Math.sqrt(1 - Math.pow(value - 1, 2));
+        case "ease-out-circ":
+          return Math.sqrt(1 - Math.pow(value - 1, 2));
 
-       default:
-        return value;
+        default:
+          return value;
       }
     }
-    function rectSideBounce(pSide, pOtherSide, rectSide, rectOtherSide, velocity, factor) {
+    function rectSideBounce(
+      pSide,
+      pOtherSide,
+      rectSide,
+      rectOtherSide,
+      velocity,
+      factor
+    ) {
       const res = {
-        bounced: false
+        bounced: false,
       };
-      if (pOtherSide.min >= rectOtherSide.min && pOtherSide.min <= rectOtherSide.max && pOtherSide.max >= rectOtherSide.min && pOtherSide.max <= rectOtherSide.max) {
-        if (pSide.max >= rectSide.min && pSide.max <= (rectSide.max + rectSide.min) / 2 && velocity > 0 || pSide.min <= rectSide.max && pSide.min > (rectSide.max + rectSide.min) / 2 && velocity < 0) {
+      if (
+        pOtherSide.min >= rectOtherSide.min &&
+        pOtherSide.min <= rectOtherSide.max &&
+        pOtherSide.max >= rectOtherSide.min &&
+        pOtherSide.max <= rectOtherSide.max
+      ) {
+        if (
+          (pSide.max >= rectSide.min &&
+            pSide.max <= (rectSide.max + rectSide.min) / 2 &&
+            velocity > 0) ||
+          (pSide.min <= rectSide.max &&
+            pSide.min > (rectSide.max + rectSide.min) / 2 &&
+            velocity < 0)
+        ) {
           res.velocity = velocity * -factor;
           res.bounced = true;
         }
@@ -3997,32 +5078,75 @@
       }
     }
     function Utils_isSsr() {
-      return typeof window === "undefined" || !window || typeof window.document === "undefined" || !window.document;
+      return (
+        typeof window === "undefined" ||
+        !window ||
+        typeof window.document === "undefined" ||
+        !window.document
+      );
     }
     function Utils_animate() {
-      return Utils_isSsr() ? callback => setTimeout(callback) : callback => (window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || window.setTimeout)(callback);
+      return Utils_isSsr()
+        ? (callback) => setTimeout(callback)
+        : (callback) =>
+            (
+              window.requestAnimationFrame ||
+              window.webkitRequestAnimationFrame ||
+              window.mozRequestAnimationFrame ||
+              window.oRequestAnimationFrame ||
+              window.msRequestAnimationFrame ||
+              window.setTimeout
+            )(callback);
     }
     function Utils_cancelAnimation() {
-      return Utils_isSsr() ? handle => clearTimeout(handle) : handle => (window.cancelAnimationFrame || window.webkitCancelRequestAnimationFrame || window.mozCancelRequestAnimationFrame || window.oCancelRequestAnimationFrame || window.msCancelRequestAnimationFrame || window.clearTimeout)(handle);
+      return Utils_isSsr()
+        ? (handle) => clearTimeout(handle)
+        : (handle) =>
+            (
+              window.cancelAnimationFrame ||
+              window.webkitCancelRequestAnimationFrame ||
+              window.mozCancelRequestAnimationFrame ||
+              window.oCancelRequestAnimationFrame ||
+              window.msCancelRequestAnimationFrame ||
+              window.clearTimeout
+            )(handle);
     }
     function Utils_isInArray(value, array) {
-      return value === array || array instanceof Array && array.indexOf(value) > -1;
+      return (
+        value === array || (array instanceof Array && array.indexOf(value) > -1)
+      );
     }
     async function loadFont(character) {
       var _a, _b;
       try {
-        await document.fonts.load(`${(_a = character.weight) !== null && _a !== void 0 ? _a : "400"} 36px '${(_b = character.font) !== null && _b !== void 0 ? _b : "Verdana"}'`);
+        await document.fonts.load(
+          `${
+            (_a = character.weight) !== null && _a !== void 0 ? _a : "400"
+          } 36px '${
+            (_b = character.font) !== null && _b !== void 0 ? _b : "Verdana"
+          }'`
+        );
       } catch (_c) {}
     }
     function arrayRandomIndex(array) {
       return Math.floor(Math.random() * array.length);
     }
     function Utils_itemFromArray(array, index, useIndex = true) {
-      const fixedIndex = index !== undefined && useIndex ? index % array.length : arrayRandomIndex(array);
+      const fixedIndex =
+        index !== undefined && useIndex
+          ? index % array.length
+          : arrayRandomIndex(array);
       return array[fixedIndex];
     }
     function isPointInside(point, size, radius, direction) {
-      return areBoundsInside(calculateBounds(point, radius !== null && radius !== void 0 ? radius : 0), size, direction);
+      return areBoundsInside(
+        calculateBounds(
+          point,
+          radius !== null && radius !== void 0 ? radius : 0
+        ),
+        size,
+        direction
+      );
     }
     function areBoundsInside(bounds, size, direction) {
       let inside = true;
@@ -4045,7 +5169,7 @@
         bottom: point.y + radius,
         left: point.x - radius,
         right: point.x + radius,
-        top: point.y - radius
+        top: point.y - radius,
       };
     }
     function Utils_deepExtend(destination, ...sources) {
@@ -4058,9 +5182,19 @@
           continue;
         }
         const sourceIsArray = Array.isArray(source);
-        if (sourceIsArray && (typeof destination !== "object" || !destination || !Array.isArray(destination))) {
+        if (
+          sourceIsArray &&
+          (typeof destination !== "object" ||
+            !destination ||
+            !Array.isArray(destination))
+        ) {
           destination = [];
-        } else if (!sourceIsArray && (typeof destination !== "object" || !destination || Array.isArray(destination))) {
+        } else if (
+          !sourceIsArray &&
+          (typeof destination !== "object" ||
+            !destination ||
+            Array.isArray(destination))
+        ) {
           destination = {};
         }
         for (const key in source) {
@@ -4071,13 +5205,18 @@
           const value = sourceDict[key];
           const isObject = typeof value === "object";
           const destDict = destination;
-          destDict[key] = isObject && Array.isArray(value) ? value.map((v => Utils_deepExtend(destDict[key], v))) : Utils_deepExtend(destDict[key], value);
+          destDict[key] =
+            isObject && Array.isArray(value)
+              ? value.map((v) => Utils_deepExtend(destDict[key], v))
+              : Utils_deepExtend(destDict[key], value);
         }
       }
       return destination;
     }
     function isDivModeEnabled(mode, divs) {
-      return divs instanceof Array ? !!divs.find((t => t.enable && Utils_isInArray(mode, t.mode))) : Utils_isInArray(mode, divs.mode);
+      return divs instanceof Array
+        ? !!divs.find((t) => t.enable && Utils_isInArray(mode, t.mode))
+        : Utils_isInArray(mode, divs.mode);
     }
     function divModeExecute(mode, divs, callback) {
       if (divs instanceof Array) {
@@ -4111,7 +5250,7 @@
         return;
       }
       if (divs instanceof Array) {
-        return divs.find((d => checkSelector(element, d.selectors)));
+        return divs.find((d) => checkSelector(element, d.selectors));
       } else if (checkSelector(element, divs.selectors)) {
         return divs;
       }
@@ -4122,13 +5261,18 @@
         radius: p.getRadius(),
         mass: p.getMass(),
         velocity: p.velocity,
-        factor: Vector.create(getValue(p.options.bounce.horizontal), getValue(p.options.bounce.vertical))
+        factor: Vector.create(
+          getValue(p.options.bounce.horizontal),
+          getValue(p.options.bounce.vertical)
+        ),
       };
     }
     function circleBounce(p1, p2) {
-      const {x: xVelocityDiff, y: yVelocityDiff} = p1.velocity.sub(p2.velocity);
-      const [pos1, pos2] = [ p1.position, p2.position ];
-      const {dx: xDist, dy: yDist} = getDistances(pos2, pos1);
+      const { x: xVelocityDiff, y: yVelocityDiff } = p1.velocity.sub(
+        p2.velocity
+      );
+      const [pos1, pos2] = [p1.position, p2.position];
+      const { dx: xDist, dy: yDist } = getDistances(pos2, pos1);
       if (xVelocityDiff * xDist + yVelocityDiff * yDist >= 0) {
         const angle = -Math.atan2(yDist, xDist);
         const m1 = p1.mass;
@@ -4149,19 +5293,26 @@
       const pPos = particle.getPosition();
       const size = particle.getRadius();
       const bounds = calculateBounds(pPos, size);
-      const resH = rectSideBounce({
-        min: bounds.left,
-        max: bounds.right
-      }, {
-        min: bounds.top,
-        max: bounds.bottom
-      }, {
-        min: divBounds.left,
-        max: divBounds.right
-      }, {
-        min: divBounds.top,
-        max: divBounds.bottom
-      }, particle.velocity.x, getValue(particle.options.bounce.horizontal));
+      const resH = rectSideBounce(
+        {
+          min: bounds.left,
+          max: bounds.right,
+        },
+        {
+          min: bounds.top,
+          max: bounds.bottom,
+        },
+        {
+          min: divBounds.left,
+          max: divBounds.right,
+        },
+        {
+          min: divBounds.top,
+          max: divBounds.bottom,
+        },
+        particle.velocity.x,
+        getValue(particle.options.bounce.horizontal)
+      );
       if (resH.bounced) {
         if (resH.velocity !== undefined) {
           particle.velocity.x = resH.velocity;
@@ -4170,19 +5321,26 @@
           particle.position.x = resH.position;
         }
       }
-      const resV = rectSideBounce({
-        min: bounds.top,
-        max: bounds.bottom
-      }, {
-        min: bounds.left,
-        max: bounds.right
-      }, {
-        min: divBounds.top,
-        max: divBounds.bottom
-      }, {
-        min: divBounds.left,
-        max: divBounds.right
-      }, particle.velocity.y, getValue(particle.options.bounce.vertical));
+      const resV = rectSideBounce(
+        {
+          min: bounds.top,
+          max: bounds.bottom,
+        },
+        {
+          min: bounds.left,
+          max: bounds.right,
+        },
+        {
+          min: divBounds.top,
+          max: divBounds.bottom,
+        },
+        {
+          min: divBounds.left,
+          max: divBounds.right,
+        },
+        particle.velocity.y,
+        getValue(particle.options.bounce.vertical)
+      );
       if (resV.bounced) {
         if (resV.velocity !== undefined) {
           particle.velocity.y = resV.velocity;
@@ -4213,43 +5371,58 @@
     }
     function stringToRgba(input) {
       if (input.startsWith("rgb")) {
-        const regex = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*([\d.]+)\s*)?\)/i;
+        const regex =
+          /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*([\d.]+)\s*)?\)/i;
         const result = regex.exec(input);
-        return result ? {
-          a: result.length > 4 ? parseFloat(result[5]) : 1,
-          b: parseInt(result[3], 10),
-          g: parseInt(result[2], 10),
-          r: parseInt(result[1], 10)
-        } : undefined;
+        return result
+          ? {
+              a: result.length > 4 ? parseFloat(result[5]) : 1,
+              b: parseInt(result[3], 10),
+              g: parseInt(result[2], 10),
+              r: parseInt(result[1], 10),
+            }
+          : undefined;
       } else if (input.startsWith("hsl")) {
-        const regex = /hsla?\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*(,\s*([\d.]+)\s*)?\)/i;
+        const regex =
+          /hsla?\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*(,\s*([\d.]+)\s*)?\)/i;
         const result = regex.exec(input);
-        return result ? hslaToRgba({
-          a: result.length > 4 ? parseFloat(result[5]) : 1,
-          h: parseInt(result[1], 10),
-          l: parseInt(result[3], 10),
-          s: parseInt(result[2], 10)
-        }) : undefined;
+        return result
+          ? hslaToRgba({
+              a: result.length > 4 ? parseFloat(result[5]) : 1,
+              h: parseInt(result[1], 10),
+              l: parseInt(result[3], 10),
+              s: parseInt(result[2], 10),
+            })
+          : undefined;
       } else if (input.startsWith("hsv")) {
-        const regex = /hsva?\(\s*(\d+)°\s*,\s*(\d+)%\s*,\s*(\d+)%\s*(,\s*([\d.]+)\s*)?\)/i;
+        const regex =
+          /hsva?\(\s*(\d+)°\s*,\s*(\d+)%\s*,\s*(\d+)%\s*(,\s*([\d.]+)\s*)?\)/i;
         const result = regex.exec(input);
-        return result ? hsvaToRgba({
-          a: result.length > 4 ? parseFloat(result[5]) : 1,
-          h: parseInt(result[1], 10),
-          s: parseInt(result[2], 10),
-          v: parseInt(result[3], 10)
-        }) : undefined;
+        return result
+          ? hsvaToRgba({
+              a: result.length > 4 ? parseFloat(result[5]) : 1,
+              h: parseInt(result[1], 10),
+              s: parseInt(result[2], 10),
+              v: parseInt(result[3], 10),
+            })
+          : undefined;
       } else {
         const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])([a-f\d])?$/i;
-        const hexFixed = input.replace(shorthandRegex, ((_m, r, g, b, a) => r + r + g + g + b + b + (a !== undefined ? a + a : "")));
+        const hexFixed = input.replace(
+          shorthandRegex,
+          (_m, r, g, b, a) =>
+            r + r + g + g + b + b + (a !== undefined ? a + a : "")
+        );
         const regex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})?$/i;
         const result = regex.exec(hexFixed);
-        return result ? {
-          a: result[4] !== undefined ? parseInt(result[4], 16) / 255 : 1,
-          b: parseInt(result[3], 16),
-          g: parseInt(result[2], 16),
-          r: parseInt(result[1], 16)
-        } : undefined;
+        return result
+          ? {
+              a: result[4] !== undefined ? parseInt(result[4], 16) / 255 : 1,
+              b: parseInt(result[3], 16),
+              g: parseInt(result[2], 16),
+              r: parseInt(result[1], 16),
+            }
+          : undefined;
       }
     }
     function ColorUtils_colorToRgb(input, index, useIndex = true) {
@@ -4257,9 +5430,12 @@
       if (input === undefined) {
         return;
       }
-      const color = typeof input === "string" ? {
-        value: input
-      } : input;
+      const color =
+        typeof input === "string"
+          ? {
+              value: input,
+            }
+          : input;
       let res;
       if (typeof color.value === "string") {
         if (color.value === Constants.randomColorValue) {
@@ -4271,19 +5447,26 @@
         if (color.value instanceof Array) {
           const colorSelected = itemFromArray(color.value, index, useIndex);
           res = ColorUtils_colorToRgb({
-            value: colorSelected
+            value: colorSelected,
           });
         } else {
           const colorValue = color.value;
-          const rgbColor = (_a = colorValue.rgb) !== null && _a !== void 0 ? _a : color.value;
+          const rgbColor =
+            (_a = colorValue.rgb) !== null && _a !== void 0 ? _a : color.value;
           if (rgbColor.r !== undefined) {
             res = rgbColor;
           } else {
-            const hslColor = (_b = colorValue.hsl) !== null && _b !== void 0 ? _b : color.value;
+            const hslColor =
+              (_b = colorValue.hsl) !== null && _b !== void 0
+                ? _b
+                : color.value;
             if (hslColor.h !== undefined && hslColor.l !== undefined) {
               res = hslToRgb(hslColor);
             } else {
-              const hsvColor = (_c = colorValue.hsv) !== null && _c !== void 0 ? _c : color.value;
+              const hsvColor =
+                (_c = colorValue.hsv) !== null && _c !== void 0
+                  ? _c
+                  : color.value;
               if (hsvColor.h !== undefined && hsvColor.v !== undefined) {
                 res = hsvToRgb(hsvColor);
               }
@@ -4306,11 +5489,20 @@
       const res = {
         h: 0,
         l: (max + min) / 2,
-        s: 0
+        s: 0,
       };
       if (max != min) {
-        res.s = res.l < .5 ? (max - min) / (max + min) : (max - min) / (2 - max - min);
-        res.h = r1 === max ? (g1 - b1) / (max - min) : res.h = g1 === max ? 2 + (b1 - r1) / (max - min) : 4 + (r1 - g1) / (max - min);
+        res.s =
+          res.l < 0.5
+            ? (max - min) / (max + min)
+            : (max - min) / (2 - max - min);
+        res.h =
+          r1 === max
+            ? (g1 - b1) / (max - min)
+            : (res.h =
+                g1 === max
+                  ? 2 + (b1 - r1) / (max - min)
+                  : 4 + (r1 - g1) / (max - min));
       }
       res.l *= 100;
       res.s *= 100;
@@ -4322,7 +5514,9 @@
     }
     function stringToAlpha(input) {
       var _a;
-      return (_a = stringToRgba(input)) === null || _a === void 0 ? void 0 : _a.a;
+      return (_a = stringToRgba(input)) === null || _a === void 0
+        ? void 0
+        : _a.a;
     }
     function stringToRgb(input) {
       return stringToRgba(input);
@@ -4331,19 +5525,22 @@
       const result = {
         b: 0,
         g: 0,
-        r: 0
+        r: 0,
       };
       const hslPercent = {
         h: hsl.h / 360,
         l: hsl.l / 100,
-        s: hsl.s / 100
+        s: hsl.s / 100,
       };
       if (hslPercent.s === 0) {
         result.b = hslPercent.l;
         result.g = hslPercent.l;
         result.r = hslPercent.l;
       } else {
-        const q = hslPercent.l < .5 ? hslPercent.l * (1 + hslPercent.s) : hslPercent.l + hslPercent.s - hslPercent.l * hslPercent.s;
+        const q =
+          hslPercent.l < 0.5
+            ? hslPercent.l * (1 + hslPercent.s)
+            : hslPercent.l + hslPercent.s - hslPercent.l * hslPercent.s;
         const p = 2 * hslPercent.l - q;
         result.r = hue2rgb(p, q, hslPercent.h + 1 / 3);
         result.g = hue2rgb(p, q, hslPercent.h);
@@ -4360,16 +5557,18 @@
         a: hsla.a,
         b: rgbResult.b,
         g: rgbResult.g,
-        r: rgbResult.r
+        r: rgbResult.r,
       };
     }
     function hslToHsv(hsl) {
-      const l = hsl.l / 100, sl = hsl.s / 100;
-      const v = l + sl * Math.min(l, 1 - l), sv = !v ? 0 : 2 * (1 - l / v);
+      const l = hsl.l / 100,
+        sl = hsl.s / 100;
+      const v = l + sl * Math.min(l, 1 - l),
+        sv = !v ? 0 : 2 * (1 - l / v);
       return {
         h: hsl.h,
         s: sv * 100,
-        v: v * 100
+        v: v * 100,
       };
     }
     function hslaToHsva(hsla) {
@@ -4378,16 +5577,18 @@
         a: hsla.a,
         h: hsvResult.h,
         s: hsvResult.s,
-        v: hsvResult.v
+        v: hsvResult.v,
       };
     }
     function hsvToHsl(hsv) {
-      const v = hsv.v / 100, sv = hsv.s / 100;
-      const l = v * (1 - sv / 2), sl = l === 0 || l === 1 ? 0 : (v - l) / Math.min(l, 1 - l);
+      const v = hsv.v / 100,
+        sv = hsv.s / 100;
+      const l = v * (1 - sv / 2),
+        sl = l === 0 || l === 1 ? 0 : (v - l) / Math.min(l, 1 - l);
       return {
         h: hsv.h,
         l: l * 100,
-        s: sl * 100
+        s: sl * 100,
       };
     }
     function hsvaToHsla(hsva) {
@@ -4396,57 +5597,58 @@
         a: hsva.a,
         h: hslResult.h,
         l: hslResult.l,
-        s: hslResult.s
+        s: hslResult.s,
       };
     }
     function hsvToRgb(hsv) {
       const result = {
         b: 0,
         g: 0,
-        r: 0
+        r: 0,
       };
       const hsvPercent = {
         h: hsv.h / 60,
         s: hsv.s / 100,
-        v: hsv.v / 100
+        v: hsv.v / 100,
       };
-      const c = hsvPercent.v * hsvPercent.s, x = c * (1 - Math.abs(hsvPercent.h % 2 - 1));
+      const c = hsvPercent.v * hsvPercent.s,
+        x = c * (1 - Math.abs((hsvPercent.h % 2) - 1));
       let tempRgb;
       if (hsvPercent.h >= 0 && hsvPercent.h <= 1) {
         tempRgb = {
           r: c,
           g: x,
-          b: 0
+          b: 0,
         };
       } else if (hsvPercent.h > 1 && hsvPercent.h <= 2) {
         tempRgb = {
           r: x,
           g: c,
-          b: 0
+          b: 0,
         };
       } else if (hsvPercent.h > 2 && hsvPercent.h <= 3) {
         tempRgb = {
           r: 0,
           g: c,
-          b: x
+          b: x,
         };
       } else if (hsvPercent.h > 3 && hsvPercent.h <= 4) {
         tempRgb = {
           r: 0,
           g: x,
-          b: c
+          b: c,
         };
       } else if (hsvPercent.h > 4 && hsvPercent.h <= 5) {
         tempRgb = {
           r: x,
           g: 0,
-          b: c
+          b: c,
         };
       } else if (hsvPercent.h > 5 && hsvPercent.h <= 6) {
         tempRgb = {
           r: c,
           g: 0,
-          b: x
+          b: x,
         };
       }
       if (tempRgb) {
@@ -4463,15 +5665,19 @@
         a: hsva.a,
         b: rgbResult.b,
         g: rgbResult.g,
-        r: rgbResult.r
+        r: rgbResult.r,
       };
     }
     function rgbToHsv(rgb) {
       const rgbPercent = {
-        r: rgb.r / 255,
-        g: rgb.g / 255,
-        b: rgb.b / 255
-      }, xMax = Math.max(rgbPercent.r, rgbPercent.g, rgbPercent.b), xMin = Math.min(rgbPercent.r, rgbPercent.g, rgbPercent.b), v = xMax, c = xMax - xMin;
+          r: rgb.r / 255,
+          g: rgb.g / 255,
+          b: rgb.b / 255,
+        },
+        xMax = Math.max(rgbPercent.r, rgbPercent.g, rgbPercent.b),
+        xMin = Math.min(rgbPercent.r, rgbPercent.g, rgbPercent.b),
+        v = xMax,
+        c = xMax - xMin;
       let h = 0;
       if (v === rgbPercent.r) {
         h = 60 * ((rgbPercent.g - rgbPercent.b) / c);
@@ -4484,7 +5690,7 @@
       return {
         h: h,
         s: s * 100,
-        v: v * 100
+        v: v * 100,
       };
     }
     function rgbaToHsva(rgba) {
@@ -4493,7 +5699,7 @@
         a: rgba.a,
         h: hsvResult.h,
         s: hsvResult.s,
-        v: hsvResult.v
+        v: hsvResult.v,
       };
     }
     function getRandomRgbColor(min) {
@@ -4501,14 +5707,18 @@
       return {
         b: Math.floor(randomInRange(setRangeValue(fixedMin, 256))),
         g: Math.floor(randomInRange(setRangeValue(fixedMin, 256))),
-        r: Math.floor(randomInRange(setRangeValue(fixedMin, 256)))
+        r: Math.floor(randomInRange(setRangeValue(fixedMin, 256))),
       };
     }
     function ColorUtils_getStyleFromRgb(color, opacity) {
-      return `rgba(${color.r}, ${color.g}, ${color.b}, ${opacity !== null && opacity !== void 0 ? opacity : 1})`;
+      return `rgba(${
+        color.r
+      }, ${color.g}, ${color.b}, ${opacity !== null && opacity !== void 0 ? opacity : 1})`;
     }
     function ColorUtils_getStyleFromHsl(color, opacity) {
-      return `hsla(${color.h}, ${color.s}%, ${color.l}%, ${opacity !== null && opacity !== void 0 ? opacity : 1})`;
+      return `hsla(${
+        color.h
+      }, ${color.s}%, ${color.l}%, ${opacity !== null && opacity !== void 0 ? opacity : 1})`;
     }
     function getStyleFromHsv(color, opacity) {
       return ColorUtils_getStyleFromHsl(hsvToHsl(color), opacity);
@@ -4525,7 +5735,7 @@
       return {
         b: mix(rgb1.b, rgb2.b, size1, size2),
         g: mix(rgb1.g, rgb2.g, size1, size2),
-        r: mix(rgb1.r, rgb2.r, size1, size2)
+        r: mix(rgb1.r, rgb2.r, size1, size2),
       };
     }
     function getLinkColor(p1, p2, linkColor) {
@@ -4533,12 +5743,29 @@
       if (linkColor === Constants.randomColorValue) {
         return getRandomRgbColor();
       } else if (linkColor === "mid") {
-        const sourceColor = (_a = p1.getFillColor()) !== null && _a !== void 0 ? _a : p1.getStrokeColor();
-        const destColor = (_b = p2 === null || p2 === void 0 ? void 0 : p2.getFillColor()) !== null && _b !== void 0 ? _b : p2 === null || p2 === void 0 ? void 0 : p2.getStrokeColor();
+        const sourceColor =
+          (_a = p1.getFillColor()) !== null && _a !== void 0
+            ? _a
+            : p1.getStrokeColor();
+        const destColor =
+          (_b = p2 === null || p2 === void 0 ? void 0 : p2.getFillColor()) !==
+            null && _b !== void 0
+            ? _b
+            : p2 === null || p2 === void 0
+            ? void 0
+            : p2.getStrokeColor();
         if (sourceColor && destColor && p2) {
-          return ColorUtils_colorMix(sourceColor, destColor, p1.getRadius(), p2.getRadius());
+          return ColorUtils_colorMix(
+            sourceColor,
+            destColor,
+            p1.getRadius(),
+            p2.getRadius()
+          );
         } else {
-          const hslColor = sourceColor !== null && sourceColor !== void 0 ? sourceColor : destColor;
+          const hslColor =
+            sourceColor !== null && sourceColor !== void 0
+              ? sourceColor
+              : destColor;
           if (hslColor) {
             return hslToRgb(hslColor);
           }
@@ -4552,7 +5779,7 @@
       if (color === Constants.randomColorValue) {
         if (consent) {
           return ColorUtils_colorToRgb({
-            value: color
+            value: color,
           });
         } else if (blink) {
           return Constants.randomColorValue;
@@ -4561,31 +5788,33 @@
         }
       } else {
         return ColorUtils_colorToRgb({
-          value: color
+          value: color,
         });
       }
     }
     function ColorUtils_getHslFromAnimation(animation) {
-      return animation !== undefined ? {
-        h: animation.h.value,
-        s: animation.s.value,
-        l: animation.l.value
-      } : undefined;
+      return animation !== undefined
+        ? {
+            h: animation.h.value,
+            s: animation.s.value,
+            l: animation.l.value,
+          }
+        : undefined;
     }
     function getHslAnimationFromHsl(hsl, animationOptions, reduceFactor) {
       const resColor = {
         h: {
           enable: false,
-          value: hsl.h
+          value: hsl.h,
         },
         s: {
           enable: false,
-          value: hsl.s
+          value: hsl.s,
         },
         l: {
           enable: false,
-          value: hsl.l
-        }
+          value: hsl.l,
+        },
       };
       if (animationOptions) {
         setColorAnimation(resColor.h, animationOptions.h, reduceFactor);
@@ -4597,7 +5826,7 @@
     function setColorAnimation(colorValue, colorAnimation, reduceFactor) {
       colorValue.enable = colorAnimation.enable;
       if (colorValue.enable) {
-        colorValue.velocity = colorAnimation.speed / 100 * reduceFactor;
+        colorValue.velocity = (colorAnimation.speed / 100) * reduceFactor;
         if (colorAnimation.sync) {
           return;
         }
@@ -4625,14 +5854,30 @@
     }
     function CanvasUtils_paintBase(context, dimension, baseColor) {
       context.save();
-      context.fillStyle = baseColor !== null && baseColor !== void 0 ? baseColor : "rgba(0,0,0,0)";
+      context.fillStyle =
+        baseColor !== null && baseColor !== void 0
+          ? baseColor
+          : "rgba(0,0,0,0)";
       context.fillRect(0, 0, dimension.width, dimension.height);
       context.restore();
     }
     function CanvasUtils_clear(context, dimension) {
       context.clearRect(0, 0, dimension.width, dimension.height);
     }
-    function drawLinkLine(context, width, begin, end, maxDistance, canvasSize, warp, backgroundMask, composite, colorLine, opacity, shadow) {
+    function drawLinkLine(
+      context,
+      width,
+      begin,
+      end,
+      maxDistance,
+      canvasSize,
+      warp,
+      backgroundMask,
+      composite,
+      colorLine,
+      opacity,
+      shadow
+    ) {
       let drawn = false;
       if (getDistance(begin, end) <= maxDistance) {
         drawLine(context, begin, end);
@@ -4642,52 +5887,52 @@
         let pi2;
         const endNE = {
           x: end.x - canvasSize.width,
-          y: end.y
+          y: end.y,
         };
         const d1 = getDistances(begin, endNE);
         if (d1.distance <= maxDistance) {
-          const yi = begin.y - d1.dy / d1.dx * begin.x;
+          const yi = begin.y - (d1.dy / d1.dx) * begin.x;
           pi1 = {
             x: 0,
-            y: yi
+            y: yi,
           };
           pi2 = {
             x: canvasSize.width,
-            y: yi
+            y: yi,
           };
         } else {
           const endSW = {
             x: end.x,
-            y: end.y - canvasSize.height
+            y: end.y - canvasSize.height,
           };
           const d2 = getDistances(begin, endSW);
           if (d2.distance <= maxDistance) {
-            const yi = begin.y - d2.dy / d2.dx * begin.x;
+            const yi = begin.y - (d2.dy / d2.dx) * begin.x;
             const xi = -yi / (d2.dy / d2.dx);
             pi1 = {
               x: xi,
-              y: 0
+              y: 0,
             };
             pi2 = {
               x: xi,
-              y: canvasSize.height
+              y: canvasSize.height,
             };
           } else {
             const endSE = {
               x: end.x - canvasSize.width,
-              y: end.y - canvasSize.height
+              y: end.y - canvasSize.height,
             };
             const d3 = getDistances(begin, endSE);
             if (d3.distance <= maxDistance) {
-              const yi = begin.y - d3.dy / d3.dx * begin.x;
+              const yi = begin.y - (d3.dy / d3.dx) * begin.x;
               const xi = -yi / (d3.dy / d3.dx);
               pi1 = {
                 x: xi,
-                y: yi
+                y: yi,
               };
               pi2 = {
                 x: pi1.x + canvasSize.width,
-                y: pi1.y + canvasSize.height
+                y: pi1.y + canvasSize.height,
               };
             }
           }
@@ -4715,7 +5960,16 @@
       }
       context.stroke();
     }
-    function drawLinkTriangle(context, pos1, pos2, pos3, backgroundMask, composite, colorTriangle, opacityTriangle) {
+    function drawLinkTriangle(
+      context,
+      pos1,
+      pos2,
+      pos3,
+      backgroundMask,
+      composite,
+      colorTriangle,
+      opacityTriangle
+    ) {
       drawTriangle(context, pos1, pos2, pos3);
       if (backgroundMask) {
         context.globalCompositeOperation = composite;
@@ -4723,7 +5977,13 @@
       context.fillStyle = getStyleFromRgb(colorTriangle, opacityTriangle);
       context.fill();
     }
-    function CanvasUtils_drawConnectLine(context, width, lineStyle, begin, end) {
+    function CanvasUtils_drawConnectLine(
+      context,
+      width,
+      lineStyle,
+      begin,
+      end
+    ) {
       context.save();
       drawLine(context, begin, end);
       context.lineWidth = width;
@@ -4741,13 +6001,28 @@
       const sourcePos = p1.getPosition();
       const destPos = p2.getPosition();
       const midRgb = colorMix(color1, color2, p1.getRadius(), p2.getRadius());
-      const grad = context.createLinearGradient(sourcePos.x, sourcePos.y, destPos.x, destPos.y);
+      const grad = context.createLinearGradient(
+        sourcePos.x,
+        sourcePos.y,
+        destPos.x,
+        destPos.y
+      );
       grad.addColorStop(0, getStyleFromHsl(color1, opacity));
-      grad.addColorStop(gradStop > 1 ? 1 : gradStop, getStyleFromRgb(midRgb, opacity));
+      grad.addColorStop(
+        gradStop > 1 ? 1 : gradStop,
+        getStyleFromRgb(midRgb, opacity)
+      );
       grad.addColorStop(1, getStyleFromHsl(color2, opacity));
       return grad;
     }
-    function CanvasUtils_drawGrabLine(context, width, begin, end, colorLine, opacity) {
+    function CanvasUtils_drawGrabLine(
+      context,
+      width,
+      begin,
+      end,
+      colorLine,
+      opacity
+    ) {
       context.save();
       drawLine(context, begin, end);
       context.strokeStyle = getStyleFromRgb(colorLine, opacity);
@@ -4755,7 +6030,20 @@
       context.stroke();
       context.restore();
     }
-    function CanvasUtils_drawParticle(container, context, particle, delta, fillColorValue, strokeColorValue, backgroundMask, composite, radius, opacity, shadow, gradient) {
+    function CanvasUtils_drawParticle(
+      container,
+      context,
+      particle,
+      delta,
+      fillColorValue,
+      strokeColorValue,
+      backgroundMask,
+      composite,
+      radius,
+      opacity,
+      shadow,
+      gradient
+    ) {
       var _a, _b, _c, _d, _e, _f;
       const pos = particle.getPosition();
       const tiltOptions = particle.options.tilt;
@@ -4764,14 +6052,31 @@
       if (tiltOptions.enable || rollOptions.enable) {
         const roll = rollOptions.enable && particle.roll;
         const tilt = tiltOptions.enable && particle.tilt;
-        const rollHorizontal = roll && (rollOptions.mode === "horizontal" || rollOptions.mode === "both");
-        const rollVertical = roll && (rollOptions.mode === "vertical" || rollOptions.mode === "both");
-        context.setTransform(rollHorizontal ? Math.cos(particle.roll.angle) : 1, tilt ? Math.cos(particle.tilt.value) * particle.tilt.cosDirection : 0, tilt ? Math.sin(particle.tilt.value) * particle.tilt.sinDirection : 0, rollVertical ? Math.sin(particle.roll.angle) : 1, pos.x, pos.y);
+        const rollHorizontal =
+          roll &&
+          (rollOptions.mode === "horizontal" || rollOptions.mode === "both");
+        const rollVertical =
+          roll &&
+          (rollOptions.mode === "vertical" || rollOptions.mode === "both");
+        context.setTransform(
+          rollHorizontal ? Math.cos(particle.roll.angle) : 1,
+          tilt ? Math.cos(particle.tilt.value) * particle.tilt.cosDirection : 0,
+          tilt ? Math.sin(particle.tilt.value) * particle.tilt.sinDirection : 0,
+          rollVertical ? Math.sin(particle.roll.angle) : 1,
+          pos.x,
+          pos.y
+        );
       } else {
         context.translate(pos.x, pos.y);
       }
       context.beginPath();
-      const angle = ((_b = (_a = particle.rotate) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : 0) + (particle.options.rotate.path ? particle.velocity.angle : 0);
+      const angle =
+        ((_b =
+          (_a = particle.rotate) === null || _a === void 0
+            ? void 0
+            : _a.value) !== null && _b !== void 0
+          ? _b
+          : 0) + (particle.options.rotate.path ? particle.velocity.angle : 0);
       if (angle !== 0) {
         context.rotate(angle);
       }
@@ -4787,13 +6092,32 @@
       }
       if (gradient) {
         const gradientAngle = gradient.angle.value;
-        const fillGradient = gradient.type === "radial" ? context.createRadialGradient(0, 0, 0, 0, 0, radius) : context.createLinearGradient(Math.cos(gradientAngle) * -radius, Math.sin(gradientAngle) * -radius, Math.cos(gradientAngle) * radius, Math.sin(gradientAngle) * radius);
+        const fillGradient =
+          gradient.type === "radial"
+            ? context.createRadialGradient(0, 0, 0, 0, 0, radius)
+            : context.createLinearGradient(
+                Math.cos(gradientAngle) * -radius,
+                Math.sin(gradientAngle) * -radius,
+                Math.cos(gradientAngle) * radius,
+                Math.sin(gradientAngle) * radius
+              );
         for (const color of gradient.colors) {
-          fillGradient.addColorStop(color.stop, getStyleFromHsl({
-            h: color.value.h.value,
-            s: color.value.s.value,
-            l: color.value.l.value
-          }, (_d = (_c = color.opacity) === null || _c === void 0 ? void 0 : _c.value) !== null && _d !== void 0 ? _d : opacity));
+          fillGradient.addColorStop(
+            color.stop,
+            getStyleFromHsl(
+              {
+                h: color.value.h.value,
+                s: color.value.s.value,
+                l: color.value.l.value,
+              },
+              (_d =
+                (_c = color.opacity) === null || _c === void 0
+                  ? void 0
+                  : _c.value) !== null && _d !== void 0
+                ? _d
+                : opacity
+            )
+          );
         }
         context.fillStyle = fillGradient;
       } else {
@@ -4802,12 +6126,18 @@
         }
       }
       const stroke = particle.stroke;
-      context.lineWidth = (_e = particle.strokeWidth) !== null && _e !== void 0 ? _e : 0;
+      context.lineWidth =
+        (_e = particle.strokeWidth) !== null && _e !== void 0 ? _e : 0;
       if (strokeColorValue) {
         context.strokeStyle = strokeColorValue;
       }
       drawShape(container, context, particle, radius, opacity, delta);
-      if (((_f = stroke === null || stroke === void 0 ? void 0 : stroke.width) !== null && _f !== void 0 ? _f : 0) > 0) {
+      if (
+        ((_f = stroke === null || stroke === void 0 ? void 0 : stroke.width) !==
+          null && _f !== void 0
+          ? _f
+          : 0) > 0
+      ) {
         context.stroke();
       }
       if (particle.close) {
@@ -4819,7 +6149,14 @@
       context.restore();
       context.save();
       if (tiltOptions.enable && particle.tilt) {
-        context.setTransform(1, Math.cos(particle.tilt.value) * particle.tilt.cosDirection, Math.sin(particle.tilt.value) * particle.tilt.sinDirection, 1, pos.x, pos.y);
+        context.setTransform(
+          1,
+          Math.cos(particle.tilt.value) * particle.tilt.cosDirection,
+          Math.sin(particle.tilt.value) * particle.tilt.sinDirection,
+          1,
+          pos.x,
+          pos.y
+        );
       } else {
         context.translate(pos.x, pos.y);
       }
@@ -4829,7 +6166,14 @@
       if (backgroundMask) {
         context.globalCompositeOperation = composite;
       }
-      drawShapeAfterEffect(container, context, particle, radius, opacity, delta);
+      drawShapeAfterEffect(
+        container,
+        context,
+        particle,
+        radius,
+        opacity,
+        delta
+      );
       context.restore();
     }
     function drawShape(container, context, particle, radius, opacity, delta) {
@@ -4840,17 +6184,40 @@
       if (!drawer) {
         return;
       }
-      drawer.draw(context, particle, radius, opacity, delta, container.retina.pixelRatio);
+      drawer.draw(
+        context,
+        particle,
+        radius,
+        opacity,
+        delta,
+        container.retina.pixelRatio
+      );
     }
-    function drawShapeAfterEffect(container, context, particle, radius, opacity, delta) {
+    function drawShapeAfterEffect(
+      container,
+      context,
+      particle,
+      radius,
+      opacity,
+      delta
+    ) {
       if (!particle.shape) {
         return;
       }
       const drawer = container.drawers.get(particle.shape);
-      if (!(drawer === null || drawer === void 0 ? void 0 : drawer.afterEffect)) {
+      if (
+        !(drawer === null || drawer === void 0 ? void 0 : drawer.afterEffect)
+      ) {
         return;
       }
-      drawer.afterEffect(context, particle, radius, opacity, delta, container.retina.pixelRatio);
+      drawer.afterEffect(
+        context,
+        particle,
+        radius,
+        opacity,
+        delta,
+        container.retina.pixelRatio
+      );
     }
     function CanvasUtils_drawPlugin(context, plugin, delta) {
       if (!plugin.draw) {
@@ -4867,7 +6234,17 @@
         context.restore();
       }
     }
-    function drawEllipse(context, particle, fillColorValue, radius, opacity, width, rotation, start, end) {
+    function drawEllipse(
+      context,
+      particle,
+      fillColorValue,
+      radius,
+      opacity,
+      width,
+      rotation,
+      start,
+      end
+    ) {
       const pos = particle.getPosition();
       if (fillColorValue) {
         context.strokeStyle = getStyleFromHsl(fillColorValue, opacity);
@@ -4876,31 +6253,39 @@
         return;
       }
       context.lineWidth = width;
-      const rotationRadian = rotation * Math.PI / 180;
+      const rotationRadian = (rotation * Math.PI) / 180;
       context.beginPath();
-      context.ellipse(pos.x, pos.y, radius / 2, radius * 2, rotationRadian, start, end);
+      context.ellipse(
+        pos.x,
+        pos.y,
+        radius / 2,
+        radius * 2,
+        rotationRadian,
+        start,
+        end
+      );
       context.stroke();
     }
     function CanvasUtils_alterHsl(color, type, value) {
       return {
         h: color.h,
         s: color.s,
-        l: color.l + (type === "darken" ? -1 : 1) * value
+        l: color.l + (type === "darken" ? -1 : 1) * value,
       };
     }
     function checkDestroy(particle, value, minValue, maxValue) {
       switch (particle.options.opacity.animation.destroy) {
-       case "max":
-        if (value >= maxValue) {
-          particle.destroy();
-        }
-        break;
+        case "max":
+          if (value >= maxValue) {
+            particle.destroy();
+          }
+          break;
 
-       case "min":
-        if (value <= minValue) {
-          particle.destroy();
-        }
-        break;
+        case "min":
+          if (value <= minValue) {
+            particle.destroy();
+          }
+          break;
       }
     }
     function updateOpacity(particle, delta) {
@@ -4910,37 +6295,59 @@
       }
       const minValue = particle.opacity.min;
       const maxValue = particle.opacity.max;
-      if (!(!particle.destroyed && particle.opacity.enable && (((_a = particle.opacity.maxLoops) !== null && _a !== void 0 ? _a : 0) <= 0 || ((_b = particle.opacity.loops) !== null && _b !== void 0 ? _b : 0) < ((_c = particle.opacity.maxLoops) !== null && _c !== void 0 ? _c : 0)))) {
+      if (
+        !(
+          !particle.destroyed &&
+          particle.opacity.enable &&
+          (((_a = particle.opacity.maxLoops) !== null && _a !== void 0
+            ? _a
+            : 0) <= 0 ||
+            ((_b = particle.opacity.loops) !== null && _b !== void 0 ? _b : 0) <
+              ((_c = particle.opacity.maxLoops) !== null && _c !== void 0
+                ? _c
+                : 0))
+        )
+      ) {
         return;
       }
       switch (particle.opacity.status) {
-       case 0:
-        if (particle.opacity.value >= maxValue) {
-          particle.opacity.status = 1;
-          if (!particle.opacity.loops) {
-            particle.opacity.loops = 0;
+        case 0:
+          if (particle.opacity.value >= maxValue) {
+            particle.opacity.status = 1;
+            if (!particle.opacity.loops) {
+              particle.opacity.loops = 0;
+            }
+            particle.opacity.loops++;
+          } else {
+            particle.opacity.value +=
+              ((_d = particle.opacity.velocity) !== null && _d !== void 0
+                ? _d
+                : 0) * delta.factor;
           }
-          particle.opacity.loops++;
-        } else {
-          particle.opacity.value += ((_d = particle.opacity.velocity) !== null && _d !== void 0 ? _d : 0) * delta.factor;
-        }
-        break;
+          break;
 
-       case 1:
-        if (particle.opacity.value <= minValue) {
-          particle.opacity.status = 0;
-          if (!particle.opacity.loops) {
-            particle.opacity.loops = 0;
+        case 1:
+          if (particle.opacity.value <= minValue) {
+            particle.opacity.status = 0;
+            if (!particle.opacity.loops) {
+              particle.opacity.loops = 0;
+            }
+            particle.opacity.loops++;
+          } else {
+            particle.opacity.value -=
+              ((_e = particle.opacity.velocity) !== null && _e !== void 0
+                ? _e
+                : 0) * delta.factor;
           }
-          particle.opacity.loops++;
-        } else {
-          particle.opacity.value -= ((_e = particle.opacity.velocity) !== null && _e !== void 0 ? _e : 0) * delta.factor;
-        }
-        break;
+          break;
       }
       checkDestroy(particle, particle.opacity.value, minValue, maxValue);
       if (!particle.destroyed) {
-        particle.opacity.value = NumberUtils_clamp(particle.opacity.value, minValue, maxValue);
+        particle.opacity.value = NumberUtils_clamp(
+          particle.opacity.value,
+          minValue,
+          maxValue
+        );
       }
     }
     class OpacityUpdater {
@@ -4955,7 +6362,7 @@
           min: NumberUtils_getRangeMin(opacityOptions.value),
           value: NumberUtils_getRangeValue(opacityOptions.value),
           loops: 0,
-          maxLoops: opacityOptions.animation.count
+          maxLoops: opacityOptions.animation.count,
         };
         const opacityAnimation = opacityOptions.animation;
         if (opacityAnimation.enable) {
@@ -4964,23 +6371,26 @@
           particle.opacity.min = NumberUtils_getRangeMin(opacityRange);
           particle.opacity.max = NumberUtils_getRangeMax(opacityRange);
           switch (opacityAnimation.startValue) {
-           case "min":
-            particle.opacity.value = particle.opacity.min;
-            particle.opacity.status = 0;
-            break;
+            case "min":
+              particle.opacity.value = particle.opacity.min;
+              particle.opacity.status = 0;
+              break;
 
-           case "random":
-            particle.opacity.value = NumberUtils_randomInRange(particle.opacity);
-            particle.opacity.status = Math.random() >= .5 ? 0 : 1;
-            break;
+            case "random":
+              particle.opacity.value = NumberUtils_randomInRange(
+                particle.opacity
+              );
+              particle.opacity.status = Math.random() >= 0.5 ? 0 : 1;
+              break;
 
-           case "max":
-           default:
-            particle.opacity.value = particle.opacity.max;
-            particle.opacity.status = 1;
-            break;
+            case "max":
+            default:
+              particle.opacity.value = particle.opacity.max;
+              particle.opacity.status = 1;
+              break;
           }
-          particle.opacity.velocity = opacityAnimation.speed / 100 * this.container.retina.reduceFactor;
+          particle.opacity.velocity =
+            (opacityAnimation.speed / 100) * this.container.retina.reduceFactor;
           if (!opacityAnimation.sync) {
             particle.opacity.velocity *= Math.random();
           }
@@ -4988,7 +6398,19 @@
       }
       isEnabled(particle) {
         var _a, _b, _c;
-        return !particle.destroyed && !particle.spawning && !!particle.opacity && particle.opacity.enable && (((_a = particle.opacity.maxLoops) !== null && _a !== void 0 ? _a : 0) <= 0 || ((_b = particle.opacity.loops) !== null && _b !== void 0 ? _b : 0) < ((_c = particle.opacity.maxLoops) !== null && _c !== void 0 ? _c : 0));
+        return (
+          !particle.destroyed &&
+          !particle.spawning &&
+          !!particle.opacity &&
+          particle.opacity.enable &&
+          (((_a = particle.opacity.maxLoops) !== null && _a !== void 0
+            ? _a
+            : 0) <= 0 ||
+            ((_b = particle.opacity.loops) !== null && _b !== void 0 ? _b : 0) <
+              ((_c = particle.opacity.maxLoops) !== null && _c !== void 0
+                ? _c
+                : 0))
+        );
       }
       update(particle, delta) {
         if (!this.isEnabled(particle)) {
@@ -4998,8 +6420,11 @@
       }
     }
     async function loadOpacityUpdater(engine) {
-      await engine.addParticleUpdater("opacity", (container => new OpacityUpdater(container)));
+      await engine.addParticleUpdater(
+        "opacity",
+        (container) => new OpacityUpdater(container)
+      );
     }
     return __webpack_exports__;
-  }();
-}));
+  })();
+});

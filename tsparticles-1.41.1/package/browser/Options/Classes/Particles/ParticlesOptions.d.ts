@@ -28,53 +28,55 @@ import { ZIndex } from "./ZIndex/ZIndex";
  * [[include:Options/Particles.md]]
  * @category Options
  */
-export declare class ParticlesOptions implements IParticles, IOptionLoader<IParticles> {
-    bounce: Bounce;
-    collisions: Collisions;
-    color: AnimatableColor;
-    destroy: Destroy;
-    gradient: SingleOrMultiple<AnimatableGradient>;
-    groups: ParticlesGroups;
-    life: Life;
-    links: Links;
-    move: Move;
-    number: ParticlesNumber;
-    opacity: Opacity;
-    orbit: Orbit;
-    reduceDuplicates: boolean;
-    repulse: Repulse;
-    roll: Roll;
-    rotate: Rotate;
-    shape: Shape;
-    size: Size;
-    shadow: Shadow;
-    stroke: SingleOrMultiple<Stroke>;
-    tilt: Tilt;
-    twinkle: Twinkle;
-    wobble: Wobble;
-    zIndex: ZIndex;
-    /**
-     *
-     * @deprecated this property is obsolete, please use the new links
-     */
-    get line_linked(): Links;
-    /**
-     *
-     * @deprecated this property is obsolete, please use the new links
-     * @param value
-     */
-    set line_linked(value: Links);
-    /**
-     *
-     * @deprecated this property is obsolete, please use the new lineLinked
-     */
-    get lineLinked(): Links;
-    /**
-     *
-     * @deprecated this property is obsolete, please use the new lineLinked
-     * @param value
-     */
-    set lineLinked(value: Links);
-    constructor();
-    load(data?: RecursivePartial<IParticles>): void;
+export declare class ParticlesOptions
+  implements IParticles, IOptionLoader<IParticles>
+{
+  bounce: Bounce;
+  collisions: Collisions;
+  color: AnimatableColor;
+  destroy: Destroy;
+  gradient: SingleOrMultiple<AnimatableGradient>;
+  groups: ParticlesGroups;
+  life: Life;
+  links: Links;
+  move: Move;
+  number: ParticlesNumber;
+  opacity: Opacity;
+  orbit: Orbit;
+  reduceDuplicates: boolean;
+  repulse: Repulse;
+  roll: Roll;
+  rotate: Rotate;
+  shape: Shape;
+  size: Size;
+  shadow: Shadow;
+  stroke: SingleOrMultiple<Stroke>;
+  tilt: Tilt;
+  twinkle: Twinkle;
+  wobble: Wobble;
+  zIndex: ZIndex;
+  /**
+   *
+   * @deprecated this property is obsolete, please use the new links
+   */
+  get line_linked(): Links;
+  /**
+   *
+   * @deprecated this property is obsolete, please use the new links
+   * @param value
+   */
+  set line_linked(value: Links);
+  /**
+   *
+   * @deprecated this property is obsolete, please use the new lineLinked
+   */
+  get lineLinked(): Links;
+  /**
+   *
+   * @deprecated this property is obsolete, please use the new lineLinked
+   * @param value
+   */
+  set lineLinked(value: Links);
+  constructor();
+  load(data?: RecursivePartial<IParticles>): void;
 }

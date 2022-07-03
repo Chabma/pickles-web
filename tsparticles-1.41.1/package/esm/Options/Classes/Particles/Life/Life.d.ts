@@ -4,9 +4,9 @@ import { LifeDelay } from "./LifeDelay";
 import { LifeDuration } from "./LifeDuration";
 import type { RecursivePartial } from "../../../../Types";
 export declare class Life implements ILife, IOptionLoader<ILife> {
-    count: number;
-    delay: LifeDelay;
-    duration: LifeDuration;
-    constructor();
-    load(data?: RecursivePartial<ILife>): void;
+  count: number;
+  delay: LifeDelay;
+  duration: LifeDuration;
+  constructor();
+  load(data?: RecursivePartial<ILife>): void;
 }

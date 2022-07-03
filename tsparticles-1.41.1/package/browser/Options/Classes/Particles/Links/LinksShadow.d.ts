@@ -5,10 +5,12 @@ import type { RecursivePartial } from "../../../../Types";
 /**
  * @category Options
  */
-export declare class LinksShadow implements ILinksShadow, IOptionLoader<ILinksShadow> {
-    blur: number;
-    color: OptionsColor;
-    enable: boolean;
-    constructor();
-    load(data?: RecursivePartial<ILinksShadow>): void;
+export declare class LinksShadow
+  implements ILinksShadow, IOptionLoader<ILinksShadow>
+{
+  blur: number;
+  color: OptionsColor;
+  enable: boolean;
+  constructor();
+  load(data?: RecursivePartial<ILinksShadow>): void;
 }

@@ -5,8 +5,8 @@
 import type { IAnimation } from "./IAnimation";
 import type { RangeValue } from "../../Types";
 export interface IColorAnimation extends IAnimation {
-    /**
-     * The value offset percent applied to color hue
-     */
-    offset: RangeValue;
+  /**
+   * The value offset percent applied to color hue
+   */
+  offset: RangeValue;
 }

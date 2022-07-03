@@ -5,13 +5,15 @@ import type { RecursivePartial } from "../../../../Types";
 /**
  * @category Options
  */
-export declare abstract class RepulseBase implements IRepulseBase, IOptionLoader<IRepulseBase> {
-    distance: number;
-    duration: number;
-    easing: EasingType;
-    factor: number;
-    maxSpeed: number;
-    speed: number;
-    constructor();
-    load(data?: RecursivePartial<IRepulseBase>): void;
+export declare abstract class RepulseBase
+  implements IRepulseBase, IOptionLoader<IRepulseBase>
+{
+  distance: number;
+  duration: number;
+  easing: EasingType;
+  factor: number;
+  maxSpeed: number;
+  speed: number;
+  constructor();
+  load(data?: RecursivePartial<IRepulseBase>): void;
 }

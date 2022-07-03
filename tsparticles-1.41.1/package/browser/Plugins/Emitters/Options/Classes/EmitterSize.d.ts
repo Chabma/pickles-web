@@ -5,10 +5,12 @@ import { SizeMode } from "../../../../Enums";
 /**
  * @category Emitters Plugin
  */
-export declare class EmitterSize implements IEmitterSize, IOptionLoader<IEmitterSize> {
-    mode: SizeMode | keyof typeof SizeMode;
-    height: number;
-    width: number;
-    constructor();
-    load(data?: RecursivePartial<IEmitterSize>): void;
+export declare class EmitterSize
+  implements IEmitterSize, IOptionLoader<IEmitterSize>
+{
+  mode: SizeMode | keyof typeof SizeMode;
+  height: number;
+  width: number;
+  constructor();
+  load(data?: RecursivePartial<IEmitterSize>): void;
 }

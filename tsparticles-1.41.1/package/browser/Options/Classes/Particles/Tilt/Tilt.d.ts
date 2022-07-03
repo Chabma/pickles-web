@@ -8,10 +8,13 @@ import { ValueWithRandom } from "../../ValueWithRandom";
  * [[include:Options/Particles/Rotate.md]]
  * @category Options
  */
-export declare class Tilt extends ValueWithRandom implements ITilt, IOptionLoader<ITilt> {
-    animation: TiltAnimation;
-    direction: TiltDirection | keyof typeof TiltDirection | TiltDirectionAlt;
-    enable: boolean;
-    constructor();
-    load(data?: RecursivePartial<ITilt>): void;
+export declare class Tilt
+  extends ValueWithRandom
+  implements ITilt, IOptionLoader<ITilt>
+{
+  animation: TiltAnimation;
+  direction: TiltDirection | keyof typeof TiltDirection | TiltDirectionAlt;
+  enable: boolean;
+  constructor();
+  load(data?: RecursivePartial<ITilt>): void;
 }

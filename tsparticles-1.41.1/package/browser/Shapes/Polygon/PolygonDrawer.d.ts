@@ -5,6 +5,6 @@ import { PolygonDrawerBase } from "./PolygonDrawerBase";
  * @category Shape Drawers
  */
 export declare class PolygonDrawer extends PolygonDrawerBase {
-    getSidesData(particle: IParticle, radius: number): ISide;
-    getCenter(particle: IParticle, radius: number): ICoordinates;
+  getSidesData(particle: IParticle, radius: number): ISide;
+  getCenter(particle: IParticle, radius: number): ICoordinates;
 }

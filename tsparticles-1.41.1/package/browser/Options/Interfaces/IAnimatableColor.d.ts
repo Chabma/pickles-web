@@ -7,8 +7,8 @@ import type { IOptionsColor } from "./IOptionsColor";
  * @category Options
  */
 export interface IAnimatableColor extends IOptionsColor {
-    /**
-     * The color animation property
-     */
-    animation: IColorAnimation | IHslAnimation;
+  /**
+   * The color animation property
+   */
+  animation: IColorAnimation | IHslAnimation;
 }

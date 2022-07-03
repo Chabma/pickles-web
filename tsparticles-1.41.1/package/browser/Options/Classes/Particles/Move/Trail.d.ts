@@ -6,9 +6,9 @@ import type { RecursivePartial } from "../../../../Types";
  * @category Options
  */
 export declare class Trail implements ITrail, IOptionLoader<ITrail> {
-    enable: boolean;
-    length: number;
-    fillColor: OptionsColor;
-    constructor();
-    load(data?: RecursivePartial<ITrail>): void;
+  enable: boolean;
+  length: number;
+  fillColor: OptionsColor;
+  constructor();
+  load(data?: RecursivePartial<ITrail>): void;
 }

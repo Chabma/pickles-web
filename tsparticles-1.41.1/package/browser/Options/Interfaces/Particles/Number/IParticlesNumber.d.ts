@@ -4,11 +4,11 @@ import type { IDensity } from "./IDensity";
  * @category Options
  */
 export interface IParticlesNumber {
-    /**
-     * @deprecated the property max is deprecated, use the new limit instead
-     */
-    max: number;
-    density: IDensity;
-    limit: number;
-    value: number;
+  /**
+   * @deprecated the property max is deprecated, use the new limit instead
+   */
+  max: number;
+  density: IDensity;
+  limit: number;
+  value: number;
 }

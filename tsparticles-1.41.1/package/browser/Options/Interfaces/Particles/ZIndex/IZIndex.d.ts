@@ -4,7 +4,7 @@ import type { IValueWithRandom } from "../../IValueWithRandom";
  * [[include:Options/Particles/ZIndex.md]]
  */
 export interface IZIndex extends IValueWithRandom {
-    opacityRate: number;
-    velocityRate: number;
-    sizeRate: number;
+  opacityRate: number;
+  velocityRate: number;
+  sizeRate: number;
 }

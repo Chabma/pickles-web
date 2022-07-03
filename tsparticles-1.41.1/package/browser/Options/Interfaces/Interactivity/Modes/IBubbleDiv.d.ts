@@ -3,5 +3,4 @@ import type { IModeDiv } from "./IModeDiv";
 /**
  * @category Options
  */
-export interface IBubbleDiv extends IBubbleBase, IModeDiv {
-}
+export interface IBubbleDiv extends IBubbleBase, IModeDiv {}

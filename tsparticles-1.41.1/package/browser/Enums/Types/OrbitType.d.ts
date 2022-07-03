@@ -2,6 +2,6 @@
  * @category Enums
  */
 export declare const enum OrbitType {
-    front = "front",
-    back = "back"
+  front = "front",
+  back = "back",
 }

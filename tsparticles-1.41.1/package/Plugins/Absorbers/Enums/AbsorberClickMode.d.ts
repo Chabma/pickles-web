@@ -1,3 +1,3 @@
 export declare const enum AbsorberClickMode {
-    absorber = "absorber"
+  absorber = "absorber",
 }

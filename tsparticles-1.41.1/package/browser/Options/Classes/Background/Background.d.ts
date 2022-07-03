@@ -6,13 +6,15 @@ import type { RecursivePartial } from "../../../Types";
  * [[include:Options/Background.md]]
  * @category Options
  */
-export declare class Background implements IBackground, IOptionLoader<IBackground> {
-    color: OptionsColor;
-    image: string;
-    position: string;
-    repeat: string;
-    size: string;
-    opacity: number;
-    constructor();
-    load(data?: RecursivePartial<IBackground>): void;
+export declare class Background
+  implements IBackground, IOptionLoader<IBackground>
+{
+  color: OptionsColor;
+  image: string;
+  position: string;
+  repeat: string;
+  size: string;
+  opacity: number;
+  constructor();
+  load(data?: RecursivePartial<IBackground>): void;
 }

@@ -12,8 +12,8 @@ import type { RecursivePartial } from "../../Types";
  * @category Interfaces
  */
 export interface IPlugin {
-    readonly id: string;
-    needsPlugin(options?: RecursivePartial<IOptions>): boolean;
-    getPlugin(container: Container): IContainerPlugin;
-    loadOptions(options: Options, source?: RecursivePartial<IOptions>): void;
+  readonly id: string;
+  needsPlugin(options?: RecursivePartial<IOptions>): boolean;
+  getPlugin(container: Container): IContainerPlugin;
+  loadOptions(options: Options, source?: RecursivePartial<IOptions>): void;
 }

@@ -8,11 +8,13 @@ import type { RecursivePartial } from "../../../../Types";
  * @category Options
  * [[include:Collisions.md]]
  */
-export declare class Collisions implements ICollisions, IOptionLoader<ICollisions> {
-    bounce: Bounce;
-    enable: boolean;
-    mode: CollisionMode | keyof typeof CollisionMode;
-    overlap: CollisionsOverlap;
-    constructor();
-    load(data?: RecursivePartial<ICollisions>): void;
+export declare class Collisions
+  implements ICollisions, IOptionLoader<ICollisions>
+{
+  bounce: Bounce;
+  enable: boolean;
+  mode: CollisionMode | keyof typeof CollisionMode;
+  overlap: CollisionsOverlap;
+  constructor();
+  load(data?: RecursivePartial<ICollisions>): void;
 }

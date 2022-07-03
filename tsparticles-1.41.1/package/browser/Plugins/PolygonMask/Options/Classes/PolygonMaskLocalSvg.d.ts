@@ -6,9 +6,11 @@ import type { SingleOrMultiple } from "../../../../Types";
 /**
  * @category Polygon Mask Plugin
  */
-export declare class PolygonMaskLocalSvg implements IPolygonMaskLocalSvg, IOptionLoader<IPolygonMaskLocalSvg> {
-    path: SingleOrMultiple<string>;
-    size: IDimension;
-    constructor();
-    load(data?: RecursivePartial<IPolygonMaskLocalSvg>): void;
+export declare class PolygonMaskLocalSvg
+  implements IPolygonMaskLocalSvg, IOptionLoader<IPolygonMaskLocalSvg>
+{
+  path: SingleOrMultiple<string>;
+  size: IDimension;
+  constructor();
+  load(data?: RecursivePartial<IPolygonMaskLocalSvg>): void;
 }

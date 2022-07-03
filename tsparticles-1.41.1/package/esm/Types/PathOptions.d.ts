@@ -1,3 +1,3 @@
 export declare type PathOptions = {
-    [key: string]: unknown;
+  [key: string]: unknown;
 };

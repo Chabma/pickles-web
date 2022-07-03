@@ -4,8 +4,10 @@ import type { RecursivePartial } from "../../../../Types";
 /**
  * @category Options
  */
-export declare class ConnectLinks implements IConnectLinks, IOptionLoader<IConnectLinks> {
-    opacity: number;
-    constructor();
-    load(data?: RecursivePartial<IConnectLinks>): void;
+export declare class ConnectLinks
+  implements IConnectLinks, IOptionLoader<IConnectLinks>
+{
+  opacity: number;
+  constructor();
+  load(data?: RecursivePartial<IConnectLinks>): void;
 }

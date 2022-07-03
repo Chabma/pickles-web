@@ -5,8 +5,8 @@ import type { ICoordinates } from "../../../Core/Interfaces/ICoordinates";
  * [[include:Shadow.md]]
  */
 export interface IShadow {
-    blur: number;
-    color: string | IColor;
-    enable: boolean;
-    offset: ICoordinates;
+  blur: number;
+  color: string | IColor;
+  enable: boolean;
+  offset: ICoordinates;
 }

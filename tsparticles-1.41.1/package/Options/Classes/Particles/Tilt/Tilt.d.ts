@@ -4,10 +4,13 @@ import type { ITilt } from "../../../Interfaces/Particles/Tilt/ITilt";
 import type { RecursivePartial } from "../../../../Types";
 import { TiltAnimation } from "./TiltAnimation";
 import { ValueWithRandom } from "../../ValueWithRandom";
-export declare class Tilt extends ValueWithRandom implements ITilt, IOptionLoader<ITilt> {
-    animation: TiltAnimation;
-    direction: TiltDirection | keyof typeof TiltDirection | TiltDirectionAlt;
-    enable: boolean;
-    constructor();
-    load(data?: RecursivePartial<ITilt>): void;
+export declare class Tilt
+  extends ValueWithRandom
+  implements ITilt, IOptionLoader<ITilt>
+{
+  animation: TiltAnimation;
+  direction: TiltDirection | keyof typeof TiltDirection | TiltDirectionAlt;
+  enable: boolean;
+  constructor();
+  load(data?: RecursivePartial<ITilt>): void;
 }

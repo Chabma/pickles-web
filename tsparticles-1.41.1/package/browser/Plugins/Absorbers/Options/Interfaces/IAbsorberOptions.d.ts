@@ -6,10 +6,10 @@ import type { SingleOrMultiple } from "../../../../Types";
  * @category Absorbers Plugin
  */
 export interface IAbsorberOptions {
-    absorbers: SingleOrMultiple<IAbsorber>;
-    interactivity: IInteractivity & {
-        modes: IModes & {
-            absorbers: SingleOrMultiple<IAbsorber>;
-        };
+  absorbers: SingleOrMultiple<IAbsorber>;
+  interactivity: IInteractivity & {
+    modes: IModes & {
+      absorbers: SingleOrMultiple<IAbsorber>;
     };
+  };
 }

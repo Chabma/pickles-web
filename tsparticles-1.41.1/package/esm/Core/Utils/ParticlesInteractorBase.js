@@ -1,6 +1,6 @@
 export class ParticlesInteractorBase {
-    constructor(container) {
-        this.container = container;
-        this.type = 1;
-    }
+  constructor(container) {
+    this.container = container;
+    this.type = 1;
+  }
 }

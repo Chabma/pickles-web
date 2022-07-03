@@ -6,8 +6,8 @@ import type { ICollisionsOverlap } from "./ICollisionsOverlap";
  * [[include:Collisions.md]]
  */
 export interface ICollisions {
-    bounce: IBounce;
-    enable: boolean;
-    mode: CollisionMode | keyof typeof CollisionMode;
-    overlap: ICollisionsOverlap;
+  bounce: IBounce;
+  enable: boolean;
+  mode: CollisionMode | keyof typeof CollisionMode;
+  overlap: ICollisionsOverlap;
 }

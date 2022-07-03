@@ -8,10 +8,16 @@ import { ValueWithRandom } from "../../ValueWithRandom";
  * [[include:Options/Particles/Rotate.md]]
  * @category Options
  */
-export declare class Rotate extends ValueWithRandom implements IRotate, IOptionLoader<IRotate> {
-    animation: RotateAnimation;
-    direction: RotateDirection | keyof typeof RotateDirection | RotateDirectionAlt;
-    path: boolean;
-    constructor();
-    load(data?: RecursivePartial<IRotate>): void;
+export declare class Rotate
+  extends ValueWithRandom
+  implements IRotate, IOptionLoader<IRotate>
+{
+  animation: RotateAnimation;
+  direction:
+    | RotateDirection
+    | keyof typeof RotateDirection
+    | RotateDirectionAlt;
+  path: boolean;
+  constructor();
+  load(data?: RecursivePartial<IRotate>): void;
 }

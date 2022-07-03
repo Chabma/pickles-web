@@ -6,16 +6,16 @@ import type { IColor } from "../../../Core";
  * @category Options
  */
 export interface IStroke {
-    /**
-     * The stroke color, can be animated too
-     */
-    color?: string | IAnimatableColor | IColor;
-    /**
-     * The stroke opacity
-     */
-    opacity?: number;
-    /**
-     * The stroke line width
-     */
-    width: number;
+  /**
+   * The stroke color, can be animated too
+   */
+  color?: string | IAnimatableColor | IColor;
+  /**
+   * The stroke opacity
+   */
+  opacity?: number;
+  /**
+   * The stroke line width
+   */
+  width: number;
 }

@@ -5,11 +5,11 @@ import type { Container } from "../../../Core";
  * @category Interactions
  */
 export declare class Attractor extends ExternalInteractorBase {
-    constructor(container: Container);
-    isEnabled(): boolean;
-    reset(): void;
-    interact(): Promise<void>;
-    private hoverAttract;
-    private processAttract;
-    private clickAttract;
+  constructor(container: Container);
+  isEnabled(): boolean;
+  reset(): void;
+  interact(): Promise<void>;
+  private hoverAttract;
+  private processAttract;
+  private clickAttract;
 }

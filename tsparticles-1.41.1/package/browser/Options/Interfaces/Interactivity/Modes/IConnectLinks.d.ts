@@ -2,5 +2,5 @@
  * @category Options
  */
 export interface IConnectLinks {
-    opacity: number;
+  opacity: number;
 }

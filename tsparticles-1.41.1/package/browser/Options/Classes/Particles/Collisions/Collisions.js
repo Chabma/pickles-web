@@ -5,23 +5,23 @@ import { CollisionsOverlap } from "./CollisionsOverlap";
  * [[include:Collisions.md]]
  */
 export class Collisions {
-    constructor() {
-        this.bounce = new Bounce();
-        this.enable = false;
-        this.mode = "bounce" /* bounce */;
-        this.overlap = new CollisionsOverlap();
+  constructor() {
+    this.bounce = new Bounce();
+    this.enable = false;
+    this.mode = "bounce" /* bounce */;
+    this.overlap = new CollisionsOverlap();
+  }
+  load(data) {
+    if (data === undefined) {
+      return;
     }
-    load(data) {
-        if (data === undefined) {
-            return;
-        }
-        this.bounce.load(data.bounce);
-        if (data.enable !== undefined) {
-            this.enable = data.enable;
-        }
-        if (data.mode !== undefined) {
-            this.mode = data.mode;
-        }
-        this.overlap.load(data.overlap);
+    this.bounce.load(data.bounce);
+    if (data.enable !== undefined) {
+      this.enable = data.enable;
     }
+    if (data.mode !== undefined) {
+      this.mode = data.mode;
+    }
+    this.overlap.load(data.overlap);
+  }
 }

@@ -7,12 +7,12 @@ import type { RecursivePartial } from "../../Types";
  * @category options
  */
 export interface IManualParticle {
-    /**
-     * Particle position in canvas size percent, if undefined a random position will be used
-     */
-    position?: ICoordinates;
-    /**
-     * Particle options, this properties will override the general particles configuration
-     */
-    options?: RecursivePartial<IParticles>;
+  /**
+   * Particle position in canvas size percent, if undefined a random position will be used
+   */
+  position?: ICoordinates;
+  /**
+   * Particle options, this properties will override the general particles configuration
+   */
+  options?: RecursivePartial<IParticles>;
 }

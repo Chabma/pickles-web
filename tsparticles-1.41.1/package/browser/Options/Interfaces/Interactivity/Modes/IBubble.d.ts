@@ -5,5 +5,5 @@ import type { SingleOrMultiple } from "../../../../Types";
  * @category Options
  */
 export interface IBubble extends IBubbleBase {
-    divs?: SingleOrMultiple<IBubbleDiv>;
+  divs?: SingleOrMultiple<IBubbleDiv>;
 }

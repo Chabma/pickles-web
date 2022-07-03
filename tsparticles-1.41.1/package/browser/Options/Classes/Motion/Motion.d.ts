@@ -7,15 +7,15 @@ import type { RecursivePartial } from "../../../Types";
  * @category Options
  */
 export declare class Motion implements IMotion, IOptionLoader<IMotion> {
-    /**
-     * Disables motions for users with `prefer-reduced-motion` enabled
-     */
-    disable: boolean;
-    /**
-     * Reduce motion settings for users with `prefer-reduced-motion` enabled
-     * If [[disable]] is `true` these values will be ignored
-     */
-    reduce: MotionReduce;
-    constructor();
-    load(data?: RecursivePartial<IMotion>): void;
+  /**
+   * Disables motions for users with `prefer-reduced-motion` enabled
+   */
+  disable: boolean;
+  /**
+   * Reduce motion settings for users with `prefer-reduced-motion` enabled
+   * If [[disable]] is `true` these values will be ignored
+   */
+  reduce: MotionReduce;
+  constructor();
+  load(data?: RecursivePartial<IMotion>): void;
 }

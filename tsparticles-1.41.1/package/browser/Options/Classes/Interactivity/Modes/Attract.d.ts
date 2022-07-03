@@ -6,12 +6,12 @@ import type { RecursivePartial } from "../../../../Types";
  * @category Options
  */
 export declare class Attract implements IAttract, IOptionLoader<IAttract> {
-    distance: number;
-    duration: number;
-    easing: EasingType;
-    factor: number;
-    maxSpeed: number;
-    speed: number;
-    constructor();
-    load(data?: RecursivePartial<IAttract>): void;
+  distance: number;
+  duration: number;
+  easing: EasingType;
+  factor: number;
+  maxSpeed: number;
+  speed: number;
+  constructor();
+  load(data?: RecursivePartial<IAttract>): void;
 }

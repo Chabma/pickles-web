@@ -2,7 +2,7 @@
  * @category Options
  */
 export interface IParallax {
-    enable: boolean;
-    force: number;
-    smooth: number;
+  enable: boolean;
+  force: number;
+  smooth: number;
 }

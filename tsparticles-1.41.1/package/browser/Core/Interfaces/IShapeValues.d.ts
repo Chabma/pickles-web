@@ -4,8 +4,8 @@ import type { RecursivePartial } from "../../Types";
  * @category Options
  */
 export interface IShapeValues {
-    close?: boolean;
-    fill?: boolean;
-    particles?: RecursivePartial<IParticles>;
-    [key: string]: unknown;
+  close?: boolean;
+  fill?: boolean;
+  particles?: RecursivePartial<IParticles>;
+  [key: string]: unknown;
 }

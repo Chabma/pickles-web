@@ -6,7 +6,7 @@ import type { IValueWithRandom } from "../../IValueWithRandom";
  * @category Options
  */
 export interface ITilt extends IValueWithRandom {
-    animation: ITiltAnimation;
-    direction: TiltDirection | keyof typeof TiltDirection | TiltDirectionAlt;
-    enable: boolean;
+  animation: ITiltAnimation;
+  direction: TiltDirection | keyof typeof TiltDirection | TiltDirectionAlt;
+  enable: boolean;
 }

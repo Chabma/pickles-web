@@ -7,8 +7,8 @@ import { TwinkleValues } from "./TwinkleValues";
  * @category Options
  */
 export declare class Twinkle implements ITwinkle, IOptionLoader<ITwinkle> {
-    lines: TwinkleValues;
-    particles: TwinkleValues;
-    constructor();
-    load(data?: RecursivePartial<ITwinkle>): void;
+  lines: TwinkleValues;
+  particles: TwinkleValues;
+  constructor();
+  load(data?: RecursivePartial<ITwinkle>): void;
 }

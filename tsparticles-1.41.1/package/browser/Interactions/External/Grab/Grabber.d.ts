@@ -5,8 +5,8 @@ import type { Container } from "../../../Core";
  * @category Interactions
  */
 export declare class Grabber extends ExternalInteractorBase {
-    constructor(container: Container);
-    isEnabled(): boolean;
-    reset(): void;
-    interact(): Promise<void>;
+  constructor(container: Container);
+  isEnabled(): boolean;
+  reset(): void;
+  interact(): Promise<void>;
 }

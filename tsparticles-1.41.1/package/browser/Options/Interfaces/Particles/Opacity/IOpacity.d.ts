@@ -5,9 +5,9 @@ import type { IValueWithRandom } from "../../IValueWithRandom";
  * @category Options
  */
 export interface IOpacity extends IValueWithRandom {
-    /**
-     * @deprecated use the new animation instead
-     */
-    anim: IOpacityAnimation;
-    animation: IOpacityAnimation;
+  /**
+   * @deprecated use the new animation instead
+   */
+  anim: IOpacityAnimation;
+  animation: IOpacityAnimation;
 }

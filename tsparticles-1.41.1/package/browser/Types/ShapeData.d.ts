@@ -4,5 +4,5 @@ import type { SingleOrMultiple } from "./SingleOrMultiple";
  * @category Types
  */
 export declare type ShapeData = {
-    [type: string]: SingleOrMultiple<IShapeValues>;
+  [type: string]: SingleOrMultiple<IShapeValues>;
 };

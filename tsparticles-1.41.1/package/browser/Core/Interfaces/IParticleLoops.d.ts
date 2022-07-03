@@ -1,4 +1,4 @@
 export interface IParticleLoops {
-    size: number;
-    opacity: number;
+  size: number;
+  opacity: number;
 }

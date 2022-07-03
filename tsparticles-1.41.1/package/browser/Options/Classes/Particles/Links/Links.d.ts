@@ -9,18 +9,18 @@ import type { RecursivePartial } from "../../../../Types";
  * @category Options
  */
 export declare class Links implements ILinks, IOptionLoader<ILinks> {
-    blink: boolean;
-    color: OptionsColor;
-    consent: boolean;
-    distance: number;
-    enable: boolean;
-    frequency: number;
-    id?: string;
-    opacity: number;
-    shadow: LinksShadow;
-    triangles: LinksTriangle;
-    width: number;
-    warp: boolean;
-    constructor();
-    load(data?: RecursivePartial<ILinks>): void;
+  blink: boolean;
+  color: OptionsColor;
+  consent: boolean;
+  distance: number;
+  enable: boolean;
+  frequency: number;
+  id?: string;
+  opacity: number;
+  shadow: LinksShadow;
+  triangles: LinksTriangle;
+  width: number;
+  warp: boolean;
+  constructor();
+  load(data?: RecursivePartial<ILinks>): void;
 }

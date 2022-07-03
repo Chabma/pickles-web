@@ -1,33 +1,32 @@
 import type { SingleOrMultiple } from "../../Types";
 export interface IAlphaColor {
-    a: number;
+  a: number;
 }
 export interface IColor {
-    value: SingleOrMultiple<IValueColor | IRgb | IHsl | IHsv | SingleOrMultiple<string>>;
+  value: SingleOrMultiple<
+    IValueColor | IRgb | IHsl | IHsv | SingleOrMultiple<string>
+  >;
 }
 export interface IHsl {
-    h: number;
-    s: number;
-    l: number;
+  h: number;
+  s: number;
+  l: number;
 }
-export interface IHsla extends IHsl, IAlphaColor {
-}
+export interface IHsla extends IHsl, IAlphaColor {}
 export interface IHsv {
-    h: number;
-    s: number;
-    v: number;
+  h: number;
+  s: number;
+  v: number;
 }
-export interface IHsva extends IHsv, IAlphaColor {
-}
+export interface IHsva extends IHsv, IAlphaColor {}
 export interface IRgb {
-    r: number;
-    g: number;
-    b: number;
+  r: number;
+  g: number;
+  b: number;
 }
-export interface IRgba extends IRgb, IAlphaColor {
-}
+export interface IRgba extends IRgb, IAlphaColor {}
 export interface IValueColor {
-    rgb?: IRgb;
-    hsl?: IHsl;
-    hsv?: IHsv;
+  rgb?: IRgb;
+  hsl?: IHsl;
+  hsv?: IHsv;
 }

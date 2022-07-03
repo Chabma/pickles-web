@@ -5,9 +5,11 @@ import type { RecursivePartial } from "../../../Types";
 /**
  * @category Options
  */
-export declare class BackgroundMaskCover implements IBackgroundMaskCover, IOptionLoader<IBackgroundMaskCover> {
-    color: OptionsColor;
-    opacity: number;
-    constructor();
-    load(data?: RecursivePartial<IBackgroundMaskCover> | undefined): void;
+export declare class BackgroundMaskCover
+  implements IBackgroundMaskCover, IOptionLoader<IBackgroundMaskCover>
+{
+  color: OptionsColor;
+  opacity: number;
+  constructor();
+  load(data?: RecursivePartial<IBackgroundMaskCover> | undefined): void;
 }

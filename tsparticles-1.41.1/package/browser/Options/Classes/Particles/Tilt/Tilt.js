@@ -5,24 +5,24 @@ import { ValueWithRandom } from "../../ValueWithRandom";
  * @category Options
  */
 export class Tilt extends ValueWithRandom {
-    constructor() {
-        super();
-        this.animation = new TiltAnimation();
-        this.direction = "clockwise" /* clockwise */;
-        this.enable = false;
-        this.value = 0;
+  constructor() {
+    super();
+    this.animation = new TiltAnimation();
+    this.direction = "clockwise" /* clockwise */;
+    this.enable = false;
+    this.value = 0;
+  }
+  load(data) {
+    if (!data) {
+      return;
     }
-    load(data) {
-        if (!data) {
-            return;
-        }
-        super.load(data);
-        this.animation.load(data.animation);
-        if (data.direction !== undefined) {
-            this.direction = data.direction;
-        }
-        if (data.enable !== undefined) {
-            this.enable = data.enable;
-        }
+    super.load(data);
+    this.animation.load(data.animation);
+    if (data.direction !== undefined) {
+      this.direction = data.direction;
     }
+    if (data.enable !== undefined) {
+      this.enable = data.enable;
+    }
+  }
 }

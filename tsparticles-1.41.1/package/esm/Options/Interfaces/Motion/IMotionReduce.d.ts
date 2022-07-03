@@ -1,4 +1,4 @@
 export interface IMotionReduce {
-    factor: number;
-    value: boolean;
+  factor: number;
+  value: boolean;
 }

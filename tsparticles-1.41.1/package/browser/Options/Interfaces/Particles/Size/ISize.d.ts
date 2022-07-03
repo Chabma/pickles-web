@@ -5,9 +5,9 @@ import type { IValueWithRandom } from "../../IValueWithRandom";
  * @category Options
  */
 export interface ISize extends IValueWithRandom {
-    /**
-     * @deprecated use the new animation instead
-     */
-    anim: ISizeAnimation;
-    animation: ISizeAnimation;
+  /**
+   * @deprecated use the new animation instead
+   */
+  anim: ISizeAnimation;
+  animation: ISizeAnimation;
 }
