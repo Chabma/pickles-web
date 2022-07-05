@@ -181,9 +181,9 @@ export class OutOfCanvasUpdater {
     if (
       (particle.options.move.distance.horizontal &&
         (direction === "left" /* left */ ||
-          direction === "right") /* right */) ||
+          direction === "right")) /* right */ ||
       (particle.options.move.distance.vertical &&
-        (direction === "top" /* top */ || direction === "bottom") /* bottom */)
+        (direction === "top" /* top */ || direction === "bottom")) /* bottom */
     ) {
       return;
     }

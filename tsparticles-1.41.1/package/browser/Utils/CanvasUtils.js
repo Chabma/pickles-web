@@ -192,11 +192,11 @@ export function drawParticle(
     const rollHorizontal =
       roll &&
       (rollOptions.mode === "horizontal" /* horizontal */ ||
-        rollOptions.mode === "both") /* both */;
+        rollOptions.mode === "both"); /* both */
     const rollVertical =
       roll &&
       (rollOptions.mode === "vertical" /* vertical */ ||
-        rollOptions.mode === "both") /* both */;
+        rollOptions.mode === "both"); /* both */
     context.setTransform(
       rollHorizontal ? Math.cos(particle.roll.angle) : 1,
       tilt ? Math.cos(particle.tilt.value) * particle.tilt.cosDirection : 0,
