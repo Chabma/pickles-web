@@ -7,16 +7,16 @@ import type { RecursivePartial } from "../../../Types";
  * @category Options
  */
 export interface ITheme {
-    /**
-     * Theme name, use it when changing theme
-     */
-    name: string;
-    /**
-     * Options to set the default theme
-     */
-    default: IThemeDefault;
-    /**
-     * All options the theme will override
-     */
-    options?: RecursivePartial<IOptions>;
+  /**
+   * Theme name, use it when changing theme
+   */
+  name: string;
+  /**
+   * Options to set the default theme
+   */
+  default: IThemeDefault;
+  /**
+   * All options the theme will override
+   */
+  options?: RecursivePartial<IOptions>;
 }

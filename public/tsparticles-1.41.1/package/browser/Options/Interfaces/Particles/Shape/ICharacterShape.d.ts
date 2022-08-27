@@ -4,8 +4,8 @@ import type { SingleOrMultiple } from "../../../../Types";
  * @category Options
  */
 export interface ICharacterShape extends IShapeValues {
-    value: SingleOrMultiple<string>;
-    font: string;
-    style: string;
-    weight: string;
+  value: SingleOrMultiple<string>;
+  font: string;
+  style: string;
+  weight: string;
 }

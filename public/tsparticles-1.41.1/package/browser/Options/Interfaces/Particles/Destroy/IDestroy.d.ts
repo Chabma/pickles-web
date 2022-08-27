@@ -5,6 +5,6 @@ import type { ISplit } from "./ISplit";
  * [[include:Destroy.md]]
  */
 export interface IDestroy {
-    mode: DestroyMode;
-    split: ISplit;
+  mode: DestroyMode;
+  split: ISplit;
 }

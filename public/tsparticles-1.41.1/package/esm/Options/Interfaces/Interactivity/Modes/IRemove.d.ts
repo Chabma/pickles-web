@@ -1,4 +1,4 @@
 export interface IRemove {
-    particles_nb: number;
-    quantity: number;
+  particles_nb: number;
+  quantity: number;
 }

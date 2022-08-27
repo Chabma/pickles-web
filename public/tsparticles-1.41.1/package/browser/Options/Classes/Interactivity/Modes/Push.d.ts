@@ -5,20 +5,20 @@ import type { RecursivePartial } from "../../../../Types";
  * @category Options
  */
 export declare class Push implements IPush, IOptionLoader<IPush> {
-    /**
-     *
-     * @deprecated this property is obsolete, please use the new quantity
-     */
-    get particles_nb(): number;
-    /**
-     *
-     * @deprecated this property is obsolete, please use the new quantity
-     * @param value
-     */
-    set particles_nb(value: number);
-    default: boolean;
-    groups: string[];
-    quantity: number;
-    constructor();
-    load(data?: RecursivePartial<IPush>): void;
+  /**
+   *
+   * @deprecated this property is obsolete, please use the new quantity
+   */
+  get particles_nb(): number;
+  /**
+   *
+   * @deprecated this property is obsolete, please use the new quantity
+   * @param value
+   */
+  set particles_nb(value: number);
+  default: boolean;
+  groups: string[];
+  quantity: number;
+  constructor();
+  load(data?: RecursivePartial<IPush>): void;
 }

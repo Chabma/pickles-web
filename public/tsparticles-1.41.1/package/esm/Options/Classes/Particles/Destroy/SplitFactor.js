@@ -1,7 +1,7 @@
 import { ValueWithRandom } from "../../ValueWithRandom";
 export class SplitFactor extends ValueWithRandom {
-    constructor() {
-        super();
-        this.value = 3;
-    }
+  constructor() {
+    super();
+    this.value = 3;
+  }
 }

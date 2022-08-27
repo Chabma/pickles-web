@@ -6,10 +6,10 @@ import type { RecursivePartial } from "../../../../Types";
  * @category Options
  */
 export declare class Trail implements ITrail, IOptionLoader<ITrail> {
-    delay: number;
-    particles?: RecursivePartial<IParticles>;
-    pauseOnStop: boolean;
-    quantity: number;
-    constructor();
-    load(data?: RecursivePartial<ITrail>): void;
+  delay: number;
+  particles?: RecursivePartial<IParticles>;
+  pauseOnStop: boolean;
+  quantity: number;
+  constructor();
+  load(data?: RecursivePartial<ITrail>): void;
 }

@@ -1,4 +1,4 @@
 export declare const enum EmitterShapeType {
-    circle = "circle",
-    square = "square"
+  circle = "circle",
+  square = "square",
 }

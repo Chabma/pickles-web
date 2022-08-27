@@ -1,6 +1,6 @@
 export class ExternalInteractorBase {
-    constructor(container) {
-        this.container = container;
-        this.type = 0;
-    }
+  constructor(container) {
+    this.container = container;
+    this.type = 0;
+  }
 }

@@ -4,10 +4,12 @@ import type { RecursivePartial } from "../../../../Types";
 /**
  * @category Options
  */
-export declare class TiltAnimation implements ITiltAnimation, IOptionLoader<ITiltAnimation> {
-    enable: boolean;
-    speed: number;
-    sync: boolean;
-    constructor();
-    load(data?: RecursivePartial<ITiltAnimation>): void;
+export declare class TiltAnimation
+  implements ITiltAnimation, IOptionLoader<ITiltAnimation>
+{
+  enable: boolean;
+  speed: number;
+  sync: boolean;
+  constructor();
+  load(data?: RecursivePartial<ITiltAnimation>): void;
 }

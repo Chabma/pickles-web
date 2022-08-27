@@ -1,4 +1,4 @@
 export declare const enum AlterType {
-    darken = "darken",
-    enlighten = "enlighten"
+  darken = "darken",
+  enlighten = "enlighten",
 }

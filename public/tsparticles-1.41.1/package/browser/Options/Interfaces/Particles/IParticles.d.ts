@@ -27,36 +27,36 @@ import type { SingleOrMultiple } from "../../../Types";
  * @category Options
  */
 export interface IParticles {
-    /**
-     * @deprecated use the new links instead
-     */
-    line_linked: ILinks;
-    /**
-     * @deprecated use the new links instead
-     */
-    lineLinked: ILinks;
-    bounce: IBounce;
-    collisions: ICollisions;
-    color: IAnimatableColor;
-    destroy: IDestroy;
-    gradient: SingleOrMultiple<IAnimatableGradient>;
-    groups: ParticlesGroups;
-    life: ILife;
-    links: ILinks;
-    move: IMove;
-    number: IParticlesNumber;
-    opacity: IOpacity;
-    orbit: IOrbit;
-    reduceDuplicates: boolean;
-    repulse: IRepulse;
-    roll: IRoll;
-    rotate: IRotate;
-    shadow: IShadow;
-    shape: IShape;
-    size: ISize;
-    stroke: SingleOrMultiple<IStroke>;
-    tilt: ITilt;
-    twinkle: ITwinkle;
-    wobble: IWobble;
-    zIndex: IZIndex;
+  /**
+   * @deprecated use the new links instead
+   */
+  line_linked: ILinks;
+  /**
+   * @deprecated use the new links instead
+   */
+  lineLinked: ILinks;
+  bounce: IBounce;
+  collisions: ICollisions;
+  color: IAnimatableColor;
+  destroy: IDestroy;
+  gradient: SingleOrMultiple<IAnimatableGradient>;
+  groups: ParticlesGroups;
+  life: ILife;
+  links: ILinks;
+  move: IMove;
+  number: IParticlesNumber;
+  opacity: IOpacity;
+  orbit: IOrbit;
+  reduceDuplicates: boolean;
+  repulse: IRepulse;
+  roll: IRoll;
+  rotate: IRotate;
+  shadow: IShadow;
+  shape: IShape;
+  size: ISize;
+  stroke: SingleOrMultiple<IStroke>;
+  tilt: ITilt;
+  twinkle: ITwinkle;
+  wobble: IWobble;
+  zIndex: IZIndex;
 }

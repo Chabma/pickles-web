@@ -4,15 +4,15 @@ import { TwinkleValues } from "./TwinkleValues";
  * @category Options
  */
 export class Twinkle {
-    constructor() {
-        this.lines = new TwinkleValues();
-        this.particles = new TwinkleValues();
+  constructor() {
+    this.lines = new TwinkleValues();
+    this.particles = new TwinkleValues();
+  }
+  load(data) {
+    if (data === undefined) {
+      return;
     }
-    load(data) {
-        if (data === undefined) {
-            return;
-        }
-        this.lines.load(data.lines);
-        this.particles.load(data.particles);
-    }
+    this.lines.load(data.lines);
+    this.particles.load(data.particles);
+  }
 }

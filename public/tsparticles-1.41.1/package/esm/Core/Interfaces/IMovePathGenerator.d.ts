@@ -2,7 +2,7 @@ import type { Container } from "../Container";
 import type { Particle } from "../Particle";
 import { Vector } from "../Utils";
 export interface IMovePathGenerator {
-    generate: (particle: Particle) => Vector;
-    init: (container: Container) => void;
-    update: () => void;
+  generate: (particle: Particle) => Vector;
+  init: (container: Container) => void;
+  update: () => void;
 }

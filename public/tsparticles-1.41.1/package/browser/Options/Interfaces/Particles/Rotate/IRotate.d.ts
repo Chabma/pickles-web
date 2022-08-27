@@ -6,7 +6,10 @@ import type { IValueWithRandom } from "../../IValueWithRandom";
  * @category Options
  */
 export interface IRotate extends IValueWithRandom {
-    animation: IRotateAnimation;
-    direction: RotateDirection | keyof typeof RotateDirection | RotateDirectionAlt;
-    path: boolean;
+  animation: IRotateAnimation;
+  direction:
+    | RotateDirection
+    | keyof typeof RotateDirection
+    | RotateDirectionAlt;
+  path: boolean;
 }

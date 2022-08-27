@@ -3,10 +3,13 @@ import type { IOptionLoader } from "../../../Interfaces/IOptionLoader";
 import { OpacityAnimation } from "./OpacityAnimation";
 import type { RecursivePartial } from "../../../../Types";
 import { ValueWithRandom } from "../../ValueWithRandom";
-export declare class Opacity extends ValueWithRandom implements IOpacity, IOptionLoader<IOpacity> {
-    get anim(): OpacityAnimation;
-    set anim(value: OpacityAnimation);
-    animation: OpacityAnimation;
-    constructor();
-    load(data?: RecursivePartial<IOpacity>): void;
+export declare class Opacity
+  extends ValueWithRandom
+  implements IOpacity, IOptionLoader<IOpacity>
+{
+  get anim(): OpacityAnimation;
+  set anim(value: OpacityAnimation);
+  animation: OpacityAnimation;
+  constructor();
+  load(data?: RecursivePartial<IOpacity>): void;
 }

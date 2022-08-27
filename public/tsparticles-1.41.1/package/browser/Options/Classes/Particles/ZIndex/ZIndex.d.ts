@@ -5,10 +5,13 @@ import { ValueWithRandom } from "../../ValueWithRandom";
 /**
  * @category Options
  */
-export declare class ZIndex extends ValueWithRandom implements IZIndex, IOptionLoader<IZIndex> {
-    opacityRate: number;
-    sizeRate: number;
-    velocityRate: number;
-    constructor();
-    load(data?: RecursivePartial<IZIndex>): void;
+export declare class ZIndex
+  extends ValueWithRandom
+  implements IZIndex, IOptionLoader<IZIndex>
+{
+  opacityRate: number;
+  sizeRate: number;
+  velocityRate: number;
+  constructor();
+  load(data?: RecursivePartial<IZIndex>): void;
 }

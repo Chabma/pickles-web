@@ -1,4 +1,9 @@
-import type { Container, IContainerPlugin, ICoordinates, IDelta } from "../../Core";
+import type {
+  Container,
+  IContainerPlugin,
+  ICoordinates,
+  IDelta,
+} from "../../Core";
 import type { RecursivePartial, SingleOrMultiple } from "../../Types";
 import { Emitter } from "./Options/Classes/Emitter";
 import { EmitterInstance } from "./EmitterInstance";
@@ -10,19 +15,19 @@ import type { IOptions } from "../../Options/Interfaces/IOptions";
  * @category Emitters Plugin
  */
 export declare class Emitters implements IContainerPlugin {
-    #private;
-    private readonly container;
-    array: EmitterInstance[];
-    emitters: SingleOrMultiple<Emitter>;
-    interactivityEmitters: SingleOrMultiple<Emitter>;
-    constructor(engine: EmittersEngine, container: Container);
-    init(options?: RecursivePartial<IOptions & IEmitterOptions>): void;
-    play(): void;
-    pause(): void;
-    stop(): void;
-    update(delta: IDelta): void;
-    handleClickMode(mode: string): void;
-    resize(): void;
-    addEmitter(options: IEmitter, position?: ICoordinates): EmitterInstance;
-    removeEmitter(emitter: EmitterInstance): void;
+  #private;
+  private readonly container;
+  array: EmitterInstance[];
+  emitters: SingleOrMultiple<Emitter>;
+  interactivityEmitters: SingleOrMultiple<Emitter>;
+  constructor(engine: EmittersEngine, container: Container);
+  init(options?: RecursivePartial<IOptions & IEmitterOptions>): void;
+  play(): void;
+  pause(): void;
+  stop(): void;
+  update(delta: IDelta): void;
+  handleClickMode(mode: string): void;
+  resize(): void;
+  addEmitter(options: IEmitter, position?: ICoordinates): EmitterInstance;
+  removeEmitter(emitter: EmitterInstance): void;
 }

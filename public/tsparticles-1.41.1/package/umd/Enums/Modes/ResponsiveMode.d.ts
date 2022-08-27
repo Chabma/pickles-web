@@ -1,4 +1,4 @@
 export declare const enum ResponsiveMode {
-    screen = "screen",
-    canvas = "canvas"
+  screen = "screen",
+  canvas = "canvas",
 }

@@ -14,19 +14,23 @@ import type { RecursivePartial } from "../../../../Types";
  * @category Emitters Plugin
  */
 export declare class Emitter implements IEmitter, IOptionLoader<IEmitter> {
-    autoPlay: boolean;
-    size?: EmitterSize;
-    direction?: MoveDirection | keyof typeof MoveDirection | MoveDirectionAlt | number;
-    domId?: string;
-    fill: boolean;
-    life: EmitterLife;
-    name?: string;
-    particles?: RecursivePartial<IParticles>;
-    position?: RecursivePartial<ICoordinates>;
-    rate: EmitterRate;
-    shape: EmitterShapeType | keyof typeof EmitterShapeType;
-    spawnColor?: AnimatableColor;
-    startCount: number;
-    constructor();
-    load(data?: RecursivePartial<IEmitter>): void;
+  autoPlay: boolean;
+  size?: EmitterSize;
+  direction?:
+    | MoveDirection
+    | keyof typeof MoveDirection
+    | MoveDirectionAlt
+    | number;
+  domId?: string;
+  fill: boolean;
+  life: EmitterLife;
+  name?: string;
+  particles?: RecursivePartial<IParticles>;
+  position?: RecursivePartial<ICoordinates>;
+  rate: EmitterRate;
+  shape: EmitterShapeType | keyof typeof EmitterShapeType;
+  spawnColor?: AnimatableColor;
+  startCount: number;
+  constructor();
+  load(data?: RecursivePartial<IEmitter>): void;
 }

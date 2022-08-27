@@ -3,10 +3,10 @@ import type { IInteractivity } from "../../../../Options/Interfaces/Interactivit
 import type { IModes } from "../../../../Options/Interfaces/Interactivity/Modes/IModes";
 import type { SingleOrMultiple } from "../../../../Types";
 export interface IAbsorberOptions {
-    absorbers: SingleOrMultiple<IAbsorber>;
-    interactivity: IInteractivity & {
-        modes: IModes & {
-            absorbers: SingleOrMultiple<IAbsorber>;
-        };
+  absorbers: SingleOrMultiple<IAbsorber>;
+  interactivity: IInteractivity & {
+    modes: IModes & {
+      absorbers: SingleOrMultiple<IAbsorber>;
     };
+  };
 }

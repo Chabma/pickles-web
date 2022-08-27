@@ -1,4 +1,4 @@
 export interface IRandom {
-    enable: boolean;
-    minimumValue: number;
+  enable: boolean;
+  minimumValue: number;
 }

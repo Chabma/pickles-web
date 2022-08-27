@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ParticlesInteractorBase = void 0;
 class ParticlesInteractorBase {
-    constructor(container) {
-        this.container = container;
-        this.type = 1;
-    }
+  constructor(container) {
+    this.container = container;
+    this.type = 1;
+  }
 }
 exports.ParticlesInteractorBase = ParticlesInteractorBase;

@@ -1,13 +1,13 @@
 export class Bounce {
-    constructor() {
-        this.distance = 200;
+  constructor() {
+    this.distance = 200;
+  }
+  load(data) {
+    if (!data) {
+      return;
     }
-    load(data) {
-        if (!data) {
-            return;
-        }
-        if (data.distance !== undefined) {
-            this.distance = data.distance;
-        }
+    if (data.distance !== undefined) {
+      this.distance = data.distance;
     }
+  }
 }

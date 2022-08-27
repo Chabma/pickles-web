@@ -8,17 +8,21 @@ import type { IEmitterSize } from "./IEmitterSize";
 import type { IParticles } from "../../../../Options/Interfaces/Particles/IParticles";
 import type { RecursivePartial } from "../../../../Types";
 export interface IEmitter {
-    autoPlay: boolean;
-    size?: IEmitterSize;
-    direction?: MoveDirection | keyof typeof MoveDirection | MoveDirectionAlt | number;
-    domId?: string;
-    fill: boolean;
-    life: IEmitterLife;
-    name?: string;
-    particles?: RecursivePartial<IParticles>;
-    position?: RecursivePartial<ICoordinates>;
-    rate: IEmitterRate;
-    shape: EmitterShapeType | keyof typeof EmitterShapeType;
-    spawnColor?: IAnimatableColor;
-    startCount: number;
+  autoPlay: boolean;
+  size?: IEmitterSize;
+  direction?:
+    | MoveDirection
+    | keyof typeof MoveDirection
+    | MoveDirectionAlt
+    | number;
+  domId?: string;
+  fill: boolean;
+  life: IEmitterLife;
+  name?: string;
+  particles?: RecursivePartial<IParticles>;
+  position?: RecursivePartial<ICoordinates>;
+  rate: IEmitterRate;
+  shape: EmitterShapeType | keyof typeof EmitterShapeType;
+  spawnColor?: IAnimatableColor;
+  startCount: number;
 }

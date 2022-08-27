@@ -5,5 +5,5 @@ import type { SingleOrMultiple } from "../../../../Types";
  * @category Options
  */
 export interface IRepulse extends IRepulseBase {
-    divs?: SingleOrMultiple<IRepulseDiv>;
+  divs?: SingleOrMultiple<IRepulseDiv>;
 }

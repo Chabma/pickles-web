@@ -5,6 +5,6 @@ import { ValueWithRandom } from "../../ValueWithRandom";
  * @category Options
  */
 export declare class OrbitRotation extends ValueWithRandom {
-    constructor();
-    load(data?: RecursivePartial<IValueWithRandom>): void;
+  constructor();
+  load(data?: RecursivePartial<IValueWithRandom>): void;
 }

@@ -6,7 +6,10 @@ import { RepulseDiv } from "./RepulseDiv";
 /**
  * @category Options
  */
-export declare class Repulse extends RepulseBase implements IRepulse, IOptionLoader<IRepulse> {
-    divs?: SingleOrMultiple<RepulseDiv>;
-    load(data?: RecursivePartial<IRepulse>): void;
+export declare class Repulse
+  extends RepulseBase
+  implements IRepulse, IOptionLoader<IRepulse>
+{
+  divs?: SingleOrMultiple<RepulseDiv>;
+  load(data?: RecursivePartial<IRepulse>): void;
 }

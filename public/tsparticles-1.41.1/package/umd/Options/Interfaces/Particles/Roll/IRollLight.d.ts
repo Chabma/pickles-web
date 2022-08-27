@@ -1,4 +1,4 @@
 export interface IRollLight {
-    enable: boolean;
-    value: number;
+  enable: boolean;
+  value: number;
 }

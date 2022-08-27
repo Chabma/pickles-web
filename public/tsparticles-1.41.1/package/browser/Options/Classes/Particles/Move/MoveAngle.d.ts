@@ -4,9 +4,11 @@ import type { RecursivePartial } from "../../../../Types";
 /**
  * @category Options
  */
-export declare class MoveAngle implements IMoveAngle, IOptionLoader<IMoveAngle> {
-    offset: number;
-    value: number;
-    constructor();
-    load(data?: RecursivePartial<IMoveAngle>): void;
+export declare class MoveAngle
+  implements IMoveAngle, IOptionLoader<IMoveAngle>
+{
+  offset: number;
+  value: number;
+  constructor();
+  load(data?: RecursivePartial<IMoveAngle>): void;
 }

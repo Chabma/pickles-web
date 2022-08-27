@@ -2,19 +2,19 @@
  * @category Options
  */
 export class MoveAngle {
-    constructor() {
-        this.offset = 0; //45;
-        this.value = 90;
+  constructor() {
+    this.offset = 0; //45;
+    this.value = 90;
+  }
+  load(data) {
+    if (data === undefined) {
+      return;
     }
-    load(data) {
-        if (data === undefined) {
-            return;
-        }
-        if (data.offset !== undefined) {
-            this.offset = data.offset;
-        }
-        if (data.value !== undefined) {
-            this.value = data.value;
-        }
+    if (data.offset !== undefined) {
+      this.offset = data.offset;
     }
+    if (data.value !== undefined) {
+      this.value = data.value;
+    }
+  }
 }

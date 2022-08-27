@@ -2,11 +2,13 @@ import type { ILinksTriangle } from "../../../Interfaces/Particles/Links/ILinksT
 import type { IOptionLoader } from "../../../Interfaces/IOptionLoader";
 import { OptionsColor } from "../../OptionsColor";
 import type { RecursivePartial } from "../../../../Types";
-export declare class LinksTriangle implements ILinksTriangle, IOptionLoader<ILinksTriangle> {
-    color?: OptionsColor;
-    enable: boolean;
-    frequency: number;
-    opacity?: number;
-    constructor();
-    load(data?: RecursivePartial<ILinksTriangle>): void;
+export declare class LinksTriangle
+  implements ILinksTriangle, IOptionLoader<ILinksTriangle>
+{
+  color?: OptionsColor;
+  enable: boolean;
+  frequency: number;
+  opacity?: number;
+  constructor();
+  load(data?: RecursivePartial<ILinksTriangle>): void;
 }

@@ -7,13 +7,13 @@ import type { IValueWithRandom } from "../../IValueWithRandom";
  * [[include:Options/Particles/Orbit.md]]
  */
 export interface IOrbit extends IAnimatable<IAnimation> {
-    color?: string | IColor;
-    /**
-     * Enables/disables the animation
-     */
-    enable: boolean;
-    radius?: number;
-    rotation: IValueWithRandom;
-    opacity: number;
-    width: number;
+  color?: string | IColor;
+  /**
+   * Enables/disables the animation
+   */
+  enable: boolean;
+  radius?: number;
+  rotation: IValueWithRandom;
+  opacity: number;
+  width: number;
 }

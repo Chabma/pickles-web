@@ -2,7 +2,8 @@ import { Engine } from "./engine";
 import type { IOptions } from "./Options/Interfaces/IOptions";
 import type { RecursivePartial } from "./Types";
 declare const tsParticles: Engine;
-declare const particlesJS: import("./pjs").IParticlesJS, pJSDom: import("./Core").Container[];
+declare const particlesJS: import("./pjs").IParticlesJS,
+  pJSDom: import("./Core").Container[];
 export * from "./Core";
 export * from "./Enums";
 export { Engine, Engine as Main };

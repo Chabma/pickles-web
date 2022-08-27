@@ -13,14 +13,14 @@ import type { ITrail } from "./ITrail";
  * @category Options
  */
 export interface IModes {
-    attract: IAttract;
-    bubble: IBubble;
-    connect: IConnect;
-    grab: IGrab;
-    light: ILight;
-    push: IPush;
-    remove: IRemove;
-    repulse: IRepulse;
-    slow: ISlow;
-    trail: ITrail;
+  attract: IAttract;
+  bubble: IBubble;
+  connect: IConnect;
+  grab: IGrab;
+  light: ILight;
+  push: IPush;
+  remove: IRemove;
+  repulse: IRepulse;
+  slow: ISlow;
+  trail: ITrail;
 }

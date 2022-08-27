@@ -5,10 +5,12 @@ import type { RecursivePartial } from "../../../../Types";
 /**
  * @category Polygon Mask Plugin
  */
-export declare class PolygonMaskDrawStroke implements IPolygonMaskDrawStroke, IOptionLoader<IPolygonMaskDrawStroke> {
-    color: OptionsColor;
-    width: number;
-    opacity: number;
-    constructor();
-    load(data?: RecursivePartial<IPolygonMaskDrawStroke>): void;
+export declare class PolygonMaskDrawStroke
+  implements IPolygonMaskDrawStroke, IOptionLoader<IPolygonMaskDrawStroke>
+{
+  color: OptionsColor;
+  width: number;
+  opacity: number;
+  constructor();
+  load(data?: RecursivePartial<IPolygonMaskDrawStroke>): void;
 }

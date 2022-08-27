@@ -1,5 +1,5 @@
 export interface ISlow {
-    active: boolean;
-    radius: number;
-    factor: number;
+  active: boolean;
+  radius: number;
+  factor: number;
 }

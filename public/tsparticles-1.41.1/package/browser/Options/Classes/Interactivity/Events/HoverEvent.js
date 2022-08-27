@@ -4,21 +4,21 @@ import { Parallax } from "./Parallax";
  * @category Options
  */
 export class HoverEvent {
-    constructor() {
-        this.enable = false;
-        this.mode = [];
-        this.parallax = new Parallax();
+  constructor() {
+    this.enable = false;
+    this.mode = [];
+    this.parallax = new Parallax();
+  }
+  load(data) {
+    if (data === undefined) {
+      return;
     }
-    load(data) {
-        if (data === undefined) {
-            return;
-        }
-        if (data.enable !== undefined) {
-            this.enable = data.enable;
-        }
-        if (data.mode !== undefined) {
-            this.mode = data.mode;
-        }
-        this.parallax.load(data.parallax);
+    if (data.enable !== undefined) {
+      this.enable = data.enable;
     }
+    if (data.mode !== undefined) {
+      this.mode = data.mode;
+    }
+    this.parallax.load(data.parallax);
+  }
 }

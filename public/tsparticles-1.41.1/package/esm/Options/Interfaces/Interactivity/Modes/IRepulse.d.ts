@@ -2,5 +2,5 @@ import type { IRepulseBase } from "./IRepulseBase";
 import type { IRepulseDiv } from "./IRepulseDiv";
 import type { SingleOrMultiple } from "../../../../Types";
 export interface IRepulse extends IRepulseBase {
-    divs?: SingleOrMultiple<IRepulseDiv>;
+  divs?: SingleOrMultiple<IRepulseDiv>;
 }

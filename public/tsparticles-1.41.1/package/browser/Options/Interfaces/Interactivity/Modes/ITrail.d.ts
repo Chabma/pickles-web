@@ -4,8 +4,8 @@ import type { RecursivePartial } from "../../../../Types";
  * @category Options
  */
 export interface ITrail {
-    delay: number;
-    particles?: RecursivePartial<IParticles>;
-    pauseOnStop: boolean;
-    quantity: number;
+  delay: number;
+  particles?: RecursivePartial<IParticles>;
+  pauseOnStop: boolean;
+  quantity: number;
 }

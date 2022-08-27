@@ -3,10 +3,15 @@ const fixFactor = Math.sqrt(2);
  * @category Shape Drawers
  */
 export class SquareDrawer {
-    getSidesCount() {
-        return 4;
-    }
-    draw(context, particle, radius) {
-        context.rect(-radius / fixFactor, -radius / fixFactor, (radius * 2) / fixFactor, (radius * 2) / fixFactor);
-    }
+  getSidesCount() {
+    return 4;
+  }
+  draw(context, particle, radius) {
+    context.rect(
+      -radius / fixFactor,
+      -radius / fixFactor,
+      (radius * 2) / fixFactor,
+      (radius * 2) / fixFactor
+    );
+  }
 }

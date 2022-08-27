@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Constants = void 0;
-class Constants {
-}
+class Constants {}
 exports.Constants = Constants;
 Constants.generatedAttribute = "generated";
 Constants.randomColorValue = "random";
@@ -19,4 +18,5 @@ Constants.touchCancelEvent = "touchcancel";
 Constants.resizeEvent = "resize";
 Constants.visibilityChangeEvent = "visibilitychange";
 Constants.noPolygonDataLoaded = "No polygon data loaded.";
-Constants.noPolygonFound = "No polygon found, you need to specify SVG url in config.";
+Constants.noPolygonFound =
+  "No polygon found, you need to specify SVG url in config.";

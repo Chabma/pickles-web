@@ -6,10 +6,10 @@ import type { SingleOrMultiple } from "../../../../Types";
  * @category Emitters Plugin
  */
 export interface IEmitterOptions {
-    emitters: SingleOrMultiple<IEmitter>;
-    interactivity: IInteractivity & {
-        modes: IModes & {
-            emitters: SingleOrMultiple<IEmitter>;
-        };
+  emitters: SingleOrMultiple<IEmitter>;
+  interactivity: IInteractivity & {
+    modes: IModes & {
+      emitters: SingleOrMultiple<IEmitter>;
     };
+  };
 }

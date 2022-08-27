@@ -1,6 +1,6 @@
 export interface IPush {
-    particles_nb: number;
-    default: boolean;
-    groups: string[];
-    quantity: number;
+  particles_nb: number;
+  default: boolean;
+  groups: string[];
+  quantity: number;
 }

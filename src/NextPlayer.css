@@ -43,8 +43,8 @@
   height: 6px;
 }
 
-.next-wrapper{
-	width: 100%;
+.next-wrapper {
+  width: 100%;
 }
 
 .next-playing__img img {
@@ -67,25 +67,26 @@
   margin-bottom: 0.1em;
   color: purple;
 }
-#nextPlayer{	float: left;
-    flex-direction: column;
-    width: 25%;
+#nextPlayer {
+  float: left;
+  flex-direction: column;
+  width: 25%;
 }
 #queue {
-	max-height: 80%;
+  max-height: 80%;
 }
-#buttons{
-	display: flex;
-	margin-left: auto;
-	margin-right: auto;
-	width: 100%;
+#buttons {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
-#buttons_two{
-	flex-direction: column; 
-	display: flex;
-	height: 100px;
+#buttons_two {
+  flex-direction: column;
+  display: flex;
+  height: 100px;
 }
-.button_img{
-	width: 33%;
-	margin: auto;
+.button_img {
+  width: 33%;
+  margin: auto;
 }

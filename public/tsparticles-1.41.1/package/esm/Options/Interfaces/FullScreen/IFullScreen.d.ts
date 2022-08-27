@@ -1,4 +1,4 @@
 export interface IFullScreen {
-    enable: boolean;
-    zIndex: number;
+  enable: boolean;
+  zIndex: number;
 }

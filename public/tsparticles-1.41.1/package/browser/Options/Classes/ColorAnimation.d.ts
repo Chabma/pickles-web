@@ -4,12 +4,14 @@ import type { IOptionLoader } from "../Interfaces/IOptionLoader";
 /**
  * @category Options
  */
-export declare class ColorAnimation implements IColorAnimation, IOptionLoader<IColorAnimation> {
-    count: number;
-    enable: boolean;
-    offset: RangeValue;
-    speed: number;
-    sync: boolean;
-    constructor();
-    load(data?: RecursivePartial<IColorAnimation>): void;
+export declare class ColorAnimation
+  implements IColorAnimation, IOptionLoader<IColorAnimation>
+{
+  count: number;
+  enable: boolean;
+  offset: RangeValue;
+  speed: number;
+  sync: boolean;
+  constructor();
+  load(data?: RecursivePartial<IColorAnimation>): void;
 }

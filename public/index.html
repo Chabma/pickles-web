@@ -5,13 +5,13 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Pickles"
-    />
+    <meta name="description" content="Pickles" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lobster&display=swap"
+      rel="stylesheet"
+    />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -32,10 +32,12 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <script>
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      console.log("The Web Playback SDK is ready. We have access to Spotify.Player");
-      console.log(window.Spotify.Player);
-    };
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        console.log(
+          "The Web Playback SDK is ready. We have access to Spotify.Player"
+        );
+        console.log(window.Spotify.Player);
+      };
     </script>
     <div id="root"></div>
     <!--

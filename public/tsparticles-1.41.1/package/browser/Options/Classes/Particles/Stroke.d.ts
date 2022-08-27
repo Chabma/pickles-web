@@ -7,9 +7,9 @@ import type { RecursivePartial } from "../../../Types";
  * @category Options
  */
 export declare class Stroke implements IStroke, IOptionLoader<IStroke> {
-    color?: AnimatableColor;
-    width: number;
-    opacity?: number;
-    constructor();
-    load(data?: RecursivePartial<IStroke>): void;
+  color?: AnimatableColor;
+  width: number;
+  opacity?: number;
+  constructor();
+  load(data?: RecursivePartial<IStroke>): void;
 }

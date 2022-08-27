@@ -3,6 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.loadRollUpdater = void 0;
 const RollUpdater_1 = require("./RollUpdater");
 async function loadRollUpdater(engine) {
-    await engine.addParticleUpdater("roll", () => new RollUpdater_1.RollUpdater());
+  await engine.addParticleUpdater(
+    "roll",
+    () => new RollUpdater_1.RollUpdater()
+  );
 }
 exports.loadRollUpdater = loadRollUpdater;

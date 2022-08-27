@@ -6,15 +6,15 @@ import type { Particle } from "../../../Core";
  * @category Interactions
  */
 export declare class Bubbler extends ExternalInteractorBase {
-    constructor(container: Container);
-    isEnabled(): boolean;
-    reset(particle: Particle, force?: boolean): void;
-    interact(): Promise<void>;
-    private singleSelectorHover;
-    private process;
-    private clickBubble;
-    private hoverBubble;
-    private hoverBubbleSize;
-    private hoverBubbleOpacity;
-    private hoverBubbleColor;
+  constructor(container: Container);
+  isEnabled(): boolean;
+  reset(particle: Particle, force?: boolean): void;
+  interact(): Promise<void>;
+  private singleSelectorHover;
+  private process;
+  private clickBubble;
+  private hoverBubble;
+  private hoverBubbleSize;
+  private hoverBubbleOpacity;
+  private hoverBubbleColor;
 }

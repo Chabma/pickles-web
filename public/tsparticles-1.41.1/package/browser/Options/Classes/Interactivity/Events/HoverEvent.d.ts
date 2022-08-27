@@ -7,10 +7,12 @@ import { Parallax } from "./Parallax";
  * [[include:Options/Interactivity/Hover.md]]
  * @category Options
  */
-export declare class HoverEvent implements IHoverEvent, IOptionLoader<IHoverEvent> {
-    enable: boolean;
-    mode: SingleOrMultiple<HoverMode | keyof typeof HoverMode | string>;
-    parallax: Parallax;
-    constructor();
-    load(data?: RecursivePartial<IHoverEvent>): void;
+export declare class HoverEvent
+  implements IHoverEvent, IOptionLoader<IHoverEvent>
+{
+  enable: boolean;
+  mode: SingleOrMultiple<HoverMode | keyof typeof HoverMode | string>;
+  parallax: Parallax;
+  constructor();
+  load(data?: RecursivePartial<IHoverEvent>): void;
 }

@@ -4,5 +4,5 @@ import type { IParticles } from "../Options/Interfaces/Particles/IParticles";
  * [[include:Options/Particles/Group.md]]
  */
 export declare type ParticlesGroups = {
-    [name: string]: IParticles;
+  [name: string]: IParticles;
 };

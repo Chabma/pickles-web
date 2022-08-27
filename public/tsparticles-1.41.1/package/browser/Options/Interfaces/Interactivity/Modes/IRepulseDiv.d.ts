@@ -3,5 +3,4 @@ import type { IRepulseBase } from "./IRepulseBase";
 /**
  * @category Options
  */
-export interface IRepulseDiv extends IRepulseBase, IModeDiv {
-}
+export interface IRepulseDiv extends IRepulseBase, IModeDiv {}

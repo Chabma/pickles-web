@@ -5,9 +5,9 @@ import type { RecursivePartial } from "../../Types";
  * @category Options
  */
 export interface IOptionLoader<T> {
-    /**
-     * This load method is used to load [[data]] in the classes used as generic
-     * @param data the input options
-     */
-    load(data?: RecursivePartial<T>): void;
+  /**
+   * This load method is used to load [[data]] in the classes used as generic
+   * @param data the input options
+   */
+  load(data?: RecursivePartial<T>): void;
 }

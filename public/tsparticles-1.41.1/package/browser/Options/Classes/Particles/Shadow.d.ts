@@ -8,10 +8,10 @@ import type { RecursivePartial } from "../../../Types";
  * [[include:Shadow.md]]
  */
 export declare class Shadow implements IShadow, IOptionLoader<IShadow> {
-    blur: number;
-    color: OptionsColor;
-    enable: boolean;
-    offset: ICoordinates;
-    constructor();
-    load(data?: RecursivePartial<IShadow>): void;
+  blur: number;
+  color: OptionsColor;
+  enable: boolean;
+  offset: ICoordinates;
+  constructor();
+  load(data?: RecursivePartial<IShadow>): void;
 }
