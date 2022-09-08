@@ -7,7 +7,7 @@ import * as $ from "jquery";
 import Player from "./Player";
 import NextPlayer from "./NextPlayer";
 import SearchItem from "./SearchItem";
-import logo from "./images/logo.png";
+import logo from ".list_play_btn/images/logo.png";
 //import 'particles.js/particles';
 import { tsParticles } from "tsparticles";
 const { Search } = Input;
@@ -384,9 +384,9 @@ class App extends Component {
               if ("mediaSession" in navigator) {
                 navigator.mediaSession.metadata = new window.MediaMetadata({
                   title: data?.item.name ?? "Pickles",
-                    artist: data?.item.artists[0].name ?? "Pickles",
-                    album: data?.item.album.name ?? "Pickles",
-                    artwork: [{src: data?.item.album.images[0].url ?? "./images/logo.png"}],
+                  artist: data?.item.artists[0].name ?? "Pickles",
+                  album: data?.item.album.name ?? "Pickles",
+                  artwork: [{src: data?.item.album.images[0].url ?? "./images/logo.png"}],
                 });
                   console.log(navigator)
 
@@ -1121,7 +1121,7 @@ class App extends Component {
                     fontFamily: "Roboto",
                     width: "100%",
                   }}
-                  placeholder="SONG SEARCH..."
+                  placeholder="Song Search..."
                   size="large"
                   onChange={(value) => {
                     this.setState({ searchValue: value.target.value });
@@ -1159,7 +1159,7 @@ class App extends Component {
                   id="additional_features"
                   mode="multiple"
                   allowClear
-                  showSearch="false"
+                  showSearch={false}
                   placeholder="Audio features to match (choose Multiple)"
                   style={{ width: "80%" }}
                   onChange={(value) => {
