@@ -16,7 +16,7 @@ const SearchItem = (props) => {
           src={play_btn}
           style={{
             display: props.total_queue?.length > 0 ? "none" : "block",
-            width: "15%",
+            width: "100%",
           }}
           onClick={() => {
             props.setFunc("", []);
@@ -34,7 +34,7 @@ const SearchItem = (props) => {
           style={{
             display: props.total_queue?.length > 0 ? "block" : "none",
             marginRight: "3%",
-            width: "15%",
+            width: "12%",
           }}
           onClick={() => {
             props.setFunc("", []);
@@ -50,7 +50,7 @@ const SearchItem = (props) => {
           src={add_start_queue}
           style={{
             marginRight: "3%",
-            width: "15%",
+            width: "12%",
             display: props.total_queue?.length > 0 ? "block" : "none",
           }}
           onClick={() => {
@@ -63,7 +63,7 @@ const SearchItem = (props) => {
           alt="add song to end of queue"
           src={add_end_queue}
           style={{
-            width: "15%",
+            width: "12%",
             display: props.total_queue?.length > 0 ? "block" : "none",
           }}
           onClick={() => {

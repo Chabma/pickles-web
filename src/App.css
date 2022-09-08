@@ -126,10 +126,13 @@
   height: 100%;
 }
 
+.ant-list-item-action{
+  width: 12%;
+}
+
 .next-playing__name {
   float: left;
   font-size: 1em;
-  margin-bottom: 0.1em;
   color: #1e1b96;
   width: 100%;
   padding-left: 0;

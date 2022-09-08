@@ -1121,7 +1121,7 @@ class App extends Component {
                     fontFamily: "Roboto",
                     width: "100%",
                   }}
-                  placeholder="Song Search..."
+                  placeholder="SONG SEARCH..."
                   size="large"
                   onChange={(value) => {
                     this.setState({ searchValue: value.target.value });
