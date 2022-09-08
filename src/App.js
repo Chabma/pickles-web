@@ -7,7 +7,7 @@ import * as $ from "jquery";
 import Player from "./Player";
 import NextPlayer from "./NextPlayer";
 import SearchItem from "./SearchItem";
-import logo from ".list_play_btn/images/logo.png";
+import logo from "./images/logo.png";
 //import 'particles.js/particles';
 import { tsParticles } from "tsparticles";
 const { Search } = Input;
