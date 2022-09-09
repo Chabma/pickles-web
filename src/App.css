@@ -127,7 +127,7 @@
 }
 
 .ant-list-item-action{
-  width: 12%;
+  max-width: 12%;
 }
 
 .next-playing__name {

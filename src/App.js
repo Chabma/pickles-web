@@ -160,7 +160,7 @@ class App extends Component {
 
   getDevices() {
     /*
-  Create device items for device chooser
+  Get device items for device chooser
   */
     fetch(`https://api.spotify.com/v1/me/player/devices`, {
       method: "GET",
@@ -187,9 +187,9 @@ class App extends Component {
   }
 
   getUserImage() {
-        /*
-      Create user image from spotify
-      */
+    /*
+  Get user image from spotify
+  */
       fetch(`https://api.spotify.com/v1/users/${this.state.userID}`, {
             method: "GET",
             headers: { Authorization: `Bearer ${this.state.token}` },
