@@ -263,6 +263,7 @@ class App extends Component {
     this.setState({ total_queue: tempQueue }, () => {
       if (playBoolean) {
         this.play(position);
+
       }
       this.getRecs();
     });
@@ -290,7 +291,7 @@ class App extends Component {
               {
                 method: "PUT",
                 body: JSON.stringify({
-                  uris: [this.state.total_queue[queuePosition]?.uri],
+                  "uris": [this.state.total_queue[queuePosition]?.uri],
                 }),
                 headers: {
                   "Content-Type": "application/json",
@@ -312,10 +313,30 @@ class App extends Component {
                     }
                   }
                 );
-              })
-              .catch((error) => {
+/*
+                //double tap
+                fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${this.state.deviceID}`, {
+                    method: "PUT",
+                    headers: {
+                      Accept: "application/json",
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${access_token}`,
+                    },
+                  }).then((data) => {
+                    fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceID}`, {
+                                method: "PUT",
+                                headers: {
+                                  Accept: "application/json",
+                                  "Content-Type": "application/json",
+                                  Authorization: `Bearer ${access_token}`,
+                                },
+                      })
+                  })
+                })
+            .catch((error) => {
                 console.log(error);
               });
+              */
           });
         }
       }
@@ -1035,7 +1056,7 @@ class App extends Component {
                     this.expand_logout_settings();
                 }}></img>
                 <div className="user_logout_div" style={{ display: "none"}}>
-                    <a href="https://accounts.spotify.com/logout" style={{ color: "red" }}> Logout? </a>
+                    <a href="https://accounts.spotify.com/logout" style={{ color: "red", fontSize: "x-large" }}> Logout? </a>
                 </div>
         </div>
         <div className="App-main">
@@ -1137,33 +1158,17 @@ class App extends Component {
                 />
                 {card}
               </div>
-              <button
-                type="button"
-                class="settings_header"
-                onClick={() => {
-                  this.expand_settings();
-                }}
-              >
-                SETTINGS
-              </button>
-
-              <div class="settings">
-                <h4> Recommendation Logic: </h4>
-                <label for="primary_features">Match Target: </label>
-                <select name="primary_features" id="primary_features">
-                  <option value="song">Songs</option>
-                  <option value="artist">Artists</option>
-                </select>
-                <Select
+              <Select
                   name="additional_features"
                   id="additional_features"
                   mode="multiple"
                   allowClear
                   showSearch={false}
                   placeholder="Audio features to match (choose Multiple)"
-                  style={{ width: "80%" }}
+                  style={{ width: "88%", fontSize: "inherit", marginBottom: "2%" }}
                   onChange={(value) => {
                     this.setState({ additionalFeatures: value });
+                    this.updatePlaying(true);
                   }}
                 >
                   <option value="acousticness">Acousticness</option>
@@ -1177,6 +1182,23 @@ class App extends Component {
                   <option value="tempo">Tempo</option>
                   <option value="valence">Valence</option>
                 </Select>
+
+              <button
+                type="button"
+                class="settings_header"
+                onClick={() => {
+                  this.expand_settings();
+                }}
+              >
+                SETTINGS
+              </button>
+
+              <div class="settings">
+                <label for="primary_features"> Recommendation Match Target: </label>
+                <select name="primary_features" id="primary_features">
+                  <option value="song">Songs</option>
+                  <option value="artist">Artists</option>
+                </select>
                 <div id="slider" class="push-bottom">
                   <div id="slider-target"></div>
                 </div>
@@ -1249,7 +1271,6 @@ class App extends Component {
                         height: "10%",
                         fontFamily: "Roboto",
                         maxWidth: "85%",
-                        width: "50%",
                       }}
                       onChange={(value) => {
                         this.setState({

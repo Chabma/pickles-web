@@ -29,6 +29,9 @@ const NextPlayer = (props) => {
                 width: "70%",
                 textAlign: "left",
                 paddingLeft: "5%",
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "0",
               }}
             >
               RECOMMENDATIONS

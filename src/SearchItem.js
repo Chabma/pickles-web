@@ -9,6 +9,15 @@ const SearchItem = (props) => {
     <List.Item
           key={props.element.uri}
           style={{ width: "100%",}}
+          onClick={() => {
+            if (props.total_queue?.length == 0){ 
+              props.setFunc("", []);
+              props.player.activateElement().then(() => {
+                props.queueFunc(props.element, props.queue_pos, true);
+              });
+            } 
+          }}
+      /*    
       actions={[
         <img
           id="list_play_btn"
@@ -24,10 +33,11 @@ const SearchItem = (props) => {
               props.queueFunc(props.element, props.queue_pos, true);
             });
           }}
+          
         />,
-      ]}
+      ]}*/
       extra={[
-        <img
+      /*  <img
           id="list_play_btn"
           alt="play this song"
           src={play_btn}
@@ -43,7 +53,7 @@ const SearchItem = (props) => {
               props.playFunc();
             });
           }}
-        />,
+        />,*/
         <img
           id="list_queue_start_btn"
           alt="add song to start of queue"
