@@ -3,6 +3,7 @@ import { Input, List, Avatar, Card, Button, Select } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import "./App.css";
+import "./AppDark.css";
 import * as $ from "jquery";
 import Player from "./Player";
 import NextPlayer from "./NextPlayer";
@@ -331,12 +332,11 @@ class App extends Component {
                                   Authorization: `Bearer ${access_token}`,
                                 },
                       })
-                  })
+                  })*/
                 })
             .catch((error) => {
                 console.log(error);
               });
-              */
           });
         }
       }
@@ -916,6 +916,46 @@ class App extends Component {
     }
   }
 
+  toggleDarkMode() {
+    let divs = document.getElementsByTagName("div")
+    console.log(divs)
+    for(let i = 0; i < divs.length; i++){
+      if($(divs[i]).hasClass("Dark")){
+        $(divs[i]).removeClass("Dark");
+      }
+      else{
+        $(divs[i]).addClass("Dark");
+      }
+    }
+    let h1s = document.getElementsByTagName("h1")
+    for(let i = 0; i < h1s.length; i++){
+      if($(h1s[i]).hasClass("Dark")){
+        $(h1s[i]).removeClass("Dark");
+      }
+      else{
+        $(h1s[i]).addClass("Dark");
+      }
+    }
+    let h3s = document.getElementsByTagName("h3")
+    for(let i = 0; i < h3s.length; i++){
+      if($(h3s[i]).hasClass("Dark")){
+        $(h3s[i]).removeClass("Dark");
+      }
+      else{
+        $(h3s[i]).addClass("Dark");
+      }
+    }
+    let h4s = document.getElementsByTagName("h4")
+    for(let i = 0; i < h4s.length; i++){
+      if($(h4s[i]).hasClass("Dark")){
+        $(h4s[i]).removeClass("Dark");
+      }
+      else{
+        $(h4s[i]).addClass("Dark");
+      }
+    }
+  }
+
   add_playlist_btn_func(playlist_name, user_id) {
     /*
   Button function for adding the current playlist to a user's spotify account
@@ -1240,6 +1280,14 @@ class App extends Component {
                     }}
                   />
                 </div>
+                <br />
+                <Button
+                    onClick={() => {
+                      this.toggleDarkMode();
+                    }}
+                  >
+                    Toggle Dark Mode
+                  </Button>
                 <br />
                 {/* Device Chooser */}
                 <Button

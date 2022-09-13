@@ -1,0 +1,526 @@
+.Dark .App {
+  text-align: center;
+  overflow: hidden;
+  z-index: 1;
+  height: 100%;
+}
+.Dark #root {
+  height: 100%;
+}
+
+.Dark .App-logo {
+  height: 15vmin;
+  pointer-events: none;
+  position: absolute;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: Login-hover infinite 30s linear;
+  }
+}
+
+.Dark .App-main {
+  height: 92%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  font-size: calc(10px + 2vmin);
+  justify-content: flex-start;
+  overflow: overlay;
+}
+
+.Dark .App-main {
+  border-bottom: 1px solid #d9dadc;
+  overflow-x: hidden;
+  margin-bottom: 30px;
+  background-color: rgba(255, 0, 0, 0);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  justify-content: flex-start;
+}
+
+.Dark .App-link {
+  color: #61dafb;
+}
+
+.Dark .main-wrapper {
+  width: 100%;
+  height: 95%;
+  margin: auto;
+  box-sizing: border-box;
+  display: flex;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+/*App header*/
+.Dark .App-header {
+  height: 8%;
+}
+
+.Dark #logo {
+  height: 100%;
+  float: left;
+  padding: 10px;
+}
+
+.Dark #logo_text {
+  height: 100%;
+  float: left;
+  margin-bottom: 0;
+  margin: auto;
+    align-items: center;
+    display: flex;
+    float: left;
+}
+
+.Dark #account_image {
+    height: 100%;
+    float: right;
+}
+
+/*Next player (recommendations)*/
+.Dark #refresh_btn {
+  width: 100%;
+  height: 75%;
+  float: left;
+  margin: auto;
+  max-width: 150px;
+  max-height: 150px;
+  margin-bottom: 0;
+  background: #747474c2
+}
+
+.Dark #refresh_btn_div {
+  float: left;
+  height: 100%;
+  margin: auto;
+}
+
+.Dark .next-wrapper {
+    width: 95%;
+    height: 24%;
+    margin: auto;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    display: flex;
+    background-color: #747474c2;
+    margin-bottom: 1%;
+    border-radius: 5px;
+}
+.Dark .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  background-color: #747474c2;
+}
+
+.Dark .next-playing__img {
+  float: left;
+  max-width: 150px;
+  width: 33%;
+  height: 100%;
+}
+
+.Dark .next-playing__img img {
+  max-width: 150px;
+  height: 100%;
+}
+
+.Dark .next-playing__side {
+  float: left;
+  margin: auto;
+  padding: 10px;
+  padding-top: 0px;
+  width: 66%;
+  height: 100%;
+}
+
+.Dark .ant-list-item-action{
+  max-width: 12%;
+}
+
+.Dark h1 {
+  color: #eee;
+}
+.Dark h3 {
+  color: #eee;
+}
+.Dark h4 {
+  color: #eee;
+}
+
+.Dark .next-playing__name {
+  float: left;
+  font-size: 1em;
+  color: #eee;
+  width: 100%;
+  padding-left: 0;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.Dark .next-playing__artist {
+  float: left;
+  font-size: 0.7em;
+  margin-bottom: 0.1em;
+  color: #a09ee7
+}
+
+.Dark #nextPlayer {
+  display: block;
+  width: 100%;
+  height: 40%;
+}
+
+/*Song search*/
+.Dark .Search {
+    padding: 30px;
+    margin: auto;
+    max-width: 800px;
+    color: black;
+    padding-bottom: 50px;
+    height: 8%;
+    padding-top: 3%;
+    padding-bottom: 1%;
+    display: inline-block;
+    width: 100%;
+}
+
+/*Settings*/
+.Dark .settings_header {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  height: 7%;
+}
+.Dark .active,
+.settings_header:hover {
+  background-color: #ccc;
+}
+
+.Dark .settings {
+  padding: 0 18px;
+  display: block;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+
+/*CurrentPlayer*/
+.Dark #currentPlayer {
+  height: 40%;
+}
+
+.Dark canvas {
+  display: block;
+  vertical-align: bottom;
+}
+/** Now Playing **/
+.Dark .now-playing__name {
+  font-size: 1.5em;
+  color: #1e1b96;
+}
+
+.Dark .now-playing__artist {
+  margin-bottom: 1em;
+  color: #1e1b96;
+}
+
+.Dark .now-playing__status {
+  margin-bottom: 1em;
+  color: #1e1b96;
+}
+
+.Dark .now-playing__img {
+  float: left;
+  text-align: right;
+  width: 50%;
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+}
+
+.Dark .now-playing__img img {
+  max-width: 400px;
+  width: 100%;
+  margin: auto;
+}
+
+.Dark .now-playing__side {
+  float: left;
+  margin: auto;
+  width: 50%;
+}
+/** Progress **/
+.Dark .progress {
+  border: 1px solid #000;
+  height: 10px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.Dark .progress__bar {
+  background-color: #1e1b96;
+  height: 10px;
+}
+
+.Dark #queue {
+  max-height: 100%;
+}
+
+.Dark #buttons {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.Dark #buttons_two {
+  flex-direction: column;
+  display: flex;
+  height: 100px;
+}
+
+.Dark .button_img {
+  width: 33%;
+  margin: auto;
+}
+
+.Dark .ant-list-item-meta-avatar {
+  height: 100%;
+  margin-right: auto;
+}
+
+.Dark .ant-list-item-meta-content {
+  width: auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+/* width */
+.Dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 1px;
+}
+
+/* Track */
+.Dark ::-webkit-scrollbar-track {
+  /* box-shadow: inset 0 0 5px grey; */
+  /* border-radius: 10px; */
+}
+
+/* Handle */
+.Dark ::-webkit-scrollbar-thumb {
+  background: #0005;
+  /* border-radius: 8px; */
+}
+
+/* Handle on hover */
+.Dark ::-webkit-scrollbar-thumb:hover {
+  background: #0005;
+  /*background: #1E1B96;*/
+}
+/** Now Playing **/
+.Dark .now-playing__name {
+  font-size: calc(18px + 2.5vw);
+  color: purple;
+  height: 10%;
+  margin: auto;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.5vw;
+}
+
+.Dark .now-playing__artist {
+  font-size: calc(12px + 1.5vw);
+  margin-bottom: 0em;
+  color: purple;
+  height: 5%;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1vw;
+}
+
+.Dark .now-playing__img {
+  float: left;
+  text-align: right;
+  width: 50%;
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+}
+
+.now-playing__img img {
+  max-width: 400px;
+  width: 100%;
+  margin: auto;
+}
+
+.Dark .now-playing__side {
+  float: left;
+  margin: auto;
+  height: 95%;
+  min-width: 80%;
+  background: #747474c2;
+}
+
+.Dark .ant-card {
+  overflow: scroll;
+}
+
+.Dark .btn--loginApp-link {
+  font-size: 50px;
+  margin-top: 130px;
+  background-color: none;
+  border-radius: 10px;
+  padding: 2px;
+  color: #000000;
+  font-family: "Roboto", sans-serif;
+  z-index: 1;
+}
+
+.Dark .btn--loginApp-link:hover {
+  color: #1e1b96;
+}
+.Dark .btn--loginApp-link:active {
+  color: #ffffff;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes Login-hover {
+  0% {
+    -webkit-transform: translate(5%, 0%);
+    transform: translate(75%, 0%) rotate(0deg);
+  }
+  25% {
+    -webkit-transform: translate(-10%, 100%);
+    transform: translate(-200%, 500%) rotate(90deg);
+  }
+  50% {
+    -webkit-transform: translate(-5%, 200%);
+    transform: translate(-100%, 1000%) rotate(180deg);
+  }
+  75% {
+    -webkit-transform: translate(10%, 100%);
+    transform: translate(200%, 500%) rotate(270deg);
+  }
+  100% {
+    -webkit-transform: translate(5%, 0%);
+    transform: translate(75%, 0%) rotate(360deg);
+  }
+}
+
+.Dark #particles-js {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  background-color: #222;
+  /*background-color: #1dbfaf;*/
+  background-size: cover;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  z-index: -2;
+}
+
+/** Progress **/
+.Dark .progress {
+  border: 1px solid #000;
+  height: 5%;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.Dark .progress__bar {
+  background-color: #1e1b96;
+  height: 100%;
+}
+
+.Dark #queue {
+  height: 100%;
+  float: left;
+}
+.Dark #played_queue {
+  min-width: 10%;
+  height: 100%;
+  float: right;
+  display: inline-table;
+}
+.Dark #played_queue_card .ant-card-body {
+  float: right;
+  display: block;
+  padding: 0px;
+}
+
+.Dark #buttons {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  height: 10%;
+  padding-top: 5px;
+}
+.Dark #buttons_two {
+  flex-direction: column;
+  display: flex;
+  height: 100px;
+}
+.Dark .button_img {
+  width: auto;
+  height: 100%;
+  margin: auto;
+}
+
+.Dark .ant-list-item-meta-description {
+  color: #a09ee7;
+}
+
+.Dark .ant-card-body {
+  height: 100%;
+  max-height: 300px;
+  box-sizing: border-box;
+}
+.Dark .ant-list-item-meta-avatar {
+  height: 100%;
+}
+.Dark .ant-input-affix-wrapper {
+  border: none;
+  background: #00000000;
+}
+.Dark #searchInput {
+  background: #e9e9e9c2;
+  color: black;
+}
+.Dark input::-webkit-input-placeholder {
+  color: black;
+}
+
+.Dark input:-moz-placeholder {
+  color: black;
+}
+
+.Dark input::-ms-placeholder {
+  color: black;
+}
+.Dark ::placeholder {
+  color: black;
+  opacity: 1; /* Firefox */
+}
+.Dark svg {
+  width: 100%;
+}
