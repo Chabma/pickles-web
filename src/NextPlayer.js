@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import refresh_btn from "./images/refresh.png";
+import refresh_btn_dark from "./images/refresh(copy).png";
 import "antd/dist/antd.css";
 
 const NextPlayer = (props) => {
@@ -17,7 +18,7 @@ const NextPlayer = (props) => {
             id="recommendations_header"
             style={{
               width: "100%",
-                height: "25%",
+                height: "20%",
               textAlign: "center", 
                 display: "flex",
             }}

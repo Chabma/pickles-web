@@ -8,6 +8,12 @@ import next_btn from "./images/next.png";
 import previous_btn from "./images/previous.png";
 import add_to_library from "./images/addToLibrary.png";
 import checked_library from "./images/checkToLibrary.png";
+import play_btn_dark from "./images/play(copy).png";
+import pause_btn_dark from "./images/pause(copy).png";
+import next_btn_dark from "./images/next(copy).png";
+import previous_btn_dark from "./images/previous(copy).png";
+import add_to_library_dark from "./images/addToLibrary(copy).png";
+import checked_library_dark from "./images/checkToLibrary(copy).png";
 
 const Player = (props) => {
   const play_btn_func = (device) => {
@@ -82,7 +88,12 @@ const Player = (props) => {
   };
 
   const add_to_library_btn_func = (track) => {
+    if (props.isDark){
+      document.getElementById("library_btn_div").src = checked_library_dark;
+    }
+    else{
     document.getElementById("library_btn_div").src = checked_library;
+    }
     fetch(`https://api.spotify.com/v1/me/tracks?ids=${track}`, {
       method: "PUT",
       headers: {
@@ -222,13 +233,22 @@ const Player = (props) => {
   } else {
     played_queue_card = <Card hidden={true} />;
   }
+  
+  let featureSummary;
+  for (let i = 0; i < props.additionalFeatures.length; i++){
+    if (props.additionalFeatures[i] == "acousticness"){
+      featureSummary = props.additionalFeaturesString;
+    }
+  }
 
   return (
     <>
       {props.current ? (
               <div id="currentPlayer">
-                  <div style={{ overflowX: "scroll",  whiteSpace: "nowrap" }}>{props.additionalFeatureString}</div>
-          <div style={{ height: "100%" }}>
+                  <div style={{ overflowX: "scroll",  whiteSpace: "nowrap", height: "10%" }}>{
+                  //TODO: add here the function which translates additional features to colored divs 
+                  props.additionalFeatureString}</div>
+          <div style={{ height: "90%" }}>
             <div className="main-wrapper">
               <div id="played_queue">{played_queue_card}</div>
               <div className="now-playing__side">
@@ -280,7 +300,10 @@ const Player = (props) => {
                     id="previous_btn_div"
                     alt="previous song"
                     className="button_img"
-                    src={previous_btn}
+                    src={
+                      props.isDark
+      ? previous_btn_dark
+      : previous_btn}
                     onClick={function () {
                       previous_btn_func(props.device);
                     }}
@@ -289,7 +312,9 @@ const Player = (props) => {
                     id="pause_btn_div"
                     alt="pause song"
                     className="button_img"
-                    src={pause_btn}
+                    src={   props.isDark
+                      ? pause_btn_dark
+                      : pause_btn}
                     style={{ display: !props.is_playing ? "none" : "block" }}
                     onClick={function () {
                       pause_btn_func(props.device, true);
@@ -299,7 +324,9 @@ const Player = (props) => {
                     id="play_btn_div"
                     alt="play song"
                     className="button_img"
-                    src={play_btn}
+                    src={   props.isDark
+                      ? play_btn_dark
+                      : play_btn}
                     style={{ display: props.is_playing ? "none" : "block" }}
                     onClick={function () {
                       props.player.activateElement().then(() => {
@@ -311,7 +338,9 @@ const Player = (props) => {
                     id="forward_btn_div"
                     alt="next song"
                     className="button_img"
-                    src={next_btn}
+                    src={props.isDark
+                      ? next_btn_dark
+                      : next_btn}
                     onClick={function () {
                       next_btn_func(props.device);
                     }}
@@ -320,7 +349,9 @@ const Player = (props) => {
                     id="library_btn_div"
                     alt="add song to library"
                     className="button_img"
-                    src={add_to_library}
+                    src={props.isDark
+                      ? add_to_library_dark
+                      : add_to_library}
                     onClick={function () {
                       add_to_library_btn_func(
                         props.total_queue[props.queue_pos]?.id

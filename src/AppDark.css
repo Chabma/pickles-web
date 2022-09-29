@@ -92,7 +92,6 @@
   max-width: 150px;
   max-height: 150px;
   margin-bottom: 0;
-  background: #747474c2
 }
 
 .Dark #refresh_btn_div {
@@ -370,7 +369,7 @@
   margin: auto;
   height: 95%;
   min-width: 80%;
-  background: #747474c2;
+  fill: white;
 }
 
 .Dark .ant-card {

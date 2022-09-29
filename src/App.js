@@ -8,10 +8,27 @@ import * as $ from "jquery";
 import Player from "./Player";
 import NextPlayer from "./NextPlayer";
 import SearchItem from "./SearchItem";
+import refresh_btn from "./images/refresh.png";
+import refresh_btn_dark from "./images/refresh(copy).png";
+import play_btn from "./images/play.png";
+import pause_btn from "./images/pause.png";
+import next_btn from "./images/next.png";
+import previous_btn from "./images/previous.png";
+import library_btn from "./images/addToLibrary.png";
+import checked_library from "./images/checkToLibrary.png";
+import play_btn_dark from "./images/play(copy).png";
+import pause_btn_dark from "./images/pause(copy).png";
+import next_btn_dark from "./images/next(copy).png";
+import previous_btn_dark from "./images/previous(copy).png";
+import library_btn_dark from "./images/addToLibrary(copy).png";
+import checked_library_dark from "./images/checkToLibrary(copy).png";
 import logo from "./images/logo.png";
 //import 'particles.js/particles';
 import { tsParticles } from "tsparticles";
 const { Search } = Input;
+
+//TODO update alerts to be console logs and handle when the device has gone offline by updating the UI
+// and then checking for wifi / device connection occasionally (in tick?)
 
 // Spotify info
 export const authEndpoint = "https://accounts.spotify.com/authorize";
@@ -20,6 +37,7 @@ const clientId = "fadd120c4e7a4a1a954bf081a4fd6e59";
 const clientSecret = "97c1d3b88b9e4a89898482bb4141b2df";
 //TODO: change uses of client Secret to Base 64 encoded uses
 const redirectUri = "https://chabma.github.io/pickles-web/";
+const debug = true;
 //var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 //const redirectUri = "http://localhost:3000/callback";
 //^^ redirect URI for local testing
@@ -36,13 +54,11 @@ const scopes = [
   "playlist-modify-public",
   "playlist-modify-private",
   "user-top-read",
-  "user-read-recently-played",
-];
+  "user-read-recently-played",];
 
 // set up particlesJS
 const particlesJS = window.particlesJS;
-console.log(window.location);
-
+if(debug){console.log("window.location is: "+window.location);}
 // get the code from the url;
 const code = window.location.search.split("?").reduce(function (initial, item) {
   if (item) {
@@ -71,6 +87,7 @@ const click_delay = 600;
 let last_click = 0;
 let current_click = new Date();
 let pause_switch = false;
+let endSong = false;
 
 class App extends Component {
   constructor() {
@@ -99,6 +116,7 @@ class App extends Component {
       playbackSession: null,
       isPicklesPlayer: true,
       userImage: "assets/user-avatar.png",
+      isDark: false,
     };
   }
 
@@ -222,8 +240,6 @@ class App extends Component {
   Create new item and add item to state's total queue 
   (updates via a call to getRecs?)
   */
-    //enable Horizontal Scroll
-    this.enableHorizontalScroll();
 
     //create new item
     let artists = track.artists.map((item) => item.name);
@@ -302,37 +318,19 @@ class App extends Component {
             )
               .then((response) => response.text())
               .then((data) => {
+                endSong = false;
                 this.setState(
                   {
                     queue_pos: queuePosition,
                     playLock: false,
                   },
                   () => {
-                    //console.log("updating based on play function")
+                    if(debug){console.log("updating based on play function")}
                     if (!this.state.isPicklesPlayer) {
                       this.updatePlaying(false);
                     }
                   }
                 );
-/*
-                //double tap
-                fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${this.state.deviceID}`, {
-                    method: "PUT",
-                    headers: {
-                      Accept: "application/json",
-                      "Content-Type": "application/json",
-                      Authorization: `Bearer ${access_token}`,
-                    },
-                  }).then((data) => {
-                    fetch(`https://api.spotify.com/v1/me/player/play?device_id=${this.state.deviceID}`, {
-                                method: "PUT",
-                                headers: {
-                                  Accept: "application/json",
-                                  "Content-Type": "application/json",
-                                  Authorization: `Bearer ${access_token}`,
-                                },
-                      })
-                  })*/
                 })
             .catch((error) => {
                 console.log(error);
@@ -348,10 +346,6 @@ class App extends Component {
   Update's current state based on spotify api 
   (updates via a call to get Recs?)
   */
-
-    //can this line be moved to init?
-    this.enableHorizontalScroll();
-
     fetch(`https://api.spotify.com/v1/me/player/devices`, {
       method: "GET",
       headers: { Authorization: `Bearer ${this.state.token}` },
@@ -365,13 +359,15 @@ class App extends Component {
       .then((response) => response.json())
       .then((data) => {
         //update search results
-        console.log(data);
+        let deviceIDs = data.devices.map((x) => x.id);
+        if(debug){
+          console.log("data from devices request is: "+data);
+          console.log("all device IDs from request: "+deviceIDs);
+          console.log("boolean for if this.state.deviceID is in the request: "+deviceIDs.includes(this.state.deviceID));
+        }
         this.setState({
           devices: data.devices,
         });
-        let deviceIDs = data.devices.map((x) => x.id);
-        console.log(deviceIDs);
-        console.log(deviceIDs.includes(this.state.deviceID));
         if (deviceIDs.includes(this.state.deviceID)) {
           //update player info based on spotify's latest info
           $.ajax({
@@ -385,16 +381,15 @@ class App extends Component {
             },
             success: (data) => {
               if (setItemBoolean) {
-                console.log("here in setItemBoolean for update");
-                console.log(data);
+                if(debug){
+                  console.log("inside setItemBoolean for update");
+                  console.log("data from player request is: "+data);
+                }
                 this.setState({
                   //deviceID: data?.device.id ?? this.state.deviceID,
                   is_playing: data?.is_playing ?? this.state.is_playing,
                   progress_ms: data?.progress_ms ?? this.state.progress_ms,
                 });
-
-                console.log(data?.is_playing);
-                console.log(this.state.is_playing);
               }
               if (refreshSelections) {
                 this.getRecs();
@@ -409,8 +404,6 @@ class App extends Component {
                   album: data?.item.album.name ?? "Pickles",
                   artwork: [{src: data?.item.album.images[0].url ?? "./images/logo.png"}],
                 });
-                  console.log(navigator)
-
                   navigator.mediaSession.setActionHandler("previoustrack", () => this.play(this.state.queue_pos - 1));
                   navigator.mediaSession.setActionHandler("nexttrack", () => this.play(this.state.queue_pos + 1));
                 // TODO: Update playback state.
@@ -485,21 +478,58 @@ class App extends Component {
           }
         }
 
-        let stateAdditionalFeatureString = "";
-
+        let additionalFeatureString = ""
         // construct string from features for each additional feature.
-        let additionalFeatureString = "";
+        let stateAdditionalFeatureArray = [];
+        let stateAdditionalFeatureString;
         for (j = 0; j < additionalFeatures.length; j++) {
           additionalFeatureString +=
             "&target_" +
             additionalFeatures[j] +
             "=" +
             additionalFeatureValues[additionalFeatures[j]];
-          stateAdditionalFeatureString +=
-            " || " +
-            additionalFeatures[j] +
-            " : " +
-            additionalFeatureValues[additionalFeatures[j]];
+            if(additionalFeatures[j] == "acousticness"){
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "blue"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+              console.log(stateAdditionalFeatureString)
+            }
+            else  if(additionalFeatures[j] == "danceability"){
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "red"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+            }
+            else  if(additionalFeatures[j] == "energy"){
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "orange"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+            }
+            else  if(additionalFeatures[j] == "instrumentalness"){
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "lime"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+            }
+            else  if(additionalFeatures[j] == "key"){
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "green"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+            }
+            else  if(additionalFeatures[j] == "liveness"){
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "purple"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+            }
+            else  if(additionalFeatures[j] == "loudness"){
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "pink"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+            }
+            else  if(additionalFeatures[j] == "speechiness"){
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "gold"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+            }
+            else  if(additionalFeatures[j] == "tempo"){
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "silver"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+            }
+            else  if(additionalFeatures[j] == "valence"){
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "teal"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+            }
+            stateAdditionalFeatureString = (<div style={{display: "inline-flex"}}>{stateAdditionalFeatureArray}</div>);
+            console.log(stateAdditionalFeatureString)
+
+            
+          //   else{
+          // stateAdditionalFeatureString +=
+          //   " || " +
+          //   additionalFeatures[j] +
+          //   " : " +
+          //   additionalFeatureValues[additionalFeatures[j]];
+          // }
         }
 
         if (primaryFeature === "song") {
@@ -612,8 +642,9 @@ class App extends Component {
     if (this.state.is_playing) {
       let nextSecond = this.state.progress_ms + 1000;
       let currentSongDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
-        if (nextSecond + 1000 >= currentSongDuration) {
-            console.log("updating for tick")
+        if (nextSecond + 1000 >= currentSongDuration && !endSong) {
+          endSong = true;
+          if(debug){console.log("updating for tick")}
            //let currentSong = this.state.total_queue[this.state.queue_pos]?.id
             //let lastPlayedSong = this.get_last_played_song()
             //if (currentSong == lastPlayedSong) {
@@ -744,8 +775,6 @@ class App extends Component {
 
     // Playback status updates based on headphone buttons
     player.addListener("player_state_changed", (state) => {
-      console.log("updating based on player state changed listener");
-      console.log(state);
       this.updatePlaying(false, false);
       this.setState({
         //deviceID: data?.device.id ?? this.state.deviceID,
@@ -755,7 +784,7 @@ class App extends Component {
         /*
       if (
         state.position >=
-        this.state.total_queue[this.state.queue_pos]?.songDuration - 2000
+        this.stfate.total_queue[this.state.queue_pos]?.songDuration - 2000
       ) {
 
         this.play(this.state.queue_pos + 1);
@@ -763,15 +792,6 @@ class App extends Component {
       */
       if (pause_switch != state.paused) {
         pause_switch = state.paused;
-
-        /*
-                    // add double press detection
-                      last_click = current_click;
-                      current_click = new Date();
-                      if (current_click - last_click < click_delay) {
-                        this.play(this.state.queue_pos + 1);
-                    }
-                    */
       } else {
         pause_switch = state.paused;
       }
@@ -792,7 +812,7 @@ class App extends Component {
 
     // Not Ready
     player.addListener("not_ready", ({ device_id }) => {
-      console.log("Device ID has gone offline", device_id);
+      alert("Device ID has gone offline: ", device_id);
     });
 
     // Connect to the player!
@@ -808,7 +828,7 @@ class App extends Component {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("successfully set up spotify player");
+        if(debug){console.log("successfully set up spotify player");}
         this.setState(
           {
             userID: data.id,
@@ -852,11 +872,11 @@ class App extends Component {
   Wait for Spotify to load and update parameters once loaded 
   */
     if (window.Spotify) {
-      console.log("window.Spotify exists");
+      if(debug){console.log("window.Spotify exists");}
       this.setUpPlayer(data);
     } else {
       window.onSpotifyWebPlaybackSDKReady = () => {
-        console.log("entering spotify webplayback sdk ready");
+        if(debug){console.log("entering spotify webplayback sdk ready");}
         this.setUpPlayer(data);
       };
     }
@@ -870,12 +890,26 @@ class App extends Component {
     tsParticles.loadJSON("particles-js", "particles.json");
     //window.location.search = "";
     window.history.replaceState(this.state, "Pickles", "index.html");
+    this.enableHorizontalScroll();
+
+    document.addEventListener('kPause', () => {
+        last_click = current_click;
+        current_click = new Date();
+        if (current_click - last_click < click_delay) {
+          this.play(this.state.queue_pos + 1);
+        }
+    })
+    document.addEventListener('kPlay', () => {
+      last_click = current_click;
+      current_click = new Date();
+      console.log("detected");
+      if (current_click - last_click < click_delay) {
+        this.play(this.state.queue_pos + 1);
+      }
+  })
 
     //use code from url
-    console.log(code);
     if (code.code) {
-      console.log("code exists");
-
       //set up token based on code
       $.ajax({
         url: `https://accounts.spotify.com/api/token`,
@@ -889,8 +923,10 @@ class App extends Component {
           scope: scopes.join("%20"),
         },
         success: (data) => {
-          console.log("successfully logged in with code");
-          console.log(data);
+          if(debug){
+            console.log("successfully logged in with code");
+            console.log(data);
+          }
           if (data) {
             this.waitForSpotifyWebPlaybackSDKToLoad(data);
             console.log("The Web Playback SDK has loaded.");
@@ -907,18 +943,11 @@ class App extends Component {
     }
   }
 
-  collapseSection() {
-    var content = document.getElementById("advanced_setting");
-    if (content.style.display === "block") {
-      content.style.display = "none";
-    } else {
-      content.style.display = "block";
-    }
-  }
-
   toggleDarkMode() {
+
+    
     let divs = document.getElementsByTagName("div")
-    console.log(divs)
+    
     for(let i = 0; i < divs.length; i++){
       if($(divs[i]).hasClass("Dark")){
         $(divs[i]).removeClass("Dark");
@@ -954,13 +983,46 @@ class App extends Component {
         $(h4s[i]).addClass("Dark");
       }
     }
+
+    if(!$(divs[0]).hasClass("Dark")){
+      document.getElementById("refresh_btn").src=refresh_btn;
+      document.getElementById("previous_btn_div").src=previous_btn;
+      document.getElementById("pause_btn_div").src=pause_btn;
+      document.getElementById("play_btn_div").src=play_btn;
+      document.getElementById("forward_btn_div").src=next_btn;
+      if(document.getElementById("library_btn_div").src == library_btn_dark){
+        document.getElementById("library_btn_div").src=library_btn;
+        }
+        else{
+          document.getElementById("library_btn_div").src=checked_library;
+        }
+      this.setState({
+        isDark: false,
+      });
+
+    }
+    else{
+      document.getElementById("refresh_btn").src=refresh_btn_dark;
+      document.getElementById("previous_btn_div").src=previous_btn_dark;
+      document.getElementById("pause_btn_div").src=pause_btn_dark;
+      document.getElementById("play_btn_div").src=play_btn_dark;
+      document.getElementById("forward_btn_div").src=next_btn_dark;
+      if(document.getElementById("library_btn_div").src == library_btn){
+      document.getElementById("library_btn_div").src=library_btn_dark;
+      }
+      else{
+        document.getElementById("library_btn_div").src=checked_library_dark;
+      }
+      this.setState({
+        isDark: true,
+      });
+    }
   }
 
   add_playlist_btn_func(playlist_name, user_id) {
     /*
   Button function for adding the current playlist to a user's spotify account
   */
-    console.log(playlist_name);
     let playlist_id = "";
     let data = {
       name: playlist_name,
@@ -983,7 +1045,7 @@ class App extends Component {
       })
       .catch((error) => {
         console.log(error);
-        alert("Error Creating Playlist");
+        alert("Error creating playlist, please try again");
       });
   }
 
@@ -1134,7 +1196,7 @@ class App extends Component {
                 the_token={this.state.token}
                 playFunc={this.play}
                 updateFunc={(bool) => {
-                  console.log("updating because of player js");
+                  if(debug){console.log("updating because of player js");}
                   this.updatePlaying(bool);
                 }}
                 player={this.state.player}
@@ -1144,7 +1206,9 @@ class App extends Component {
                 queue_pos={this.state.queue_pos}
                 clearQueue={this.clearQueue}
                 additionalFeatureString={this.state.additionalFeatureString}
+                additionalFeatures={this.state.additionalFeatures}
                 isPicklesPlayer={this.state.isPicklesPlayer}
+                isDark={this.state.isDark}
               />
 
               {/* Song recomendations */}
@@ -1162,7 +1226,7 @@ class App extends Component {
                 isFirst={!this.state.current}
                 refreshFunc={(bool) => {
                   if (this.state.current) {
-                    console.log("updating based on next player js");
+                    if(debug){console.log("updating based on next player js");}
                     this.updatePlaying(bool);
                   } else {
                     this.getFirstRecs();
@@ -1181,6 +1245,7 @@ class App extends Component {
                     color: "black",
                     fontFamily: "Roboto",
                     width: "100%",
+                    height: "100%",
                   }}
                   placeholder="SONG SEARCH..."
                   size="large"
@@ -1211,16 +1276,16 @@ class App extends Component {
                     this.updatePlaying(true);
                   }}
                 >
-                  <option value="acousticness">Acousticness</option>
-                  <option value="danceability">Danceability</option>
-                  <option value="energy">Energy</option>
-                  <option value="instrumentalness">Instrumentalness</option>
-                  <option value="key">Key</option>
-                  <option value="liveness">Liveness</option>
-                  <option value="loudness">Loudness</option>
-                  <option value="speechiness">Speechiness</option>
-                  <option value="tempo">Tempo</option>
-                  <option value="valence">Valence</option>
+                  <option value="acousticness"><div style={{color:"blue"}}>Acousticness</div></option>
+                  <option value="danceability"><div style={{color:"red"}}>Danceability</div></option>
+                  <option value="energy"><div style={{color:"orange"}}>Energy</div></option>
+                  <option value="instrumentalness"><div style={{color:"lime"}}>Instrumentalness</div></option>
+                  <option value="key"><div style={{color:"green"}}>Key</div></option>
+                  <option value="liveness"><div style={{color:"purple"}}>Liveness</div></option>
+                  <option value="loudness"><div style={{color:"pink"}}>Loudness</div></option>
+                  <option value="speechiness"><div style={{color:"gold"}}>Speechiness</div></option>
+                  <option value="tempo"><div style={{color:"silver"}}>Tempo</div></option>
+                  <option value="valence"><div style={{color:"teal"}}>Valence</div></option>
                 </Select>
 
               <button
@@ -1287,19 +1352,10 @@ class App extends Component {
                     }}
                   >
                     Toggle Dark Mode
-                  </Button>
+                </Button>
                 <br />
                 {/* Device Chooser */}
-                <Button
-                  type="dashed"
-                  class="collapsible"
-                  onClick={() => {
-                    this.collapseSection();
-                  }}
-                  style={{ display: "none" }}
-                >
-                  Advanced Settings
-                </Button>
+
                 {this.state.deviceID && (
                   <div id="advanced_setting">
                     <h4> Device Chooser:</h4>
@@ -1329,7 +1385,6 @@ class App extends Component {
                             isPicklesPlayer: false,
                           });
                         }
-                        console.log(value.value);
                       }}
                     >
                       {this.state.devices.map((option) => (

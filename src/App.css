@@ -20,6 +20,48 @@
   }
 }
 
+
+@font-face {
+  font-family: Nabla;
+  src: url("./Nabla-Regular-VariableFont_EDPT,EHLT.ttf");
+  font-display: block;  /* Prefer FOIT (Flash Of Invisible Text) over FOUT (Flash Of Unstyled Text) */
+}
+
+@font-palette-values --0 {
+  font-family: Nabla;
+  base-palette: 0;
+}
+
+@font-palette-values --1 {
+  font-family: Nabla;
+  base-palette: 1;
+}
+
+@font-palette-values --2 {
+  font-family: Nabla;
+  base-palette: 2;
+}
+
+@font-palette-values --3 {
+  font-family: Nabla;
+  base-palette: 3;
+}
+
+@font-palette-values --4 {
+  font-family: Nabla;
+  base-palette: 4;
+}
+
+@font-palette-values --5 {
+  font-family: Nabla;
+  base-palette: 5;
+}
+
+@font-palette-values --6 {
+  font-family: Nabla;
+  base-palette: 6;
+}
+
 .App-main {
   height: 92%;
   width: 100%;
@@ -76,11 +118,21 @@
     align-items: center;
     display: flex;
     float: left;
+    font-family: Nabla;
+    font-variation-settings: "EDPT" 65.1497, "EHLT" 0;
+    font-size: 45px;
+    font-palette: --5;
 }
 
 #account_image {
     height: 100%;
     float: right;
+    border-radius: 1000px;
+}
+
+.additionalFeaturePill{
+  background: lightgrey;
+  border-radius: 12px;
 }
 
 /*Next player (recommendations)*/
