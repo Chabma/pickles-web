@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/pickles-web/static/css/main.4325b514.chunk.css",
-    "main.js": "/pickles-web/static/js/main.5072f698.chunk.js",
-    "main.js.map": "/pickles-web/static/js/main.5072f698.chunk.js.map",
+    "main.js": "/pickles-web/static/js/main.e4afeec2.chunk.js",
+    "main.js.map": "/pickles-web/static/js/main.e4afeec2.chunk.js.map",
     "runtime-main.js": "/pickles-web/static/js/runtime-main.32eca6b4.js",
     "runtime-main.js.map": "/pickles-web/static/js/runtime-main.32eca6b4.js.map",
     "static/css/2.c5b6f512.chunk.css": "/pickles-web/static/css/2.c5b6f512.chunk.css",
@@ -25,6 +25,6 @@
     "static/css/2.c5b6f512.chunk.css",
     "static/js/2.d6343ffd.chunk.js",
     "static/css/main.4325b514.chunk.css",
-    "static/js/main.5072f698.chunk.js"
+    "static/js/main.e4afeec2.chunk.js"
   ]
 }
