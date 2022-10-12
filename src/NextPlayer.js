@@ -73,11 +73,11 @@ const NextPlayer = (props) => {
               <div className="next-playing__artist">
                 {props.next[0].artists[0].name}
               </div>
-
-                      </div>
-                      <div style={{ fontSize: "calc(10px + 1vmin)", overflowX: "scroll", whiteSpace: "nowrap"  }}>
+              <div className="next-playing_attributes" style={{ fontSize: "calc(10px + 1vmin)", overflowX: "scroll", whiteSpace: "nowrap", width: "100%"  }}>
                           {props.next_features[0]}
                       </div>
+                      </div>
+
           </div>
           <div
             className="next-wrapper"
@@ -97,11 +97,11 @@ const NextPlayer = (props) => {
               <div className="next-playing__artist">
                 {props.next[1].artists[0].name}
               </div>
-
-                      </div>
-                      <div style={{ fontSize: "calc(10px + 1vmin)", overflowX: "scroll", whiteSpace: "nowrap"  }}>
+              <div className="next-playing_attributes" style={{ fontSize: "calc(10px + 1vmin)", overflowX: "scroll", whiteSpace: "nowrap", width: "100%"   }}>
                           {props.next_features[1]}
                       </div>
+                      </div>
+
           </div>
           <div
             className="next-wrapper"
@@ -121,10 +121,11 @@ const NextPlayer = (props) => {
               <div className="next-playing__artist">
                 {props.next[2].artists[0].name}
               </div>
-                      </div>
-                      <div style={{ fontSize: "calc(10px + 1vmin)", overflowX: "scroll", whiteSpace: "nowrap"  }}>
+              <div className="next-playing_attributes" style={{ fontSize: "calc(10px + 1vmin)", overflowX: "scroll", whiteSpace: "nowrap", width: "100%"   }}>
                           {props.next_features[2]}
                       </div>
+                      </div>
+
           </div>
         </React.Fragment>
       )}

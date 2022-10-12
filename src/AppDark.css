@@ -101,7 +101,7 @@
 }
 
 .Dark .next-wrapper {
-    width: 95%;
+    width: 80%;
     height: 24%;
     margin: auto;
     overflow-x: scroll;
@@ -118,13 +118,14 @@
 .Dark .next-playing__img {
   float: left;
   max-width: 150px;
-  width: 33%;
+  width: 20%;
   height: 100%;
 }
 
 .Dark .next-playing__img img {
-  max-width: 150px;
+  max-width: 100%;
   height: 100%;
+  float: left;
 }
 
 .Dark .next-playing__side {
@@ -132,7 +133,7 @@
   margin: auto;
   padding: 10px;
   padding-top: 0px;
-  width: 66%;
+  width: 80%;
   height: 100%;
 }
 
@@ -147,7 +148,11 @@
   color: #eee;
 }
 .Dark h4 {
-  color: #eee;
+  color: rgb(13, 153, 20);
+}
+
+.Dark .next-playing_attributes{
+  color:white
 }
 
 .Dark .next-playing__name {
@@ -166,7 +171,9 @@
   float: left;
   font-size: 0.7em;
   margin-bottom: 0.1em;
-  color: #a09ee7
+  color: #a09ee7;
+  width: 100%;
+  text-align: initial;
 }
 
 .Dark #nextPlayer {
@@ -258,18 +265,6 @@
   float: left;
   margin: auto;
   width: 50%;
-}
-/** Progress **/
-.Dark .progress {
-  border: 1px solid #000;
-  height: 10px;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.Dark .progress__bar {
-  background-color: #1e1b96;
-  height: 10px;
 }
 
 .Dark #queue {
@@ -440,13 +435,13 @@
 
 /** Progress **/
 .Dark .progress {
-  border: 1px solid #000;
+  border: 1px solid white;
   height: 5%;
   border-radius: 3px;
   overflow: hidden;
 }
 .Dark .progress__bar {
-  background-color: #1e1b96;
+  background-color: #42961b;
   height: 100%;
 }
 

@@ -54,11 +54,13 @@ const scopes = [
   "playlist-modify-public",
   "playlist-modify-private",
   "user-top-read",
-  "user-read-recently-played",];
+  "user-read-recently-played",
+];
 
 // set up particlesJS
 const particlesJS = window.particlesJS;
 if(debug){console.log("window.location is: "+window.location);}
+
 // get the code from the url;
 const code = window.location.search.split("?").reduce(function (initial, item) {
   if (item) {
@@ -76,13 +78,13 @@ const debounce = (context, func, delay) => {
     if (timeout) {
       clearTimeout(timeout);
     }
-
     timeout = setTimeout(() => {
       func.apply(context, args);
     }, delay);
   };
 };
 
+// variables that might be used for next song finding
 const click_delay = 600;
 let last_click = 0;
 let current_click = new Date();
@@ -93,30 +95,37 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
+      //Variables for login / refresh / flobal
       token: null,
       code: null,
       refresh_token: null,
+      userID: "",
+      userImage: "assets/user-avatar.png",
+      isDark: false,
+
+      //Spotify Player variables
       player: null,
       deviceID: null,
       devices: [],
-      searchValue: "",
-      searchResults: [],
       is_playing: false,
       progress_ms: 0,
       total_queue: [],
       queue_pos: 0,
-      userID: "",
       next: null,
       current: false,
+      current_time: Date.now(),
+      isPicklesPlayer: true,
+      playbackSession: null,
+      playLock: false,
+
+      //Search
+      searchValue: "",
+      searchResults: [],
+
+      //Additional Feature Info
       next_features: [],
       additionalFeatures: [],
-      current_time: Date.now(),
       additionalFeatureString: "",
-      playlock: false,
-      playbackSession: null,
-      isPicklesPlayer: true,
-      userImage: "assets/user-avatar.png",
-      isDark: false,
     };
   }
 
@@ -124,8 +133,8 @@ class App extends Component {
     /*
   Create search items and then add to state total queue
   */
-    const searchQuery = query;
-    const fetchURL = encodeURI(`q=${searchQuery}`);
+ //TODO: Make search results use latest queue pos even if it changes after search
+    let fetchURL = encodeURI(`q=${query}`);
 
     //search with spotify api
     fetch(`https://api.spotify.com/v1/search?${fetchURL}&type=track`, {
@@ -141,7 +150,7 @@ class App extends Component {
       .then((response) => response.json())
       .then(({ tracks }) => {
         //create an item for each search result
-        const results = [];
+        let results = [];
         tracks.items.forEach((element) => {
           let artists = [];
           element.artists.forEach((artist) => artists.push(artist.name));
@@ -280,7 +289,6 @@ class App extends Component {
     this.setState({ total_queue: tempQueue }, () => {
       if (playBoolean) {
         this.play(position);
-
       }
       this.getRecs();
     });
@@ -296,8 +304,7 @@ class App extends Component {
     if (queuePosition >= 0) {
       if (queuePosition >= this.state.total_queue.length) {
         this.queue(this.state.next[0], this.state.total_queue.length, true);
-      } else {
-        if (!this.playLock) {
+      } else if (!this.state.playLock) {
           this.setState({
             //deviceID: data?.device.id ?? this.state.deviceID,
             playLock: true,
@@ -326,17 +333,22 @@ class App extends Component {
                   },
                   () => {
                     if(debug){console.log("updating based on play function")}
+                    //TODO is this needed?
                     if (!this.state.isPicklesPlayer) {
                       this.updatePlaying(false);
                     }
                   }
                 );
-                })
+              })
             .catch((error) => {
+                this.setState(
+                  {
+                    playLock: false,
+                  },
+                );
                 console.log(error);
               });
           });
-        }
       }
     }
   };
@@ -346,6 +358,8 @@ class App extends Component {
   Update's current state based on spotify api 
   (updates via a call to get Recs?)
   */
+ //TODO: Look over everything here
+    //update device list (is this needed?)
     fetch(`https://api.spotify.com/v1/me/player/devices`, {
       method: "GET",
       headers: { Authorization: `Bearer ${this.state.token}` },
@@ -358,7 +372,22 @@ class App extends Component {
       })
       .then((response) => response.json())
       .then((data) => {
-        //update search results
+        //update device list
+
+        // looks like I only do this to hope that the player call doesn't fail. that seems dumb
+        // actually this seems to be to check that I get info related to the right device, still meh...
+        // just change to check that...
+        // oh  this is to check if the player has be reset
+        // maybe this is helpful... I barely realized I did this
+        // maybe we make this a button
+        // q1 is how often this actually happens / should it be supported
+        // q2 is if it is happening, how can I avoid this ugly wrap
+        // for q2 I think I could have a function check this
+        // and maybe make it raise a banner
+        // I don't think this should be in update playing
+        // maybe in play function itself
+        //hmmmm TODO
+
         let deviceIDs = data.devices.map((x) => x.id);
         if(debug){
           console.log("data from devices request is: "+data);
@@ -395,11 +424,11 @@ class App extends Component {
                 this.getRecs();
               }
 
-              // set up android player
-
+              // update android player
+              // make this a seperate function?
               if ("mediaSession" in navigator) {
                 navigator.mediaSession.metadata = new window.MediaMetadata({
-                  title: data?.item.name ?? "Pickles",
+                  title: data?.item.name ?? "Pickles Music Player",
                   artist: data?.item.artists[0].name ?? "Pickles",
                   album: data?.item.album.name ?? "Pickles",
                   artwork: [{src: data?.item.album.images[0].url ?? "./images/logo.png"}],
@@ -435,6 +464,47 @@ class App extends Component {
       );
   };
 
+  // TODOchange to array
+  toNote = (noteInt) => {
+    if(noteInt == 0){
+      return 'C'
+    }
+    if(noteInt == 1){
+      return 'C#'
+    }
+    if(noteInt == 2){
+      return 'D'
+    }
+    if(noteInt == 3){
+      return 'D#'
+    }
+    if(noteInt == 4){
+      return 'E'
+    }
+    if(noteInt == 5){
+      return 'F'
+    }
+    if(noteInt == 6){
+      return 'F#'
+    }
+    if(noteInt == 7){
+      return 'G'
+    }
+    if(noteInt == 8){
+      return 'G#'
+    }
+    if(noteInt == 9){
+      return 'A'
+    }
+    if(noteInt == 10){
+      return 'A#'
+    }
+    if(noteInt == 11){
+      return 'B'
+    }
+    return 'UNKNOWN'
+  }
+//TODO CUT GET RECS DOWN
   getRecs = (firstSongs = null) => {
     /*
   Calls recomendation api with last 5 songs and updates the three recommendations
@@ -478,6 +548,7 @@ class App extends Component {
           }
         }
 
+        //change to array if possible` TODO
         let additionalFeatureString = ""
         // construct string from features for each additional feature.
         let stateAdditionalFeatureArray = [];
@@ -489,35 +560,35 @@ class App extends Component {
             "=" +
             additionalFeatureValues[additionalFeatures[j]];
             if(additionalFeatures[j] == "acousticness"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "blue"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "deepskyblue"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
               console.log(stateAdditionalFeatureString)
             }
             else  if(additionalFeatures[j] == "danceability"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "red"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "red"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
             }
             else  if(additionalFeatures[j] == "energy"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "orange"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "orange"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
             }
             else  if(additionalFeatures[j] == "instrumentalness"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "lime"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "lime"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
             }
             else  if(additionalFeatures[j] == "key"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "green"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "green"}}>{this.toNote(Math.round(additionalFeatureValues[additionalFeatures[j]]))}</div>)
             }
             else  if(additionalFeatures[j] == "liveness"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "purple"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "purple"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
             }
             else  if(additionalFeatures[j] == "loudness"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "pink"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "pink"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])/100} dB</div>)
             }
             else  if(additionalFeatures[j] == "speechiness"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "gold"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "gold"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
             }
             else  if(additionalFeatures[j] == "tempo"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "silver"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "silver"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])/100} BPM</div>)
             }
             else  if(additionalFeatures[j] == "valence"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "teal"}}>{additionalFeatureValues[additionalFeatures[j]]}</div>)
+              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "teal"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
             }
             stateAdditionalFeatureString = (<div style={{display: "inline-flex"}}>{stateAdditionalFeatureArray}</div>);
             console.log(stateAdditionalFeatureString)
@@ -642,7 +713,7 @@ class App extends Component {
     if (this.state.is_playing) {
       let nextSecond = this.state.progress_ms + 1000;
       let currentSongDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
-        if (nextSecond + 1000 >= currentSongDuration && !endSong) {
+        if (nextSecond >= currentSongDuration && !endSong) {
           endSong = true;
           if(debug){console.log("updating for tick")}
            //let currentSong = this.state.total_queue[this.state.queue_pos]?.id
@@ -672,6 +743,8 @@ class App extends Component {
     /*
   Cleared state variables associated with songs in the player
   */
+
+  //TODO ADD PAUSE
     this.setState({
       searchValue: "",
       is_playing: false,
@@ -790,6 +863,18 @@ class App extends Component {
         this.play(this.state.queue_pos + 1);
       }
       */
+
+      //TODO ADD NEXT SONG CHECK HERE (maybe playlock check is fine)
+      //check if the song just ended (with checking previous song api?)
+        // how to check this,,, we have previous song endpoint, we have checking current state and saving last state
+        // if we somehow store when a song ends... then we can use that
+        // maybe check what info we have in the state here
+        // hmm we have state.is_playing. Let's atleast console log this
+        console.log(state);
+      // if the song jsut ended then play next song ()
+      //if song hasn't just ended then don't
+      // alternative, change logic to queue, but then you have to deal with queue which is a pain -> let's not
+
       if (pause_switch != state.paused) {
         pause_switch = state.paused;
       } else {
@@ -798,6 +883,7 @@ class App extends Component {
     });
 
     //On Autoplay failure
+    //TODO: MAKE AUTOPLAY CHANGE HOW SONGS ARE STARTED
     player.addListener("autoplay_failed", () =>
       console.log("Autoplay is not allowed by the browser")
     );
@@ -828,7 +914,7 @@ class App extends Component {
     })
       .then((response) => response.json())
       .then((data) => {
-        if(debug){console.log("successfully set up spotify player");}
+        if(debug){console.log("successfully call me for use info");}
         this.setState(
           {
             userID: data.id,
@@ -888,10 +974,16 @@ class App extends Component {
  */
     //run particles
     tsParticles.loadJSON("particles-js", "particles.json");
+
     //window.location.search = "";
+    // init state variable
     window.history.replaceState(this.state, "Pickles", "index.html");
+
+    // enable horizontal scrolls
     this.enableHorizontalScroll();
 
+    //initialize extra pause and play via headphones
+    // TODO see if needed
     document.addEventListener('kPause', () => {
         last_click = current_click;
         current_click = new Date();
@@ -906,11 +998,12 @@ class App extends Component {
       if (current_click - last_click < click_delay) {
         this.play(this.state.queue_pos + 1);
       }
-  })
+    })
 
     //use code from url
     if (code.code) {
       //set up token based on code
+      //TODO seperate function?
       $.ajax({
         url: `https://accounts.spotify.com/api/token`,
         type: "POST",
@@ -944,9 +1037,20 @@ class App extends Component {
   }
 
   toggleDarkMode() {
+    //TODO maybe this could be cleaner? p3
 
     
     let divs = document.getElementsByTagName("div")
+    if($(divs[0]).hasClass("Dark")){
+      this.setState({
+        isDark: false,
+      });
+    }
+    else{
+      this.setState({
+        isDark: true,
+      });
+    }
     
     for(let i = 0; i < divs.length; i++){
       if($(divs[i]).hasClass("Dark")){
@@ -996,9 +1100,7 @@ class App extends Component {
         else{
           document.getElementById("library_btn_div").src=checked_library;
         }
-      this.setState({
-        isDark: false,
-      });
+
 
     }
     else{
@@ -1013,9 +1115,7 @@ class App extends Component {
       else{
         document.getElementById("library_btn_div").src=checked_library_dark;
       }
-      this.setState({
-        isDark: true,
-      });
+
     }
   }
 
@@ -1023,6 +1123,7 @@ class App extends Component {
     /*
   Button function for adding the current playlist to a user's spotify account
   */
+ //TODO update name of this function
     let playlist_id = "";
     let data = {
       name: playlist_name,
@@ -1053,6 +1154,7 @@ class App extends Component {
     /*
   Function to add a single song to a playlist (called for every song when creating a new playlist)
   */
+ // TODO update name of this fucntion
     fetch(
       `https://api.spotify.com/v1/playlists/${playlist_id}/tracks?uris=${this.state.total_queue.map(
         (x) => "spotify%3Atrack%3A" + x.id
@@ -1074,10 +1176,11 @@ class App extends Component {
     });
   }
 
-    get_last_played_song() {
+  get_last_played_song() {
         /*
-      Function to add a single song to a playlist (called for every song when creating a new playlist)
+      Function to get most recently played song
       */
+     //TODO UPDATE name and check if this is needed
         fetch(
             `https://api.spotify.com/v1/me/player/recently-played?limit=1`,
             {
@@ -1110,6 +1213,7 @@ class App extends Component {
     }
     */
     };
+
     expand_logout_settings = () => {
       let el = document.getElementsByClassName("user_logout_div")[0];
         if (el.style.display === "block") {
@@ -1123,10 +1227,8 @@ class App extends Component {
     /*
  Built in Funtion which runs every time this component renders or rerenders due to a state change (called once before componentDidMount)
  */
+//TODO: could be nicer, but p3
 
-    //if(isSafari){
-    //     alert("Pickles does not work on IOS devices. Sorry!")
-    //}
     // Show search results
     let card;
     if (this.state.searchResults.length > 0) {
@@ -1153,12 +1255,12 @@ class App extends Component {
         {/* normal page loading */}
             <div className="App-header" >
           <img id="logo" src="assets/logo.png"></img>
-          <h1 id="logo_text"> PICKLES</h1>
+          <h1 id="logo_text"> Pickles</h1>
                 <img id="account_image" src={this.state.userImage} onClick={() => {
                     this.expand_logout_settings();
                 }}></img>
                 <div className="user_logout_div" style={{ display: "none"}}>
-                    <a href="https://accounts.spotify.com/logout" style={{ color: "red", fontSize: "x-large" }}> Logout? </a>
+                    <a href="https://accounts.spotify.com/logout" style={{ color: "red", fontSize: "x-large", float: "right" }}> Logout? </a>
                 </div>
         </div>
         <div className="App-main">
@@ -1239,6 +1341,7 @@ class App extends Component {
 
               {/* Song Search Field & Results */}
               <div className="Search">
+              {card}
                 <input
                   id="searchInput"
                   style={{
@@ -1261,7 +1364,7 @@ class App extends Component {
                   value={this.state.searchValue}
                   prefix={<SearchOutlined className="search-form-icon" />}
                 />
-                {card}
+
               </div>
               <Select
                   name="additional_features"
@@ -1269,21 +1372,21 @@ class App extends Component {
                   mode="multiple"
                   allowClear
                   showSearch={false}
-                  placeholder="Audio features to match (choose Multiple)"
+                  placeholder="Audio Features to Match (Choose Multiple)"
                   style={{ width: "88%", fontSize: "inherit", marginBottom: "2%" }}
                   onChange={(value) => {
                     this.setState({ additionalFeatures: value });
                     this.updatePlaying(true);
                   }}
                 >
-                  <option value="acousticness"><div style={{color:"blue"}}>Acousticness</div></option>
+                  <option value="acousticness"><div style={{color:"deepskyblue"}}>Acousticness</div></option>
                   <option value="danceability"><div style={{color:"red"}}>Danceability</div></option>
                   <option value="energy"><div style={{color:"orange"}}>Energy</div></option>
-                  <option value="instrumentalness"><div style={{color:"lime"}}>Instrumentalness</div></option>
+                  {/* <option value="instrumentalness"><div style={{color:"lime"}}>Instrumentalness</div></option> */}
                   <option value="key"><div style={{color:"green"}}>Key</div></option>
-                  <option value="liveness"><div style={{color:"purple"}}>Liveness</div></option>
+                  {/* <option value="liveness"><div style={{color:"purple"}}>Liveness</div></option> */}
                   <option value="loudness"><div style={{color:"pink"}}>Loudness</div></option>
-                  <option value="speechiness"><div style={{color:"gold"}}>Speechiness</div></option>
+                  {/* <option value="speechiness"><div style={{color:"gold"}}>Speechiness</div></option> */}
                   <option value="tempo"><div style={{color:"silver"}}>Tempo</div></option>
                   <option value="valence"><div style={{color:"teal"}}>Valence</div></option>
                 </Select>
