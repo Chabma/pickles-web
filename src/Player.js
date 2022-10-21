@@ -27,6 +27,7 @@ const Player = (props) => {
         Authorization: `Bearer ${props.the_token}`,
       },
     }).then((data) => {
+      props.updateLastSecond();
       if (!props.isPicklesPlayer) {
         props.updateFunc(false);
       }

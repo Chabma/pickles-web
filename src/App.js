@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Input, List, Avatar, Card, Button, Select } from "antd";
+import { Input, List, Avatar, Card, Button, Select, message } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import "./App.css";
@@ -90,6 +90,8 @@ let last_click = 0;
 let current_click = new Date();
 let pause_switch = false;
 let endSong = false;
+let tickInterval = null;
+let lastSecond = Date.now();
 
 class App extends Component {
   constructor() {
@@ -244,7 +246,7 @@ class App extends Component {
             );
   }
 
-  queue = (track, position, playBoolean = false) => {
+  queue = (track, position, playBoolean = false, tickBool = false) => {
     /*
   Create new item and add item to state's total queue 
   (updates via a call to getRecs?)
@@ -288,7 +290,7 @@ class App extends Component {
 
     this.setState({ total_queue: tempQueue }, () => {
       if (playBoolean) {
-        this.play(position);
+        this.play(position, tickBool);
       }
       this.getRecs();
     });
@@ -297,13 +299,14 @@ class App extends Component {
     //TODO: determine if this is needed
   };
 
-  play = (queuePosition = this.state.queue_pos) => {
+  play = (queuePosition = this.state.queue_pos, tickBool = false) => {
     /*
   Call spotify api to play the song at `queuePosition` via current web player (calls update playing function)
   */
+    console.log(tickBool)
     if (queuePosition >= 0) {
       if (queuePosition >= this.state.total_queue.length) {
-        this.queue(this.state.next[0], this.state.total_queue.length, true);
+        this.queue(this.state.next[0], this.state.total_queue.length, true, tickBool);
       } else if (!this.state.playLock) {
           this.setState({
             //deviceID: data?.device.id ?? this.state.deviceID,
@@ -323,22 +326,39 @@ class App extends Component {
                 },
               }
             )
-              .then((response) => response.text())
-              .then((data) => {
-                endSong = false;
-                this.setState(
-                  {
-                    queue_pos: queuePosition,
-                    playLock: false,
-                  },
-                  () => {
-                    if(debug){console.log("updating based on play function")}
-                    //TODO is this needed?
-                    if (!this.state.isPicklesPlayer) {
-                      this.updatePlaying(false);
-                    }
+              .then((response) => {
+                console.log(response);
+                if(!response.ok){
+                  this.setState(
+                    {
+                      playLock: false,
+                    },
+                  );
+                  console.log("retrying")
+                  this.play(queuePosition, tickBool);
+                }
+                else{
+                  if(tickBool){
+                    lastSecond = Date.now();
+                    tickInterval = setInterval(() => this.tick(this.state.token), 1000);
                   }
-                );
+                  console.log(tickBool)
+                  console.log(tickInterval)
+                  endSong = false;
+                  this.setState(
+                    {
+                      queue_pos: queuePosition,
+                      playLock: false,
+                    },
+                    () => {
+                      if(debug){console.log("updating based on play function")}
+                      //TODO is this needed?
+                      if (!this.state.isPicklesPlayer) {
+                        this.updatePlaying(false);
+                      }
+                    }
+                  );
+                }
               })
             .catch((error) => {
                 this.setState(
@@ -347,11 +367,18 @@ class App extends Component {
                   },
                 );
                 console.log(error);
+                console.log("retrying")
+                this.play(queuePosition, tickBool);
               });
           });
       }
     }
   };
+
+  updateLastSecond = () => {
+    lastSecond = Date.now();
+  }
+
 
   updatePlaying = (refreshSelections, setItemBoolean = true) => {
     /*
@@ -709,9 +736,14 @@ class App extends Component {
     /*
   Called every second to inch forward progress bar and check if the spotify token should be refreshed
   */
+    
+
     // check if next song should play
     if (this.state.is_playing) {
-      let nextSecond = this.state.progress_ms + 1000;
+      let nowTime = Date.now()
+      let timePassed = nowTime  - lastSecond;
+      lastSecond = nowTime;
+      let nextSecond = this.state.progress_ms + timePassed;
       let currentSongDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
         if (nextSecond >= currentSongDuration && !endSong) {
           endSong = true;
@@ -721,13 +753,22 @@ class App extends Component {
             //if (currentSong == lastPlayedSong) {
                 //console.log(currentSong)
                 //console.log(" -> current . lastSong -> "+lastPlayedSong)
-                this.play(this.state.queue_pos + 1);
+                // this.setState({
+                //   progress_ms: 0,
+                // });
+                // this.play(this.state.queue_pos + 1);
            // }
+           this.setState({
+            progress_ms: currentSongDuration,
+        });
         } else {
             this.setState({
                 progress_ms: nextSecond,
             });
         }
+    }
+    else{
+      lastSecond = Date.now();
     }
 
     // check for token refresh
@@ -837,17 +878,34 @@ class App extends Component {
     });
 
     // Error handling
-    player.addListener("initialization_error", (message) =>
-      alert(message.message)
+    player.addListener("initialization_error", (message) => {
+      //alert(message.message);
+      console.log(message.message);
+    }
     );
-    player.addListener("authentication_error", (message) =>
-      alert(message.message)
+    player.addListener("authentication_error", (message) => {
+      //alert(message.message);
+      console.log(message.message);
+    }
     );
-    player.addListener("account_error", (message) => alert(message.message));
-    player.addListener("playback_error", (message) => alert(message.message));
+    player.addListener("account_error", (message) => console.log(message.message));
+    player.addListener("playback_error", (message) => console.log(message.message));
 
     // Playback status updates based on headphone buttons
     player.addListener("player_state_changed", (state) => {
+      let currentSongDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
+      // console.log(this.state.progress_ms + 1000);
+      // console.log(currentSongDuration);
+      
+      if(this.state.progress_ms >= currentSongDuration){
+        clearInterval(tickInterval);
+        this.setState({
+          progress_ms: 0,
+        });
+        this.play(this.state.queue_pos + 1, true);
+        console.log("played from here");
+      }
+      else{
       this.updatePlaying(false, false);
       this.setState({
         //deviceID: data?.device.id ?? this.state.deviceID,
@@ -880,6 +938,7 @@ class App extends Component {
       } else {
         pause_switch = state.paused;
       }
+    }
     });
 
     //On Autoplay failure
@@ -898,7 +957,8 @@ class App extends Component {
 
     // Not Ready
     player.addListener("not_ready", ({ device_id }) => {
-      alert("Device ID has gone offline: ", device_id);
+      //alert("Device ID has gone offline: ", device_id);
+      console.log("Device ID has; gone offline: ", device_id)
     });
 
     // Connect to the player!
@@ -984,21 +1044,21 @@ class App extends Component {
 
     //initialize extra pause and play via headphones
     // TODO see if needed
-    document.addEventListener('kPause', () => {
-        last_click = current_click;
-        current_click = new Date();
-        if (current_click - last_click < click_delay) {
-          this.play(this.state.queue_pos + 1);
-        }
-    })
-    document.addEventListener('kPlay', () => {
-      last_click = current_click;
-      current_click = new Date();
-      console.log("detected");
-      if (current_click - last_click < click_delay) {
-        this.play(this.state.queue_pos + 1);
-      }
-    })
+    // document.addEventListener('kPause', () => {
+    //     last_click = current_click;
+    //     current_click = new Date();
+    //     if (current_click - last_click < click_delay) {
+    //       this.play(this.state.queue_pos + 1);
+    //     }
+    // })
+    // document.addEventListener('kPlay', () => {
+    //   last_click = current_click;
+    //   current_click = new Date();
+    //   console.log("detected");
+    //   if (current_click - last_click < click_delay) {
+    //     this.play(this.state.queue_pos + 1);
+    //   }
+    // })
 
     //use code from url
     if (code.code) {
@@ -1026,8 +1086,9 @@ class App extends Component {
           }
 
           //start tick
-          this.timerID = setInterval(() => this.tick(data.access_token), 1000);
-          this.timerID = setInterval(() => this.updatePlaying(false), 15000);
+          lastSecond = Date.now();
+          tickInterval = setInterval(() => this.tick(data.access_token), 1000);
+          //this.timerID = setInterval(() => this.updatePlaying(false), 15000);
         },
         error: () => {
           console.log("failured to login with code");
@@ -1175,7 +1236,6 @@ class App extends Component {
       }
     });
   }
-
   get_last_played_song() {
         /*
       Function to get most recently played song
@@ -1311,6 +1371,7 @@ class App extends Component {
                 additionalFeatures={this.state.additionalFeatures}
                 isPicklesPlayer={this.state.isPicklesPlayer}
                 isDark={this.state.isDark}
+                updateLastSecond={this.updateLastSecond}
               />
 
               {/* Song recomendations */}
