@@ -103,7 +103,7 @@ class App extends Component {
       refresh_token: null,
       userID: "",
       userImage: "assets/user-avatar.png",
-      isDark: false,
+      isDark: true,
 
       //Spotify Player variables
       player: null,
@@ -587,35 +587,48 @@ class App extends Component {
             "=" +
             additionalFeatureValues[additionalFeatures[j]];
             if(additionalFeatures[j] == "acousticness"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "deepskyblue"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
+                stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "deepskyblue" }}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
+                stateAdditionalFeatureArray.push(<div> </div>)
               console.log(stateAdditionalFeatureString)
             }
             else  if(additionalFeatures[j] == "danceability"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "red"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
+                stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "red" }}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
+                stateAdditionalFeatureArray.push(<div> </div>)
+
             }
             else  if(additionalFeatures[j] == "energy"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "orange"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
+                stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "orange" }}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
+                stateAdditionalFeatureArray.push(<div> </div>)
+
             }
             else  if(additionalFeatures[j] == "instrumentalness"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "lime"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
+                stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "lime" }}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
+                stateAdditionalFeatureArray.push(<div> </div>)
+
             }
             else  if(additionalFeatures[j] == "key"){
               stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "green"}}>{this.toNote(Math.round(additionalFeatureValues[additionalFeatures[j]]))}</div>)
+                stateAdditionalFeatureArray.push(<div> </div>)
             }
             else  if(additionalFeatures[j] == "liveness"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "purple"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
+                stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "purple" }}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
+                stateAdditionalFeatureArray.push(<div> </div>)
             }
             else  if(additionalFeatures[j] == "loudness"){
               stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "pink"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])/100} dB</div>)
+                stateAdditionalFeatureArray.push(<div> </div>)
             }
             else  if(additionalFeatures[j] == "speechiness"){
               stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "gold"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
+                stateAdditionalFeatureArray.push(<div> </div>)
             }
             else  if(additionalFeatures[j] == "tempo"){
               stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "silver"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])/100} BPM</div>)
+                stateAdditionalFeatureArray.push(<div> </div>)
             }
             else  if(additionalFeatures[j] == "valence"){
               stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "teal"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
+                stateAdditionalFeatureArray.push(<div> </div>)
             }
             stateAdditionalFeatureString = (<div style={{display: "inline-flex"}}>{stateAdditionalFeatureArray}</div>);
             console.log(stateAdditionalFeatureString)
@@ -1157,10 +1170,10 @@ class App extends Component {
       document.getElementById("forward_btn_div").src=next_btn;
       if(document.getElementById("library_btn_div").src == library_btn_dark){
         document.getElementById("library_btn_div").src=library_btn;
-        }
-        else{
-          document.getElementById("library_btn_div").src=checked_library;
-        }
+      }
+      else{
+        document.getElementById("library_btn_div").src=checked_library;
+      }
 
 
     }
@@ -1171,7 +1184,7 @@ class App extends Component {
       document.getElementById("play_btn_div").src=play_btn_dark;
       document.getElementById("forward_btn_div").src=next_btn_dark;
       if(document.getElementById("library_btn_div").src == library_btn){
-      document.getElementById("library_btn_div").src=library_btn_dark;
+        document.getElementById("library_btn_div").src=library_btn_dark;
       }
       else{
         document.getElementById("library_btn_div").src=checked_library_dark;
@@ -1299,7 +1312,8 @@ class App extends Component {
       );
     } else {
       card = <Card hidden={true} />;
-    }
+      }
+
 
     //return web page
     return (
@@ -1402,7 +1416,7 @@ class App extends Component {
 
               {/* Song Search Field & Results */}
               <div className="Search">
-              {card}
+              
                 <input
                   id="searchInput"
                   style={{
@@ -1425,6 +1439,7 @@ class App extends Component {
                   value={this.state.searchValue}
                   prefix={<SearchOutlined className="search-form-icon" />}
                 />
+                {card}
 
               </div>
               <Select
@@ -1499,7 +1514,7 @@ class App extends Component {
                     }}
                     type="text"
                     id="playlist_name"
-                    placeholder="Playlist Name"
+                    placeholder="New Playlist Name"
                     enterButton="Save Session as Playlist"
                     onSearch={() => {
                       this.add_playlist_btn_func(
@@ -1509,7 +1524,8 @@ class App extends Component {
                     }}
                   />
                 </div>
-                <br />
+                            <br />
+
                 <Button
                     onClick={() => {
                       this.toggleDarkMode();
