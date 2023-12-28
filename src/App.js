@@ -110,6 +110,7 @@ class App extends Component {
       deviceID: null,
       devices: [],
       is_playing: false,
+      maybeDone: false,
       progress_ms: 0,
       total_queue: [],
       queue_pos: 0,
@@ -752,37 +753,56 @@ class App extends Component {
     
 
     // check if next song should play
-    if (this.state.is_playing) {
-      let nowTime = Date.now()
-      let timePassed = nowTime  - lastSecond;
-      lastSecond = nowTime;
-      let nextSecond = this.state.progress_ms + timePassed;
-      let currentSongDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
-        if (nextSecond >= currentSongDuration && !endSong) {
-          endSong = true;
-          if(debug){console.log("updating for tick")}
-           //let currentSong = this.state.total_queue[this.state.queue_pos]?.id
-            //let lastPlayedSong = this.get_last_played_song()
-            //if (currentSong == lastPlayedSong) {
-                //console.log(currentSong)
-                //console.log(" -> current . lastSong -> "+lastPlayedSong)
-                // this.setState({
-                //   progress_ms: 0,
-                // });
-                // this.play(this.state.queue_pos + 1);
-           // }
-           this.setState({
-            progress_ms: currentSongDuration,
-        });
-        } else {
-            this.setState({
-                progress_ms: nextSecond,
-            });
-        }
+    console.log(this.state.total_queue[this.state.queue_pos]?.songDuration)
+    console.log(this.state.progress_ms)
+    console.log(this.state.is_playing)
+
+    if(this.state.progress_ms == 0){
+      if (this.state.maybeDone){
+        console.log("updating from new tick")
+        this.play(this.state.queue_pos + 1);
+        this.setState({
+          maybeDone: false,
+        })
+      }
+      else{
+        this.setState({
+          maybeDone: true,
+        })
+      }
     }
-    else{
-      lastSecond = Date.now();
-    }
+
+    // if (this.state.is_playing) {
+    //   let nowTime = Date.now()
+    //   let timePassed = nowTime  - lastSecond;
+    //   lastSecond = nowTime;
+    //   let nextSecond = this.state.progress_ms + timePassed;
+    //   let currentSongDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
+    //     if (nextSecond >= currentSongDuration && !endSong) {
+    //       endSong = true;
+    //       if(debug){console.log("updating for tick")}
+    //        //let currentSong = this.state.total_queue[this.state.queue_pos]?.id
+    //         //let lastPlayedSong = this.get_last_played_song()
+    //         //if (currentSong == lastPlayedSong) {
+    //             //console.log(currentSong)
+    //             //console.log(" -> current . lastSong -> "+lastPlayedSong)
+    //             // this.setState({
+    //             //   progress_ms: 0,
+    //             // });
+    //             // this.play(this.state.queue_pos + 1);
+    //        // }
+    //        this.setState({
+    //         progress_ms: currentSongDuration,
+    //     });
+    //     } else {
+    //         this.setState({
+    //             progress_ms: nextSecond,
+    //         });
+    //     }
+    // }
+    // else{
+    //   lastSecond = Date.now();
+    // }
 
     // check for token refresh
     if (Date.now() - this.state.current_time > 1800000) {
