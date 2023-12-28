@@ -110,7 +110,8 @@ class App extends Component {
       deviceID: null,
       devices: [],
       is_playing: false,
-      maybeDone: false,
+      maybeDone: 5,
+      initialStart: true,
       progress_ms: 0,
       total_queue: [],
       queue_pos: 0,
@@ -305,6 +306,7 @@ class App extends Component {
   Call spotify api to play the song at `queuePosition` via current web player (calls update playing function)
   */
     console.log(tickBool)
+
     if (queuePosition >= 0) {
       if (queuePosition >= this.state.total_queue.length) {
         this.queue(this.state.next[0], this.state.total_queue.length, true, tickBool);
@@ -312,6 +314,7 @@ class App extends Component {
           this.setState({
             //deviceID: data?.device.id ?? this.state.deviceID,
             playLock: true,
+            initialStart: false,
           });
           this.state.player._options.getOAuthToken((access_token) => {
             fetch(
@@ -751,24 +754,39 @@ class App extends Component {
   Called every second to inch forward progress bar and check if the spotify token should be refreshed
   */
     
+  if (this.state.is_playing) {
+    let nowTime = Date.now()
+    let timePassed = nowTime  - lastSecond;
+    lastSecond = nowTime;
+    let nextSecond = this.state.progress_ms + timePassed;
+    let currentSongDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
+    this.setState({
+      progress_ms: nextSecond,
+    });
+  }
+  else{
+    lastSecond = Date.now();
+  }
 
     // check if next song should play
-    console.log(this.state.total_queue[this.state.queue_pos]?.songDuration)
-    console.log(this.state.progress_ms)
-    console.log(this.state.is_playing)
+    // console.log(this.state.total_queue[this.state.queue_pos]?.songDuration)
+    // console.log(this.state.progress_ms)
+    // console.log(this.state.is_playing)
 
     if(this.state.progress_ms == 0){
-      if (this.state.maybeDone){
-        console.log("updating from new tick")
-        this.play(this.state.queue_pos + 1);
-        this.setState({
-          maybeDone: false,
-        })
-      }
-      else{
-        this.setState({
-          maybeDone: true,
-        })
+      if(!this.state.initialStart){
+        if (this.state.maybeDone < 1){
+          console.log("updating from new tick")
+          this.play(this.state.queue_pos + 1);
+          this.setState({
+            maybeDone: 5,
+          })
+        }
+        else{
+          this.setState({
+            maybeDone: this.state.maybeDone - 1,
+          })
+        }
       }
     }
 
