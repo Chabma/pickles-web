@@ -79,12 +79,22 @@ const Player = (props) => {
   };
 
   const next_btn_func = (device) => {
-    document.getElementById("library_btn_div").src = add_to_library;
+    if (props.isDark){
+      document.getElementById("library_btn_div").src = add_to_library_dark;
+    }
+    else{
+      document.getElementById("library_btn_div").src = add_to_library;
+    }
     props.playFunc(props.queue_pos + 1);
   };
 
   const previous_btn_func = (device) => {
-    document.getElementById("library_btn_div").src = add_to_library;
+    if (props.isDark){
+      document.getElementById("library_btn_div").src = add_to_library_dark;
+    }
+    else{
+      document.getElementById("library_btn_div").src = add_to_library;
+    }
     props.playFunc(props.queue_pos - 1);
   };
 
