@@ -1574,7 +1574,6 @@ class App extends Component {
                 <br />
                 {/* Device Chooser */}
 
-                {this.state.deviceID && (
                   <div id="advanced_setting">
                     <h4> Device Chooser:</h4>
                     <Select
@@ -1582,10 +1581,10 @@ class App extends Component {
                       name="available_devices"
                       id="available_devices"
                       defaultValue={{
-                        value: this.state.deviceID,
+                        value: this.state.deviceID ?? '',
                         label:
                           "Pickles Web Player - " +
-                          this.state.deviceID.slice(0, 3),
+                          this.state.deviceID.slice(0, 3)??'',
                       }}
                       style={{
                         margin: "auto",
@@ -1615,7 +1614,6 @@ class App extends Component {
                       ))}
                     </Select>
                   </div>
-                )}
                 <br />
                 {/* Clear Button */}
                 <div
