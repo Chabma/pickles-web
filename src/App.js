@@ -1583,8 +1583,7 @@ class App extends Component {
                       defaultValue={{
                         value: this.state.deviceID ?? '',
                         label:
-                          "Pickles Web Player - " +
-                          this.state.deviceID.slice(0, 3)??'',
+                          "This Pickles Web Player",
                       }}
                       style={{
                         margin: "auto",
