@@ -103,7 +103,7 @@ class App extends Component {
       refresh_token: null,
       userID: "",
       userImage: "assets/user-avatar.png",
-      isDark: true,
+      isDark: false,
 
       //Spotify Player variables
       player: null,
@@ -1461,9 +1461,8 @@ class App extends Component {
                     color: "black",
                     fontFamily: "Roboto",
                     width: "100%",
-                    height: "100%",
                   }}
-                  placeholder="SONG SEARCH..."
+                  placeholder="Song Search..."
                   size="large"
                   onChange={(value) => {
                     this.setState({ searchValue: value.target.value });
@@ -1486,8 +1485,8 @@ class App extends Component {
                   mode="multiple"
                   allowClear
                   showSearch={false}
-                  placeholder="Audio Features to Match (Choose Multiple)"
-                  style={{ width: "88%", fontSize: "inherit", marginBottom: "2%" }}
+                  placeholder="Audio Features to Match..."
+                  style={{ width: "88%", fontSize: "inherit", marginBottom: "4%" }}
                   onChange={(value) => {
                     this.setState({ additionalFeatures: value });
                     this.updatePlaying(true);

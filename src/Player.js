@@ -256,10 +256,10 @@ const Player = (props) => {
     <>
       {props.current ? (
               <div id="currentPlayer">
-                  <div style={{ overflowX: "scroll",  whiteSpace: "nowrap", height: "5%" }}>{
+                  <div style={{ overflowX: "scroll",  whiteSpace: "nowrap", height: "10%" }}>{
                   //TODO: add here the function which translates additional features to colored divs 
                   props.additionalFeatureString}</div>
-          <div style={{ height: "95%" }}>
+          <div style={{ height: "90%" }}>
             <div className="main-wrapper">
               <div id="played_queue">{played_queue_card}</div>
               <div className="now-playing__side">
@@ -386,7 +386,7 @@ const Player = (props) => {
       ) : (
         <>
           <h3 style={{ display: "block", height: "40%", marginBottom: "0" }}>
-            START YOUR PLAYLIST WITH A SONG
+            Select A Song To Begin
           </h3>
         </>
       )}
