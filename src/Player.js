@@ -256,10 +256,10 @@ const Player = (props) => {
     <>
       {props.current ? (
               <div id="currentPlayer">
-                  <div style={{ overflowX: "scroll",  whiteSpace: "nowrap", height: "10%" }}>{
+                  <div style={{ overflowX: "scroll",  whiteSpace: "nowrap", height: "5%" }}>{
                   //TODO: add here the function which translates additional features to colored divs 
                   props.additionalFeatureString}</div>
-          <div style={{ height: "90%" }}>
+          <div style={{ height: "95%" }}>
             <div className="main-wrapper">
               <div id="played_queue">{played_queue_card}</div>
               <div className="now-playing__side">
@@ -267,7 +267,7 @@ const Player = (props) => {
                   style={{
                     maxWidth: "100%",
                     display: "flex",
-                    height: "70%",
+                    height: "60%",
                     margin: "auto",
                   }}
                 >

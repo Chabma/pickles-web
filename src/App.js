@@ -312,7 +312,7 @@ class App extends Component {
         this.queue(this.state.next[0], this.state.total_queue.length, true, tickBool);
       } else if (!this.state.playLock) {
           this.setState({
-            //deviceID: data?.device.id ?? this.state.deviceID,
+            // deviceID: data?.device.id ?? this.state.deviceID,
             playLock: true,
             initialStart: false,
           });
@@ -357,9 +357,9 @@ class App extends Component {
                     () => {
                       if(debug){console.log("updating based on play function")}
                       //TODO is this needed?
-                      if (!this.state.isPicklesPlayer) {
-                        this.updatePlaying(false);
-                      }
+                      // if (!this.state.isPicklesPlayer) {
+                      //   this.updatePlaying(false);
+                      // }
                     }
                   );
                 }
@@ -1512,7 +1512,7 @@ class App extends Component {
                   this.expand_settings();
                 }}
               >
-                SETTINGS
+                v SETTINGS v
               </button>
 
               <div class="settings">
@@ -1573,7 +1573,7 @@ class App extends Component {
                 </Button>
                 <br />
                 {/* Device Chooser */}
-
+                {this.state.deviceID && (
                   <div id="advanced_setting">
                     <h4> Device Chooser:</h4>
                     <Select
@@ -1582,9 +1582,7 @@ class App extends Component {
                       id="available_devices"
                       defaultValue={{
                         value: this.state.deviceID ?? '',
-                        label:
-                          "Pickles Web Player - " +
-                          this.state.deviceID?.slice(0, 3)??'null',
+                        label: ("Pickles Web Player - " + this.state.deviceID).slice(0,25),
                       }}
                       style={{
                         margin: "auto",
@@ -1614,6 +1612,47 @@ class App extends Component {
                       ))}
                     </Select>
                   </div>
+                   )}
+                  {!this.state.deviceID && (
+                  <div id="advanced_setting">
+                    <h4> Device Chooser:</h4>
+                    <Select
+                      labelInValue
+                      name="available_devices"
+                      id="available_devices"
+                      defaultValue={{
+                        value: this.state.deviceID ?? '',
+                        label: ("No Active Player - ERR").slice(0,25),
+                      }}
+                      style={{
+                        margin: "auto",
+                        padding: "0",
+                        height: "10%",
+                        fontFamily: "Roboto",
+                        maxWidth: "85%",
+                      }}
+                      onChange={(value) => {
+                        this.setState({
+                          deviceID: value.value[0],
+                        });
+                        if (value.value[1] != "Pickles Web Player") {
+                          this.setState({
+                            isPicklesPlayer: false,
+                          });
+                        }
+                      }}
+                    >
+                      {this.state.devices.map((option) => (
+                        <option
+                          value={[option.id, option.name]}
+                          label={option.name + " - " + option.id.slice(0, 3)}
+                        >
+                          {option.name + " - " + option.id.slice(0, 3)}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                   )}
                 <br />
                 {/* Clear Button */}
                 <div

@@ -14,119 +14,113 @@ const NextPlayer = (props) => {
       )}
       {props.next && (
         <React.Fragment>
-          <div
-            id="recommendations_header"
-            style={{
-              width: "100%",
-                height: "20%",
-              textAlign: "center", 
-                display: "flex",
-            }}
-          >
-            <h4
-              style={{
-                display: "block",
-                float: "left",
-                width: "70%",
-                textAlign: "left",
-                paddingLeft: "5%",
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "0",
-              }}
-            >
-              RECOMMENDATIONS
-            </h4>
             <div
-              id="refresh_btn_div"
               style={{
                 display: "block",
-                float: "center",
-                maxWidth: "30%",
+                width: "84%",
+                height: "100%",
+              }}
+            > 
+              <div
+                className="next-wrapper"
+                onClick={function () {
+                  props.queueFunc(
+                    props.next[0],
+                    props.total_queue.length,
+                    props.isFirst
+                  );
+                }}
+              >
+                <div className="next-playing__img">
+                  <img src={props.next[0].album.images[0].url} alt="player" />
+                </div>
+                <div className="next-playing__side">
+                  <div className="next-playing__name">{props.next[0].name}</div>
+                  <div className="next-playing__artist">
+                    {props.next[0].artists[0].name}
+                  </div>
+                  <div className="next-playing_attributes" style={{ fontSize: "calc(10px + 1vmin)", overflowX: "scroll", whiteSpace: "nowrap", width: "100%"  }}>
+                    {props.next_features[0]}
+                  </div>
+                </div>
+
+              </div>
+              <div
+                className="next-wrapper"
+                onClick={function () {
+                  props.queueFunc(
+                    props.next[1],
+                    props.total_queue.length,
+                    props.isFirst
+                  );
+                }}
+              >
+                <div className="next-playing__img">
+                  <img src={props.next[1].album.images[0].url} alt="player" />
+                </div>
+                <div className="next-playing__side">
+                  <div className="next-playing__name">{props.next[1].name}</div>
+                  <div className="next-playing__artist">
+                    {props.next[1].artists[0].name}
+                  </div>
+                  <div className="next-playing_attributes" style={{ fontSize: "calc(10px + 1vmin)", overflowX: "scroll", whiteSpace: "nowrap", width: "100%"   }}>
+                              {props.next_features[1]}
+                          </div>
+                          </div>
+
+              </div>
+              <div
+                className="next-wrapper"
+                onClick={function () {
+                  props.queueFunc(
+                    props.next[2],
+                    props.total_queue.length,
+                    props.isFirst
+                  );
+                }}
+              >
+                <div className="next-playing__img">
+                  <img src={props.next[2].album.images[0].url} alt="player" />
+                </div>
+                <div className="next-playing__side">
+                  <div className="next-playing__name">{props.next[2].name}</div>
+                  <div className="next-playing__artist">
+                    {props.next[2].artists[0].name}
+                  </div>
+                  <div className="next-playing_attributes" style={{ fontSize: "calc(10px + 1vmin)", overflowX: "scroll", whiteSpace: "nowrap", width: "100%"   }}>
+                              {props.next_features[2]}
+                          </div>
+                          </div>
+
+              </div>
+            </div>
+            <div
+              style={{
+                  width: "15%",
+                  height: "100%",
+                  textAlign: "center",
+                  verticalAlign: "middle",
+                  display: "flex",
+                  background: "rgba(0,0,0,.06666666666666667)",
               }}
             >
-              <img
-                id="refresh_btn"
-                alt="refresh recommendations"
-                src={refresh_btn}
-                onClick={() => {
-                  props.refreshFunc(true);
-                }}
-              />
+              <div
+                  id="refresh_btn_div"
+                  style={{
+                    display: "block",
+                    maxWidth: "60%",
+                  }}
+              >
+                <img
+                  id="refresh_btn"
+                  alt="refresh recommendations"
+                  src={refresh_btn}
+                  onClick={() => {
+                    props.refreshFunc(true);
+                  }}
+                />
+              </div> 
             </div>
-          </div>
-          <div
-            className="next-wrapper"
-            onClick={function () {
-              props.queueFunc(
-                props.next[0],
-                props.total_queue.length,
-                props.isFirst
-              );
-            }}
-          >
-            <div className="next-playing__img">
-              <img src={props.next[0].album.images[0].url} alt="player" />
-            </div>
-            <div className="next-playing__side">
-              <div className="next-playing__name">{props.next[0].name}</div>
-              <div className="next-playing__artist">
-                {props.next[0].artists[0].name}
-              </div>
-              <div className="next-playing_attributes" style={{ fontSize: "calc(10px + 1vmin)", overflowX: "scroll", whiteSpace: "nowrap", width: "100%"  }}>
-                          {props.next_features[0]}
-                      </div>
-                      </div>
-
-          </div>
-          <div
-            className="next-wrapper"
-            onClick={function () {
-              props.queueFunc(
-                props.next[1],
-                props.total_queue.length,
-                props.isFirst
-              );
-            }}
-          >
-            <div className="next-playing__img">
-              <img src={props.next[1].album.images[0].url} alt="player" />
-            </div>
-            <div className="next-playing__side">
-              <div className="next-playing__name">{props.next[1].name}</div>
-              <div className="next-playing__artist">
-                {props.next[1].artists[0].name}
-              </div>
-              <div className="next-playing_attributes" style={{ fontSize: "calc(10px + 1vmin)", overflowX: "scroll", whiteSpace: "nowrap", width: "100%"   }}>
-                          {props.next_features[1]}
-                      </div>
-                      </div>
-
-          </div>
-          <div
-            className="next-wrapper"
-            onClick={function () {
-              props.queueFunc(
-                props.next[2],
-                props.total_queue.length,
-                props.isFirst
-              );
-            }}
-          >
-            <div className="next-playing__img">
-              <img src={props.next[2].album.images[0].url} alt="player" />
-            </div>
-            <div className="next-playing__side">
-              <div className="next-playing__name">{props.next[2].name}</div>
-              <div className="next-playing__artist">
-                {props.next[2].artists[0].name}
-              </div>
-              <div className="next-playing_attributes" style={{ fontSize: "calc(10px + 1vmin)", overflowX: "scroll", whiteSpace: "nowrap", width: "100%"   }}>
-                          {props.next_features[2]}
-                      </div>
-                      </div>
-
-          </div>
         </React.Fragment>
       )}
     </div>

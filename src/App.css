@@ -148,13 +148,12 @@
 
 #refresh_btn_div {
   float: left;
-  height: 100%;
   margin: auto;
 }
 
 .next-wrapper {
-    width: 80%;
-    height: 24%;
+    width: 90%;
+    height: 33%;
     margin: auto;
     overflow-x: scroll;
     overflow-y: hidden;
@@ -212,9 +211,9 @@
 }
 
 #nextPlayer {
-  display: block;
+  display: flex;
   width: 100%;
-  height: 40%;
+  height: 33%;
 }
 
 /*Song search*/
@@ -236,18 +235,17 @@
   background-color: #eee;
   color: #444;
   cursor: pointer;
-  padding: 18px;
   width: 100%;
   border: none;
   text-align: left;
   outline: none;
   font-size: 15px;
-  height: 7%;
+  font-family: "Ubuntu";
 }
 .active,
-.settings_header:hover {
+/* .settings_header:hover {
   background-color: #ccc;
-}
+} */
 
 .settings {
   padding: 0 18px;
@@ -258,7 +256,7 @@
 
 /*CurrentPlayer*/
 #currentPlayer {
-  height: 40%;
+  height: 49%;
 }
 
 canvas {
@@ -482,6 +480,7 @@ canvas {
 /** Progress **/
 .progress {
   border: 1px solid #000;
+  margin-top: 2%;
   height: 5%;
   border-radius: 3px;
   overflow: hidden;
@@ -512,7 +511,7 @@ canvas {
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-  height: 10%;
+  height: 20%;
   padding-top: 5px;
 }
 #buttons_two {
