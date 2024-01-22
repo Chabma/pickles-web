@@ -1458,8 +1458,6 @@ class App extends Component {
                 <input
                   id="searchInput"
                   style={{
-                    color: "black",
-                    fontFamily: "Roboto",
                     width: "100%",
                   }}
                   placeholder="Song Search..."

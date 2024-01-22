@@ -214,8 +214,8 @@
   display: flex;
   width: 100%;
   height: 33%;
-  margin-top: 5%;
-  margin-bottom: 5%;
+  margin-top: 1vh;
+  margin-bottom: 2vh;
 }
 
 /*Song search*/
@@ -223,10 +223,9 @@
     margin: auto;
     max-width: 800px;
     color: black;
-    padding-bottom: 50px;
-    height: 8%;
+    height: 6%;
     display: inline-block;
-    width: 100%;
+    width: 88%;
 }
 
 /*Settings*/
@@ -255,7 +254,7 @@
 
 /*CurrentPlayer*/
 #currentPlayer {
-  height: 49%;
+  height: 50%;
 }
 
 canvas {
@@ -313,24 +312,6 @@ canvas {
 
 #queue {
   max-height: 100%;
-}
-
-#buttons {
-  display: flex;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-
-#buttons_two {
-  flex-direction: column;
-  display: flex;
-  height: 100px;
-}
-
-.button_img {
-  width: 33%;
-  margin: auto;
 }
 
 .ant-list-item-meta-avatar {
@@ -406,7 +387,7 @@ canvas {
 .now-playing__side {
   float: left;
   margin: auto;
-  height: 95%;
+  height: 98%;
   min-width: 80%;
 }
 
@@ -479,7 +460,7 @@ canvas {
 /** Progress **/
 .progress {
   border: 1px solid #000;
-  margin-top: 2%;
+  margin-top: 1vh;
   height: 5%;
   border-radius: 3px;
   overflow: hidden;
@@ -512,6 +493,7 @@ canvas {
   width: 100%;
   height: 20%;
   padding-top: 5px;
+  margin-top: 7vh;
 }
 #buttons_two {
   flex-direction: column;
@@ -539,6 +521,7 @@ canvas {
   background: #fff;
   border: 1px solid #d9d9d9;
   color: #d9d9d9;
+  text-align: center;
   font-family: "Roboto",-apple-system,BlinkMacSystemFont,"Segoe UI","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
 }
 input::-webkit-input-placeholder {
@@ -558,4 +541,15 @@ input::-ms-placeholder {
 }
 svg {
   width: 100%;
+}
+
+#refresh-div {
+  background: rgba(0,0,0,0.067);
+  width: 15%;
+  height: 100%;
+  text-align: center;
+  vertical-align: middle;
+  display: flex;
+  border-radius: 5px;
+  margin-top: 2px;
 }

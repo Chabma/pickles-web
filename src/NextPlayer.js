@@ -95,13 +95,9 @@ const NextPlayer = (props) => {
               </div>
             </div>
             <div
-              style={{
-                  width: "15%",
-                  height: "100%",
-                  textAlign: "center",
-                  verticalAlign: "middle",
-                  display: "flex",
-                  background: "rgba(0,0,0,.06666666666666667)",
+              id="refresh-div"
+              onClick={() => {
+                props.refreshFunc(true);
               }}
             >
               <div
@@ -115,9 +111,7 @@ const NextPlayer = (props) => {
                   id="refresh_btn"
                   alt="refresh recommendations"
                   src={refresh_btn}
-                  onClick={() => {
-                    props.refreshFunc(true);
-                  }}
+
                 />
               </div> 
             </div>

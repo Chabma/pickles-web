@@ -267,7 +267,7 @@ const Player = (props) => {
                   style={{
                     maxWidth: "100%",
                     display: "flex",
-                    height: "60%",
+                    height: "55%",
                     margin: "auto",
                   }}
                 >
@@ -385,7 +385,7 @@ const Player = (props) => {
         </div>
       ) : (
         <>
-          <h3 style={{ display: "block", height: "40%", marginBottom: "0" }}>
+          <h3 style={{ display: "block", height: "50%", marginBottom: "0" }}>
             Select A Song To Begin
           </h3>
         </>
