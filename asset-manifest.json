@@ -1,30 +1,30 @@
 {
   "files": {
-    "main.css": "/pickles-web/static/css/main.38eeb8e3.chunk.css",
-    "main.js": "/pickles-web/static/js/main.95968952.chunk.js",
-    "main.js.map": "/pickles-web/static/js/main.95968952.chunk.js.map",
-    "runtime-main.js": "/pickles-web/static/js/runtime-main.afa06655.js",
-    "runtime-main.js.map": "/pickles-web/static/js/runtime-main.afa06655.js.map",
-    "static/css/2.32c23847.chunk.css": "/pickles-web/static/css/2.32c23847.chunk.css",
-    "static/js/2.f1d726db.chunk.js": "/pickles-web/static/js/2.f1d726db.chunk.js",
-    "static/js/2.f1d726db.chunk.js.map": "/pickles-web/static/js/2.f1d726db.chunk.js.map",
-    "static/js/3.174dd42f.chunk.js": "/pickles-web/static/js/3.174dd42f.chunk.js",
-    "static/js/3.174dd42f.chunk.js.map": "/pickles-web/static/js/3.174dd42f.chunk.js.map",
-    "index.html": "/pickles-web/index.html",
-    "static/css/2.32c23847.chunk.css.map": "/pickles-web/static/css/2.32c23847.chunk.css.map",
-    "static/css/main.38eeb8e3.chunk.css.map": "/pickles-web/static/css/main.38eeb8e3.chunk.css.map",
-    "static/js/2.f1d726db.chunk.js.LICENSE.txt": "/pickles-web/static/js/2.f1d726db.chunk.js.LICENSE.txt",
-    "static/media/App.css": "/pickles-web/static/media/Nabla-Regular-VariableFont_EDPT,EHLT.bcfdce2e.ttf",
-    "static/media/add_end_queue.aa85d3a8.png": "/pickles-web/static/media/add_end_queue.aa85d3a8.png",
-    "static/media/add_start_queue.852d6a3b.png": "/pickles-web/static/media/add_start_queue.852d6a3b.png",
-    "static/media/logo.ebb4ae6c.png": "/pickles-web/static/media/logo.ebb4ae6c.png",
-    "static/media/refresh(copy).5327d932.png": "/pickles-web/static/media/refresh(copy).5327d932.png"
+    "main.css": "/static/css/main.95734d6d.chunk.css",
+    "main.js": "/static/js/main.ffac0ce5.chunk.js",
+    "main.js.map": "/static/js/main.ffac0ce5.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.1bfd3519.js",
+    "runtime-main.js.map": "/static/js/runtime-main.1bfd3519.js.map",
+    "static/css/2.32c23847.chunk.css": "/static/css/2.32c23847.chunk.css",
+    "static/js/2.f1d726db.chunk.js": "/static/js/2.f1d726db.chunk.js",
+    "static/js/2.f1d726db.chunk.js.map": "/static/js/2.f1d726db.chunk.js.map",
+    "static/js/3.174dd42f.chunk.js": "/static/js/3.174dd42f.chunk.js",
+    "static/js/3.174dd42f.chunk.js.map": "/static/js/3.174dd42f.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.32c23847.chunk.css.map": "/static/css/2.32c23847.chunk.css.map",
+    "static/css/main.95734d6d.chunk.css.map": "/static/css/main.95734d6d.chunk.css.map",
+    "static/js/2.f1d726db.chunk.js.LICENSE.txt": "/static/js/2.f1d726db.chunk.js.LICENSE.txt",
+    "static/media/App.css": "/static/media/Nabla-Regular-VariableFont_EDPT,EHLT.bcfdce2e.ttf",
+    "static/media/add_end_queue.aa85d3a8.png": "/static/media/add_end_queue.aa85d3a8.png",
+    "static/media/add_start_queue.852d6a3b.png": "/static/media/add_start_queue.852d6a3b.png",
+    "static/media/logo.ebb4ae6c.png": "/static/media/logo.ebb4ae6c.png",
+    "static/media/refresh(copy).5327d932.png": "/static/media/refresh(copy).5327d932.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.afa06655.js",
+    "static/js/runtime-main.1bfd3519.js",
     "static/css/2.32c23847.chunk.css",
     "static/js/2.f1d726db.chunk.js",
-    "static/css/main.38eeb8e3.chunk.css",
-    "static/js/main.95968952.chunk.js"
+    "static/css/main.95734d6d.chunk.css",
+    "static/js/main.ffac0ce5.chunk.js"
   ]
 }
