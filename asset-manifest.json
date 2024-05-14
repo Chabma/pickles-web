@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/static/css/main.5fe0c95f.chunk.css",
-    "main.js": "/static/js/main.ffac0ce5.chunk.js",
-    "main.js.map": "/static/js/main.ffac0ce5.chunk.js.map",
+    "main.js": "/static/js/main.f7db486a.chunk.js",
+    "main.js.map": "/static/js/main.f7db486a.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.1bfd3519.js",
     "runtime-main.js.map": "/static/js/runtime-main.1bfd3519.js.map",
     "static/css/2.32c23847.chunk.css": "/static/css/2.32c23847.chunk.css",
@@ -17,7 +17,7 @@
     "static/media/App.css": "/static/media/Nabla-Regular-VariableFont_EDPT,EHLT.bcfdce2e.ttf",
     "static/media/add_end_queue.aa85d3a8.png": "/static/media/add_end_queue.aa85d3a8.png",
     "static/media/add_start_queue.852d6a3b.png": "/static/media/add_start_queue.852d6a3b.png",
-    "static/media/logo.ebb4ae6c.png": "/static/media/logo.ebb4ae6c.png",
+    "static/media/logo.d9839d4d.png": "/static/media/logo.d9839d4d.png",
     "static/media/refresh(copy).5327d932.png": "/static/media/refresh(copy).5327d932.png"
   },
   "entrypoints": [
@@ -25,6 +25,6 @@
     "static/css/2.32c23847.chunk.css",
     "static/js/2.f1d726db.chunk.js",
     "static/css/main.5fe0c95f.chunk.css",
-    "static/js/main.ffac0ce5.chunk.js"
+    "static/js/main.f7db486a.chunk.js"
   ]
 }
