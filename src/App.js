@@ -84,6 +84,20 @@ const debounce = (context, func, delay) => {
   };
 };
 
+// Valid min/max ranges for the Spotify audio features we target. Used to
+// clamp the exploration bands so requests stay valid.
+const featureRanges = {
+  acousticness: [0, 1],
+  danceability: [0, 1],
+  energy: [0, 1],
+  instrumentalness: [0, 1],
+  liveness: [0, 1],
+  speechiness: [0, 1],
+  valence: [0, 1],
+  loudness: [-60, 0],
+  tempo: [0, 300],
+};
+
 // variables that might be used for next song finding
 const click_delay = 600;
 let last_click = 0;
@@ -97,6 +111,7 @@ class App extends Component {
   constructor() {
     super();
     this.accessToken = null;
+    this.featureCache = {};
     this.state = {
       //Variables for login / refresh / flobal
       token: null,
@@ -539,13 +554,13 @@ class App extends Component {
 //TODO CUT GET RECS DOWN
   getRecs = (firstSongs = null) => {
     /*
-  Calls recomendation api with last 5 songs and updates the three recommendations
+  Calls recommendation api with the recent queue songs and updates the three
+  recommendations. Feature targets are recency weighted (recent songs count
+  more) and sent as min/max bands so results explore the vibe instead of
+  collapsing to a flat average.
   */
-    //TODO: change so that this calls the global queue instead of inputs
-    //TODO: replace first call with a global variable that keeps track of target features
     let additionalFeatures = this.state.additionalFeatures;
     let primaryFeature = $("#primary_features").val();
-    let additionalFeatureValues = {};
     let all_tracks = this.state.total_queue.map((x) => x.id);
     let all_artists = this.state.total_queue.map((x) => x.artists[0].id);
     if (firstSongs != null) {
@@ -553,201 +568,240 @@ class App extends Component {
       all_artists = firstSongs.map((x) => x.artists[0].id);
     }
     let tracks_string = "seed_tracks=" + all_tracks.slice(-3).join("%2C");
-    let feature_tracks_string = "ids=" + all_tracks.slice(-25).join("%2C");
     let artists_string = "seed_artists=" + all_artists.slice(-3).join("%2C");
-    //tracks_string = `${track},${tracks_string}`;
 
-    $.ajax({
-      url: `https://api.spotify.com/v1/audio-features?${feature_tracks_string}`,
-      type: "GET",
-      beforeSend: (xhr) => {
-        xhr.setRequestHeader("Authorization", "Bearer " + this.state.token);
-      },
-      success: (data) => {
-        if (data) {
-          for (var i = 0; i < data.audio_features.length; i++) {
-            for (var j = 0; j < additionalFeatures.length; j++) {
-              additionalFeatureValues[additionalFeatures[j]] =
-                additionalFeatureValues[additionalFeatures[j]] ?? 0;
-              additionalFeatureValues[additionalFeatures[j]] +=
-                data.audio_features[i][additionalFeatures[j]];
-            }
+    // Only look at the most recent 50 songs, and cache their features so the
+    // same tracks are not refetched on every refresh.
+    const recentIds = all_tracks.slice(-50);
+    if (!this.featureCache) {
+      this.featureCache = {};
+    }
+    const missingIds = recentIds.filter((id) => !this.featureCache[id]);
+
+    const buildRecommendations = (featuresById) => {
+      // Weight songs by recency: half-life of 5 songs back.
+      const rows = [];
+      recentIds.forEach((id, idx) => {
+        const features = featuresById[id];
+        if (!features) {
+          return;
+        }
+        const age = recentIds.length - 1 - idx;
+        rows.push({ features, weight: Math.pow(0.5, age / 5) });
+      });
+
+      // Weighted mean + spread for each selected feature (skipping nulls).
+      let featureStats = {};
+      additionalFeatures.forEach((feature) => {
+        let weightedSum = 0;
+        let weightTotal = 0;
+        rows.forEach(({ features, weight }) => {
+          const value = features[feature];
+          if (value === null || value === undefined || Number.isNaN(value)) {
+            return;
           }
-          for (j = 0; j < additionalFeatures.length; j++) {
-            let divisor = Math.min(data.audio_features.length, 25);
-            additionalFeatureValues[additionalFeatures[j]] =
-              additionalFeatureValues[additionalFeatures[j]] / divisor;
-          }
-        }
-
-        //change to array if possible` TODO
-        let additionalFeatureString = ""
-        // construct string from features for each additional feature.
-        let stateAdditionalFeatureArray = [];
-        let stateAdditionalFeatureString;
-        for (j = 0; j < additionalFeatures.length; j++) {
-          additionalFeatureString +=
-            "&target_" +
-            additionalFeatures[j] +
-            "=" +
-            additionalFeatureValues[additionalFeatures[j]];
-            if(additionalFeatures[j] == "acousticness"){
-                stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "deepskyblue" }}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
-                stateAdditionalFeatureArray.push(<div> </div>)
-              console.log(stateAdditionalFeatureString)
-            }
-            else  if(additionalFeatures[j] == "danceability"){
-                stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "red" }}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
-                stateAdditionalFeatureArray.push(<div> </div>)
-
-            }
-            else  if(additionalFeatures[j] == "energy"){
-                stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "orange" }}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
-                stateAdditionalFeatureArray.push(<div> </div>)
-
-            }
-            else  if(additionalFeatures[j] == "instrumentalness"){
-                stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "lime" }}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
-                stateAdditionalFeatureArray.push(<div> </div>)
-
-            }
-            else  if(additionalFeatures[j] == "key"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "green"}}>{this.toNote(Math.round(additionalFeatureValues[additionalFeatures[j]]))}</div>)
-                stateAdditionalFeatureArray.push(<div> </div>)
-            }
-            else  if(additionalFeatures[j] == "liveness"){
-                stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "purple" }}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
-                stateAdditionalFeatureArray.push(<div> </div>)
-            }
-            else  if(additionalFeatures[j] == "loudness"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "pink"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])/100} dB</div>)
-                stateAdditionalFeatureArray.push(<div> </div>)
-            }
-            else  if(additionalFeatures[j] == "speechiness"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "gold"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
-                stateAdditionalFeatureArray.push(<div> </div>)
-            }
-            else  if(additionalFeatures[j] == "tempo"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "silver"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])/100} BPM</div>)
-                stateAdditionalFeatureArray.push(<div> </div>)
-            }
-            else  if(additionalFeatures[j] == "valence"){
-              stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{color: "teal"}}>{Math.round(100 * additionalFeatureValues[additionalFeatures[j]])}%</div>)
-                stateAdditionalFeatureArray.push(<div> </div>)
-            }
-            stateAdditionalFeatureString = (<div style={{display: "inline-flex"}}>{stateAdditionalFeatureArray}</div>);
-            console.log(stateAdditionalFeatureString)
-
-            
-          //   else{
-          // stateAdditionalFeatureString +=
-          //   " || " +
-          //   additionalFeatures[j] +
-          //   " : " +
-          //   additionalFeatureValues[additionalFeatures[j]];
-          // }
-        }
-
-        if (primaryFeature === "song") {
-          artists_string =
-            "seed_artists=" + all_artists[all_artists.length - 1];
-        } else {
-          tracks_string = "seed_tracks=" + all_tracks[all_tracks.length - 1];
-        }
-
-        let limit_num = 10 + this.state.total_queue.length;
-        //add additional features string to recs request string:
-        let recRequestString = `https://api.spotify.com/v1/recommendations?limit=${limit_num}&${artists_string}&seed_genres=%20&${tracks_string}${additionalFeatureString}`;
-        $.ajax({
-          url: recRequestString,
-          type: "GET",
-          beforeSend: (xhr) => {
-            xhr.setRequestHeader("Authorization", "Bearer " + this.state.token);
-          },
-          success: (data) => {
-            if (data) {
-              let recSongs = [];
-              let h = 0;
-              let shuffled = data.tracks
-                .map((value) => ({ value, sort: Math.random() }))
-                .sort((a, b) => a.sort - b.sort)
-                .map(({ value }) => value);
-              for (var i = 0; i < shuffled.length && h < 3; i++) {
-                let seen_bool = false;
-                for (var j = 0; j < this.state.total_queue.length; j++) {
-                  if (shuffled[i].id === this.state.total_queue[j].id) {
-                    seen_bool = true;
-                  }
-                }
-                if (!seen_bool) {
-                  recSongs.push(shuffled[i]);
-                  h++;
-                }
-              }
-
-              tracks_string = "ids=";
-              for (i = 0; i < recSongs.length; i++) {
-                tracks_string += recSongs[i].id + "%2C";
-              }
-
-              let featureRequestString = `https://api.spotify.com/v1/audio-features?${tracks_string}`;
-
-              this.setState({
-                next: recSongs,
-              });
-              if (!firstSongs) {
-                this.setState({
-                  current: true,
-                });
-              }
-
-              $.ajax({
-                url: featureRequestString,
-                type: "GET",
-                beforeSend: (xhr) => {
-                  xhr.setRequestHeader(
-                    "Authorization",
-                    "Bearer " + this.state.token
-                  );
-                },
-                success: (data) => {
-                  if (data) {
-                    //construct string for each song with the additional feature scores
-                    //TODO
-                    let next_features = [];
-                    for (var i = 0; i < data.audio_features.length; i++) {
-                      next_features[i] = "";
-                      for (var j = 0; j < additionalFeatures.length; j++) {
-                        next_features[i] +=
-                          " || " +
-                          additionalFeatures[j] +
-                          " : " +
-                          data.audio_features[i][additionalFeatures[j]];
-                      }
-                    }
-
-                    //update recommendations
-                    this.setState({
-                      next_features: next_features,
-                      additionalFeatureString: stateAdditionalFeatureString,
-                    });
-                  }
-                },
-                error: () => {
-                  console.log("Failure loading features for recommendations");
-                },
-              });
-            }
-          },
-          error: () => {
-            console.log("Failure loading recommendations");
-          },
+          weightedSum += weight * value;
+          weightTotal += weight;
         });
-      },
-      error: () => {
-        console.log("Failure loading audio features");
-      },
-    });
+        if (weightTotal === 0) {
+          return;
+        }
+        const mean = weightedSum / weightTotal;
+        let varianceSum = 0;
+        rows.forEach(({ features, weight }) => {
+          const value = features[feature];
+          if (value === null || value === undefined || Number.isNaN(value)) {
+            return;
+          }
+          varianceSum += weight * Math.pow(value - mean, 2);
+        });
+        featureStats[feature] = {
+          mean,
+          std: Math.sqrt(varianceSum / weightTotal),
+        };
+      });
+
+      // Build the target/min/max request params and the display pills.
+      let additionalFeatureString = "";
+      let stateAdditionalFeatureArray = [];
+      additionalFeatures.forEach((feature) => {
+        const stats = featureStats[feature];
+        if (!stats) {
+          return;
+        }
+        const mean = stats.mean;
+        additionalFeatureString += "&target_" + feature + "=" + mean;
+        // Key is circular, so a min/max band is meaningless there.
+        if (feature !== "key") {
+          const range = featureRanges[feature] || [0, 1];
+          const min = Math.max(range[0], mean - stats.std);
+          const max = Math.min(range[1], mean + stats.std);
+          additionalFeatureString += "&min_" + feature + "=" + min;
+          additionalFeatureString += "&max_" + feature + "=" + max;
+        }
+
+        if (feature === "acousticness") {
+          stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "deepskyblue" }}>{Math.round(100 * mean)}%</div>);
+          stateAdditionalFeatureArray.push(<div> </div>);
+        } else if (feature === "danceability") {
+          stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "red" }}>{Math.round(100 * mean)}%</div>);
+          stateAdditionalFeatureArray.push(<div> </div>);
+        } else if (feature === "energy") {
+          stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "orange" }}>{Math.round(100 * mean)}%</div>);
+          stateAdditionalFeatureArray.push(<div> </div>);
+        } else if (feature === "instrumentalness") {
+          stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "lime" }}>{Math.round(100 * mean)}%</div>);
+          stateAdditionalFeatureArray.push(<div> </div>);
+        } else if (feature === "key") {
+          stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "green" }}>{this.toNote(Math.round(mean))}</div>);
+          stateAdditionalFeatureArray.push(<div> </div>);
+        } else if (feature === "liveness") {
+          stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "purple" }}>{Math.round(100 * mean)}%</div>);
+          stateAdditionalFeatureArray.push(<div> </div>);
+        } else if (feature === "loudness") {
+          stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "pink" }}>{Math.round(100 * mean) / 100} dB</div>);
+          stateAdditionalFeatureArray.push(<div> </div>);
+        } else if (feature === "speechiness") {
+          stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "gold" }}>{Math.round(100 * mean)}%</div>);
+          stateAdditionalFeatureArray.push(<div> </div>);
+        } else if (feature === "tempo") {
+          stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "silver" }}>{Math.round(100 * mean) / 100} BPM</div>);
+          stateAdditionalFeatureArray.push(<div> </div>);
+        } else if (feature === "valence") {
+          stateAdditionalFeatureArray.push(<div className="additionalFeaturePill" style={{ color: "teal" }}>{Math.round(100 * mean)}%</div>);
+          stateAdditionalFeatureArray.push(<div> </div>);
+        }
+      });
+      const stateAdditionalFeatureString = (
+        <div style={{ display: "inline-flex" }}>{stateAdditionalFeatureArray}</div>
+      );
+
+      if (primaryFeature === "song") {
+        artists_string =
+          "seed_artists=" + all_artists[all_artists.length - 1];
+      } else {
+        tracks_string = "seed_tracks=" + all_tracks[all_tracks.length - 1];
+      }
+
+      let limit_num = Math.min(100, 10 + this.state.total_queue.length);
+      //add additional features string to recs request string:
+      let recRequestString = `https://api.spotify.com/v1/recommendations?limit=${limit_num}&${artists_string}&${tracks_string}${additionalFeatureString}`;
+      $.ajax({
+        url: recRequestString,
+        type: "GET",
+        beforeSend: (xhr) => {
+          xhr.setRequestHeader("Authorization", "Bearer " + this.state.token);
+        },
+        success: (data) => {
+          if (data) {
+            let recSongs = [];
+            let h = 0;
+            let shuffled = data.tracks
+              .map((value) => ({ value, sort: Math.random() }))
+              .sort((a, b) => a.sort - b.sort)
+              .map(({ value }) => value);
+            for (var i = 0; i < shuffled.length && h < 3; i++) {
+              let seen_bool = false;
+              for (var j = 0; j < this.state.total_queue.length; j++) {
+                if (shuffled[i].id === this.state.total_queue[j].id) {
+                  seen_bool = true;
+                }
+              }
+              if (!seen_bool) {
+                recSongs.push(shuffled[i]);
+                h++;
+              }
+            }
+
+            tracks_string = "ids=";
+            for (i = 0; i < recSongs.length; i++) {
+              tracks_string += recSongs[i].id + "%2C";
+            }
+
+            let featureRequestString = `https://api.spotify.com/v1/audio-features?${tracks_string}`;
+
+            this.setState({
+              next: recSongs,
+            });
+            if (!firstSongs) {
+              this.setState({
+                current: true,
+              });
+            }
+
+            $.ajax({
+              url: featureRequestString,
+              type: "GET",
+              beforeSend: (xhr) => {
+                xhr.setRequestHeader(
+                  "Authorization",
+                  "Bearer " + this.state.token
+                );
+              },
+              success: (data) => {
+                if (data) {
+                  //construct string for each song with the additional feature scores
+                  let next_features = [];
+                  for (var i = 0; i < data.audio_features.length; i++) {
+                    const features = data.audio_features[i];
+                    if (!features) {
+                      next_features[i] = "";
+                      continue;
+                    }
+                    next_features[i] = "";
+                    for (var j = 0; j < additionalFeatures.length; j++) {
+                      next_features[i] +=
+                        " || " +
+                        additionalFeatures[j] +
+                        " : " +
+                        features[additionalFeatures[j]];
+                    }
+                  }
+
+                  //update recommendations
+                  this.setState({
+                    next_features: next_features,
+                    additionalFeatureString: stateAdditionalFeatureString,
+                  });
+                }
+              },
+              error: () => {
+                console.log("Failure loading features for recommendations");
+              },
+            });
+          }
+        },
+        error: () => {
+          console.log("Failure loading recommendations");
+        },
+      });
+    };
+
+    if (missingIds.length === 0) {
+      buildRecommendations(this.featureCache);
+    } else {
+      let feature_tracks_string = "ids=" + missingIds.join("%2C");
+      $.ajax({
+        url: `https://api.spotify.com/v1/audio-features?${feature_tracks_string}`,
+        type: "GET",
+        beforeSend: (xhr) => {
+          xhr.setRequestHeader("Authorization", "Bearer " + this.state.token);
+        },
+        success: (data) => {
+          if (data && data.audio_features) {
+            data.audio_features.forEach((features) => {
+              if (features) {
+                this.featureCache[features.id] = features;
+              }
+            });
+          }
+          buildRecommendations(this.featureCache);
+        },
+        error: () => {
+          console.log("Failure loading audio features");
+        },
+      });
+    }
   };
 
   tick() {
