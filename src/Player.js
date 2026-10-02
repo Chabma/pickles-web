@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import "./App.css";
-import { Card } from "antd";
+import { Card, List, Avatar } from "antd";
 import "antd/dist/antd.css";
 import play_btn from "./images/play.png";
 import pause_btn from "./images/pause.png";
@@ -14,6 +14,63 @@ import next_btn_dark from "./images/next(copy).png";
 import previous_btn_dark from "./images/previous(copy).png";
 import add_to_library_dark from "./images/addToLibrary(copy).png";
 import checked_library_dark from "./images/checkToLibrary(copy).png";
+
+// Album cover that flips to a "remove?" confirm on double tap.
+const FlipCover = ({ children, onConfirm, className }) => {
+  const [flipped, setFlipped] = useState(false);
+  const lastTap = useRef(0);
+
+  const handleTap = () => {
+    const now = Date.now();
+    if (lastTap.current !== 0 && now - lastTap.current < 350) {
+      setFlipped((f) => !f);
+      lastTap.current = 0;
+      return;
+    }
+    lastTap.current = now;
+  };
+
+  return (
+    <div className={"flip-cover " + (className || "")} onClick={handleTap}>
+      <div className="flip-cover-inner">
+        <div className="flip-cover-front">{children}</div>
+        <div
+          className="flip-cover-back"
+          onClick={(e) => {
+            e.stopPropagation();
+            onConfirm();
+          }}
+        >
+          remove?
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Queue row rendered from track data so its cover can be double tapped.
+const QueueItem = ({ track, index, onRemove }) => (
+  <List.Item
+    key={track.uri}
+    style={{ height: "100%", border: "4px solid #0000" }}
+  >
+    <List.Item.Meta
+      style={{ display: "block" }}
+      avatar={
+        <FlipCover onConfirm={() => onRemove(index)}>
+          <Avatar
+            shape="square"
+            size="large"
+            src={track.image.url}
+            style={{ height: "50%", width: "150px" }}
+          />
+        </FlipCover>
+      }
+      title={<p href="https://ant.design">{track.name}</p>}
+      description={track.artists.map((artist) => artist.name).join(", ")}
+    />
+  </List.Item>
+);
 
 const Player = (props) => {
   const play_btn_func = (device) => {
@@ -200,7 +257,14 @@ const Player = (props) => {
         >
           {props.total_queue
             .slice(props.queue_pos + 1)
-            .map((track) => track.item)}
+            .map((track, i) => (
+              <QueueItem
+                key={track.uri}
+                track={track}
+                index={props.queue_pos + 1 + i}
+                onRemove={props.removeFunc}
+              />
+            ))}
         </ul>
       </Card>
     );
@@ -237,7 +301,14 @@ const Player = (props) => {
         >
           {props.total_queue
             .slice(0, props.queue_pos)
-            .map((track) => track.item)}
+            .map((track, i) => (
+              <QueueItem
+                key={track.uri}
+                track={track}
+                index={i}
+                onRemove={props.removeFunc}
+              />
+            ))}
         </ul>
       </Card>
     );
@@ -271,15 +342,21 @@ const Player = (props) => {
                     margin: "auto",
                   }}
                 >
-                  <img
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                      margin: "auto",
-                    }}
-                    src={props.total_queue[props.queue_pos]?.image.url}
-                    alt="player"
-                  />
+                  <FlipCover
+                    className="flip-cover-main"
+                    onConfirm={() => props.removeFunc(props.queue_pos)}
+                  >
+                    <img
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        margin: "auto",
+                        display: "block",
+                      }}
+                      src={props.total_queue[props.queue_pos]?.image.url}
+                      alt="player"
+                    />
+                  </FlipCover>
                 </div>
                 <svg
                   viewBox="0 0 75 5"

@@ -851,6 +851,50 @@ class App extends Component {
     this.getFirstRecs();
   };
 
+  removeFromQueue = (index) => {
+    /*
+  Remove the track at `index` from the app queue. If the removed track is the
+  one currently playing, advance to the next one (or pause if it was the last).
+  */
+    const total = this.state.total_queue;
+    if (index < 0 || index >= total.length) {
+      return;
+    }
+    const oldPos = this.state.queue_pos;
+    const newQueue = [...total.slice(0, index), ...total.slice(index + 1)];
+
+    if (newQueue.length === 0) {
+      this.setState({
+        total_queue: [],
+        queue_pos: 0,
+        current: false,
+        progress_ms: 0,
+        is_playing: false,
+      });
+      this.getFirstRecs();
+      return;
+    }
+
+    const newPos = index < oldPos ? oldPos - 1 : oldPos;
+    this.setState({ total_queue: newQueue, queue_pos: newPos }, () => {
+      if (index === oldPos) {
+        if (oldPos < newQueue.length) {
+          this.play(oldPos);
+        } else {
+          this.setState({ is_playing: false, progress_ms: 0 });
+          fetch(
+            `https://api.spotify.com/v1/me/player/pause?device_id=${this.state.deviceID}`,
+            {
+              method: "PUT",
+              headers: { Authorization: `Bearer ${this.accessToken}` },
+            }
+          );
+        }
+      }
+      this.getRecs();
+    });
+  };
+
   enableHorizontalScroll = () => {
     /*
   Adds horizontal Scroll to player window
@@ -1353,6 +1397,7 @@ class App extends Component {
                 total_queue={this.state.total_queue}
                 queue_pos={this.state.queue_pos}
                 clearQueue={this.clearQueue}
+                removeFunc={this.removeFromQueue}
                 additionalFeatureString={this.state.additionalFeatureString}
                 additionalFeatures={this.state.additionalFeatures}
                 isPicklesPlayer={this.state.isPicklesPlayer}
