@@ -96,6 +96,7 @@ let lastSecond = Date.now();
 class App extends Component {
   constructor() {
     super();
+    this.accessToken = null;
     this.state = {
       //Variables for login / refresh / flobal
       token: null,
@@ -904,6 +905,7 @@ class App extends Component {
         console.log("successfully refreshed token");
         console.log(data);
         if (data) {
+          this.accessToken = data.access_token;
           this.setState({
             token: data.access_token,
           });
@@ -922,10 +924,11 @@ class App extends Component {
   setUpPlayer(data, playAfter = false) {
     let access_token = data.access_token;
     let refresh_token = data.refresh_token;
+    this.accessToken = access_token;
 
     let player = new window.Spotify.Player({
       name: "Pickles Web Player",
-      getOAuthToken: (cb) => cb(access_token),
+      getOAuthToken: (cb) => cb(this.accessToken),
     });
 
     // Error handling
