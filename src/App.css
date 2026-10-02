@@ -153,13 +153,13 @@
 
 .next-wrapper {
     width: 90%;
-    height: 33%;
+    height: 30%;
     margin: auto;
     overflow-x: scroll;
     overflow-y: hidden;
     display: flex;
     background-color: #00000011;
-    margin-bottom: 1%;
+    margin-bottom: 1vh;
     border-radius: 5px;
 }
 
@@ -215,15 +215,14 @@
   width: 100%;
   height: 33%;
   margin-top: 1vh;
-  margin-bottom: 2vh;
+  margin-bottom: 1vh;
 }
 
 /*Song search*/
 .Search {
     margin: auto;
-    max-width: 800px;
     color: black;
-    height: 6%;
+    height: 7%;
     display: inline-block;
     width: 88%;
 }

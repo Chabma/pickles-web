@@ -36,7 +36,7 @@ export const tokenEndpoint = "https://accounts.spotify.com/api/token";
 const clientId = "fadd120c4e7a4a1a954bf081a4fd6e59";
 const clientSecret = "97c1d3b88b9e4a89898482bb4141b2df";
 //TODO: change uses of client Secret to Base 64 encoded uses
-const redirectUri = "https://chabma.github.io/pickles-web/";
+const redirectUri = "https://www.pickles.foo/";
 const debug = true;
 //var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 //const redirectUri = "http://localhost:3000/callback";
@@ -1454,7 +1454,6 @@ class App extends Component {
 
               {/* Song Search Field & Results */}
               <div className="Search">
-              
                 <input
                   id="searchInput"
                   style={{
@@ -1475,7 +1474,6 @@ class App extends Component {
                   prefix={<SearchOutlined className="search-form-icon" />}
                 />
                 {card}
-
               </div>
               <Select
                   name="additional_features"
