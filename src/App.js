@@ -104,7 +104,7 @@ class App extends Component {
       refresh_token: null,
       userID: "",
       userImage: "assets/user-avatar.png",
-      isDark: false,
+      isDark: document.documentElement.classList.contains("Dark"),
 
       //Spotify Player variables
       player: null,
@@ -1155,83 +1155,14 @@ class App extends Component {
     //TODO maybe this could be cleaner? p3
 
     
-    let divs = document.getElementsByTagName("div")
-    if($(divs[0]).hasClass("Dark")){
-      this.setState({
-        isDark: false,
-      });
-    }
-    else{
-      this.setState({
-        isDark: true,
-      });
-    }
-    
-    for(let i = 0; i < divs.length; i++){
-      if($(divs[i]).hasClass("Dark")){
-        $(divs[i]).removeClass("Dark");
-      }
-      else{
-        $(divs[i]).addClass("Dark");
-      }
-    }
-    let h1s = document.getElementsByTagName("h1")
-    for(let i = 0; i < h1s.length; i++){
-      if($(h1s[i]).hasClass("Dark")){
-        $(h1s[i]).removeClass("Dark");
-      }
-      else{
-        $(h1s[i]).addClass("Dark");
-      }
-    }
-    let h3s = document.getElementsByTagName("h3")
-    for(let i = 0; i < h3s.length; i++){
-      if($(h3s[i]).hasClass("Dark")){
-        $(h3s[i]).removeClass("Dark");
-      }
-      else{
-        $(h3s[i]).addClass("Dark");
-      }
-    }
-    let h4s = document.getElementsByTagName("h4")
-    for(let i = 0; i < h4s.length; i++){
-      if($(h4s[i]).hasClass("Dark")){
-        $(h4s[i]).removeClass("Dark");
-      }
-      else{
-        $(h4s[i]).addClass("Dark");
-      }
-    }
-
-    if(!$(divs[0]).hasClass("Dark")){
-      document.getElementById("refresh_btn").src=refresh_btn;
-      document.getElementById("previous_btn_div").src=previous_btn;
-      document.getElementById("pause_btn_div").src=pause_btn;
-      document.getElementById("play_btn_div").src=play_btn;
-      document.getElementById("forward_btn_div").src=next_btn;
-      if(document.getElementById("library_btn_div").src == library_btn_dark){
-        document.getElementById("library_btn_div").src=library_btn;
-      }
-      else{
-        document.getElementById("library_btn_div").src=checked_library;
-      }
-
-
-    }
-    else{
-      document.getElementById("refresh_btn").src=refresh_btn_dark;
-      document.getElementById("previous_btn_div").src=previous_btn_dark;
-      document.getElementById("pause_btn_div").src=pause_btn_dark;
-      document.getElementById("play_btn_div").src=play_btn_dark;
-      document.getElementById("forward_btn_div").src=next_btn_dark;
-      if(document.getElementById("library_btn_div").src == library_btn){
-        document.getElementById("library_btn_div").src=library_btn_dark;
-      }
-      else{
-        document.getElementById("library_btn_div").src=checked_library_dark;
-      }
-
-    }
+    const nextDark = !this.state.isDark;
+    this.setState({
+      isDark: nextDark,
+    });
+    document.documentElement.classList.toggle("Dark", nextDark);
+    document.cookie = nextDark
+      ? "picklesDark=1; path=/; max-age=31536000; SameSite=Lax"
+      : "picklesDark=; path=/; max-age=0; SameSite=Lax";
   }
 
   add_playlist_btn_func(playlist_name, user_id) {
@@ -1442,6 +1373,7 @@ class App extends Component {
                 queue_pos={this.state.queue_pos}
                 total_queue={this.state.total_queue}
                 isFirst={!this.state.current}
+                isDark={this.state.isDark}
                 refreshFunc={(bool) => {
                   if (this.state.current) {
                     if(debug){console.log("updating based on next player js");}

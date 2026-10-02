@@ -30,6 +30,18 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Pickles</title>
+    <script>
+      // Apply saved dark mode before the app renders to avoid a flash.
+      try {
+        if (
+          document.cookie
+            .split("; ")
+            .some((c) => c.indexOf("picklesDark=1") === 0)
+        ) {
+          document.documentElement.classList.add("Dark");
+        }
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

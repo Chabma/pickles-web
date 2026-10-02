@@ -110,8 +110,7 @@ const NextPlayer = (props) => {
                 <img
                   id="refresh_btn"
                   alt="refresh recommendations"
-                  src={refresh_btn}
-
+                  src={props.isDark ? refresh_btn_dark : refresh_btn}
                 />
               </div> 
             </div>
