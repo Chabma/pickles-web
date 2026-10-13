@@ -372,6 +372,7 @@ class App extends Component {
                     },
                     () => {
                       if(debug){console.log("updating based on play function")}
+                      this.updateMediaSession(true);
                       //TODO is this needed?
                       // if (!this.state.isPicklesPlayer) {
                       //   this.updatePlaying(false);
@@ -399,6 +400,25 @@ class App extends Component {
     lastSecond = Date.now();
   }
 
+  updateMediaSession(isPlaying = this.state.is_playing) {
+    /*
+  Keep the phone / lock screen media controls in sync with the current track.
+  */
+    if (!("mediaSession" in navigator)) {
+      return;
+    }
+    const track = this.state.total_queue[this.state.queue_pos];
+    if (track) {
+      navigator.mediaSession.metadata = new window.MediaMetadata({
+        title: track.name ?? "Pickles Music Player",
+        artist:
+          track.artists?.map((artist) => artist.name).join(", ") || "Pickles",
+        album: "Pickles",
+        artwork: [{ src: track.image?.url ?? "./images/logo.png" }],
+      });
+    }
+    navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+  }
 
   updatePlaying = (refreshSelections, setItemBoolean = true) => {
     /*
@@ -471,19 +491,8 @@ class App extends Component {
                 this.getRecs();
               }
 
-              // update android player
-              // make this a seperate function?
-              if ("mediaSession" in navigator) {
-                navigator.mediaSession.metadata = new window.MediaMetadata({
-                  title: data?.item.name ?? "Pickles Music Player",
-                  artist: data?.item.artists[0].name ?? "Pickles",
-                  album: data?.item.album.name ?? "Pickles",
-                  artwork: [{src: data?.item.album.images[0].url ?? "./images/logo.png"}],
-                });
-                  navigator.mediaSession.setActionHandler("previoustrack", () => this.play(this.state.queue_pos - 1));
-                  navigator.mediaSession.setActionHandler("nexttrack", () => this.play(this.state.queue_pos + 1));
-                // TODO: Update playback state.
-              }
+              // Keep the phone / lock screen media controls in sync
+              this.updateMediaSession();
 
               this.updateScrollPosition();
             },
@@ -1064,6 +1073,7 @@ class App extends Component {
         is_playing: !state?.paused ?? this.state.is_playing,
         progress_ms: state?.position ?? this.state.progress_ms,
       });
+      this.updateMediaSession(!state?.paused);
         /*
       if (
         state.position >=
@@ -1112,6 +1122,29 @@ class App extends Component {
       //alert("Device ID has gone offline: ", device_id);
       console.log("Device ID has; gone offline: ", device_id)
     });
+
+    // Phone / lock screen media controls (registered once per player)
+    if ("mediaSession" in navigator) {
+      try {
+        navigator.mediaSession.setActionHandler("play", () => {
+          player.activateElement().then(() => player.resume());
+        });
+        navigator.mediaSession.setActionHandler("pause", () => player.pause());
+        navigator.mediaSession.setActionHandler("previoustrack", () =>
+          this.play(this.state.queue_pos - 1)
+        );
+        navigator.mediaSession.setActionHandler("nexttrack", () =>
+          this.play(this.state.queue_pos + 1)
+        );
+        navigator.mediaSession.setActionHandler("seekto", (details) => {
+          if (details && details.seekTime != null) {
+            player.seek(details.seekTime);
+          }
+        });
+      } catch (e) {
+        console.log("mediaSession action handlers not supported", e);
+      }
+    }
 
     // Connect to the player!
     player.connect();
