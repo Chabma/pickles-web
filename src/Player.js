@@ -22,7 +22,7 @@ const FlipCover = ({ children, onConfirm, className }) => {
 
   const handleTap = () => {
     const now = Date.now();
-    if (lastTap.current !== 0 && now - lastTap.current < 350) {
+    if (lastTap.current !== 0 && now - lastTap.current < 450) {
       setFlipped((f) => !f);
       lastTap.current = 0;
       return;
@@ -31,7 +31,12 @@ const FlipCover = ({ children, onConfirm, className }) => {
   };
 
   return (
-    <div className={"flip-cover " + (className || "")} onClick={handleTap}>
+    <div
+      className={
+        "flip-cover " + (flipped ? "flipped " : "") + (className || "")
+      }
+      onClick={handleTap}
+    >
       <div className="flip-cover-inner">
         <div className="flip-cover-front">{children}</div>
         <div

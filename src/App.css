@@ -560,6 +560,7 @@ svg {
   width: 150px;
   perspective: 600px;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .flip-cover-main {
