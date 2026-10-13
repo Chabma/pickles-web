@@ -107,6 +107,32 @@ let endSong = false;
 let tickInterval = null;
 let lastSecond = Date.now();
 
+// TEMP DEBUG (song-end logging run) - remove once investigated
+const debugLogLines = [];
+let lastDebugAlert = 0;
+const debugLog = (msg) => {
+  debugLogLines.push(`${new Date().toLocaleTimeString()} ${msg}`);
+  if (debugLogLines.length > 15) {
+    debugLogLines.shift();
+  }
+};
+const debugAlert = (msg) => {
+  debugLog(msg);
+  const now = Date.now();
+  if (now - lastDebugAlert < 1500) {
+    return;
+  }
+  lastDebugAlert = now;
+  try {
+    window.alert(msg);
+  } catch (e) {}
+};
+const debugShow = () => {
+  try {
+    window.alert(debugLogLines.join("\n") || "no debug events yet");
+  } catch (e) {}
+};
+
 class App extends Component {
   constructor() {
     super();
@@ -354,6 +380,7 @@ class App extends Component {
                       playLock: false,
                     },
                   );
+                  debugAlert(`PLAY retry status=${response.status}`);
                   console.log("retrying")
                   this.play(queuePosition, tickBool);
                 }
@@ -387,6 +414,7 @@ class App extends Component {
                     playLock: false,
                   },
                 );
+                debugAlert(`PLAY error ${error?.message || error}`);
                 console.log(error);
                 console.log("retrying")
                 this.play(queuePosition, tickBool);
@@ -841,6 +869,7 @@ class App extends Component {
       if(!this.state.initialStart){
         if (this.state.maybeDone < 1){
           console.log("updating from new tick")
+          debugAlert(`DETECT-B tick maybeDone: appProg=${Math.round(this.state.progress_ms)} curDur=${this.state.total_queue[this.state.queue_pos]?.songDuration} -> next`);
           this.play(this.state.queue_pos + 1);
           this.setState({
             maybeDone: 5,
@@ -1055,6 +1084,14 @@ class App extends Component {
     // Playback status updates based on headphone buttons
     player.addListener("player_state_changed", (state) => {
       let currentSongDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
+      const sdkPos = state?.position;
+      const sdkDur = state?.duration;
+      const sdkPaused = state?.paused;
+      if (state && (sdkPaused || (sdkDur && sdkPos >= sdkDur - 1000) || sdkPos === 0)) {
+        debugLog(
+          `SDK pos=${sdkPos} dur=${sdkDur} paused=${sdkPaused} uri=..${state?.track_window?.current_track?.uri?.slice(-6)} appProg=${Math.round(this.state.progress_ms)} curDur=${currentSongDuration}`
+        );
+      }
       // console.log(this.state.progress_ms + 1000);
       // console.log(currentSongDuration);
       
@@ -1063,6 +1100,7 @@ class App extends Component {
         this.setState({
           progress_ms: 0,
         });
+        debugAlert(`DETECT-A psc: appProg=${Math.round(this.state.progress_ms)} curDur=${currentSongDuration} -> next`);
         this.play(this.state.queue_pos + 1, true);
         console.log("played from here");
       }
@@ -1739,6 +1777,17 @@ class App extends Component {
                   </Button>
                 </div>
               </div>
+              <button
+                style={{
+                  position: "fixed",
+                  bottom: "12px",
+                  right: "12px",
+                  zIndex: 9999,
+                }}
+                onClick={() => debugShow()}
+              >
+                DBG
+              </button>
               <script src="https://sdk.scdn.co/spotify-player.js"></script>
             </div>
           )}
