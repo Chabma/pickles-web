@@ -984,8 +984,14 @@ class App extends Component {
         if (oldPos < newQueue.length) {
           this.play(oldPos);
         } else {
+          // Removed the last queued track: fall back to the previous track,
+          // shown paused so the user can choose what to play next.
           endSong = true;
-          this.setState({ is_playing: false, progress_ms: 0 });
+          const prevPos = newQueue.length - 1;
+          this.setState(
+            { queue_pos: prevPos, is_playing: false, progress_ms: 0 },
+            () => this.updateMediaSession(false)
+          );
           fetch(
             `https://api.spotify.com/v1/me/player/pause?device_id=${this.state.deviceID}`,
             {
