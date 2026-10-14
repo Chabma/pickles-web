@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 import { Card, List, Avatar } from "antd";
 import "antd/dist/antd.css";
@@ -19,6 +19,7 @@ import checked_library_dark from "./images/checkToLibrary(copy).png";
 const FlipCover = ({ children, onConfirm, className }) => {
   const [flipped, setFlipped] = useState(false);
   const lastTap = useRef(0);
+  const coverRef = useRef(null);
 
   const handleTap = () => {
     const now = Date.now();
@@ -30,8 +31,29 @@ const FlipCover = ({ children, onConfirm, className }) => {
     lastTap.current = now;
   };
 
+  // Dismiss the remove prompt when tapping anywhere outside the cover.
+  useEffect(() => {
+    if (!flipped) {
+      return;
+    }
+    const handleOutside = (event) => {
+      if (coverRef.current && !coverRef.current.contains(event.target)) {
+        setFlipped(false);
+      }
+    };
+    // Defer so the click that flipped it doesn't immediately close it.
+    const id = setTimeout(() => {
+      document.addEventListener("click", handleOutside);
+    }, 0);
+    return () => {
+      clearTimeout(id);
+      document.removeEventListener("click", handleOutside);
+    };
+  }, [flipped]);
+
   return (
     <div
+      ref={coverRef}
       className={
         "flip-cover " + (flipped ? "flipped " : "") + (className || "")
       }
@@ -67,7 +89,7 @@ const QueueItem = ({ track, index, onRemove }) => (
             shape="square"
             size="large"
             src={track.image.url}
-            style={{ height: "50%", width: "150px" }}
+            style={{ height: "100%", width: "100%" }}
           />
         </FlipCover>
       }
@@ -353,8 +375,9 @@ const Player = (props) => {
                   >
                     <img
                       style={{
+                        height: "100%",
+                        width: "auto",
                         maxWidth: "100%",
-                        maxHeight: "100%",
                         margin: "auto",
                         display: "block",
                       }}
