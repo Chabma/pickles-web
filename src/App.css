@@ -558,9 +558,16 @@ svg {
   display: block;
   height: 50%;
   width: 150px;
+  margin: auto;
   perspective: 600px;
   cursor: pointer;
   touch-action: manipulation;
+}
+
+.ant-list-item-meta-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .flip-cover-main {
