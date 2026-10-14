@@ -395,6 +395,7 @@ class App extends Component {
                   this.setState(
                     {
                       queue_pos: queuePosition,
+                      progress_ms: 0,
                       playLock: false,
                     },
                     () => {
@@ -865,22 +866,18 @@ class App extends Component {
     // console.log(this.state.progress_ms)
     // console.log(this.state.is_playing)
 
-    if(this.state.progress_ms == 0){
-      if(!this.state.initialStart){
-        if (this.state.maybeDone < 1){
-          console.log("updating from new tick")
-          debugAlert(`DETECT-B tick maybeDone: appProg=${Math.round(this.state.progress_ms)} curDur=${this.state.total_queue[this.state.queue_pos]?.songDuration} -> next`);
-          this.play(this.state.queue_pos + 1);
-          this.setState({
-            maybeDone: 5,
-          })
-        }
-        else{
-          this.setState({
-            maybeDone: this.state.maybeDone - 1,
-          })
-        }
-      }
+    // Fallback end-of-song detector: if the SDK never reports the end, advance
+    // once we are within the last half second. `endSong` guards against doubles.
+    const trackDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
+    if (
+      this.state.is_playing &&
+      trackDuration &&
+      this.state.progress_ms >= trackDuration - 500 &&
+      !endSong
+    ) {
+      endSong = true;
+      debugAlert(`END-tick: appProg=${Math.round(this.state.progress_ms)} dur=${trackDuration} -> next`);
+      this.play(this.state.queue_pos + 1);
     }
 
     // if (this.state.is_playing) {
@@ -928,8 +925,14 @@ class App extends Component {
     /*
   Cleared state variables associated with songs in the player
   */
-
-  //TODO ADD PAUSE
+    endSong = true;
+    fetch(
+      `https://api.spotify.com/v1/me/player/pause?device_id=${this.state.deviceID}`,
+      {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+      }
+    ).catch(() => {});
     this.setState({
       searchValue: "",
       is_playing: false,
@@ -956,6 +959,14 @@ class App extends Component {
     const newQueue = [...total.slice(0, index), ...total.slice(index + 1)];
 
     if (newQueue.length === 0) {
+      endSong = true;
+      fetch(
+        `https://api.spotify.com/v1/me/player/pause?device_id=${this.state.deviceID}`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${this.accessToken}` },
+        }
+      ).catch(() => {});
       this.setState({
         total_queue: [],
         queue_pos: 0,
@@ -973,6 +984,7 @@ class App extends Component {
         if (oldPos < newQueue.length) {
           this.play(oldPos);
         } else {
+          endSong = true;
           this.setState({ is_playing: false, progress_ms: 0 });
           fetch(
             `https://api.spotify.com/v1/me/player/pause?device_id=${this.state.deviceID}`,
@@ -1095,13 +1107,19 @@ class App extends Component {
       // console.log(this.state.progress_ms + 1000);
       // console.log(currentSongDuration);
       
-      if(this.state.progress_ms >= currentSongDuration){
-        clearInterval(tickInterval);
+      if (
+        state &&
+        !endSong &&
+        state.paused &&
+        state.position === 0 &&
+        this.state.progress_ms > currentSongDuration * 0.5
+      ) {
+        endSong = true;
+        debugAlert(`END-sdk: appProg=${Math.round(this.state.progress_ms)} dur=${currentSongDuration} -> next`);
         this.setState({
           progress_ms: 0,
         });
-        debugAlert(`DETECT-A psc: appProg=${Math.round(this.state.progress_ms)} curDur=${currentSongDuration} -> next`);
-        this.play(this.state.queue_pos + 1, true);
+        this.play(this.state.queue_pos + 1);
         console.log("played from here");
       }
       else{
