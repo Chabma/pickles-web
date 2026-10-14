@@ -872,7 +872,7 @@ class App extends Component {
     if (
       this.state.is_playing &&
       trackDuration &&
-      this.state.progress_ms >= trackDuration - 500 &&
+      this.state.progress_ms >= trackDuration - 150 &&
       !endSong
     ) {
       endSong = true;
