@@ -535,7 +535,7 @@
 /* Brighter search result text in dark mode */
 .Dark .Search .ant-list-item-meta-title,
 .Dark .Search .ant-list-item-meta-title p {
-  color: #f5f5f5;
+  color: #ffffff;
 }
 
 .Dark .Search .ant-list-item-meta-description {
