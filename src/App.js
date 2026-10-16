@@ -194,6 +194,7 @@ class App extends Component {
                 this.setState({
                   searchValue: value,
                   searchResults: results,
+                  searchFocused: false,
                 });
               }}
               playFunc={this.play}
@@ -812,8 +813,11 @@ class App extends Component {
         // Key is circular, so a min/max band is meaningless there.
         if (feature !== "key") {
           const range = featureRanges[feature] || [0, 1];
-          const min = Math.max(range[0], mean - stats.std);
-          const max = Math.min(range[1], mean + stats.std);
+          // Keep at least a small band: a single song has a spread of 0, and a
+          // zero-width target makes Spotify return too few recommendations.
+          const spread = Math.max(stats.std, (range[1] - range[0]) * 0.05);
+          const min = Math.max(range[0], mean - spread);
+          const max = Math.min(range[1], mean + spread);
           additionalFeatureString += "&min_" + feature + "=" + min;
           additionalFeatureString += "&max_" + feature + "=" + max;
         }
@@ -882,6 +886,11 @@ class App extends Component {
               let seen_bool = false;
               for (var j = 0; j < this.state.total_queue.length; j++) {
                 if (shuffled[i].id === this.state.total_queue[j].id) {
+                  seen_bool = true;
+                }
+              }
+              for (j = 0; j < recSongs.length; j++) {
+                if (shuffled[i].id === recSongs[j].id) {
                   seen_bool = true;
                 }
               }
