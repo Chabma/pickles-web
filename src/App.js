@@ -1488,7 +1488,11 @@ class App extends Component {
   };
 
   closeSearch = () => {
-    this.setState({ searchFocused: false });
+    this.setState({
+      searchFocused: false,
+      searchValue: "",
+      searchResults: [],
+    });
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -1656,12 +1660,13 @@ class App extends Component {
                   placeholder="Song Search..."
                   size="large"
                   onChange={(value) => {
-                    this.setState({ searchValue: value.target.value });
-                    debounce(
-                      this,
-                      this.getSearchResults(value.target.value),
-                      10000
-                    );
+                    const query = value.target.value;
+                    if (query === "") {
+                      this.setState({ searchValue: "", searchResults: [] });
+                      return;
+                    }
+                    this.setState({ searchValue: query });
+                    debounce(this, this.getSearchResults(query), 10000);
                   }}
                   onFocus={this.openSearch}
                   onKeyDown={(event) => {
