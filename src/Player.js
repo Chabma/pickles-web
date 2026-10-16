@@ -495,11 +495,16 @@ const Player = (props) => {
         </div>
       ) : (
         <>
-          {!props.searchFocused && (
-            <h3 style={{ display: "block", height: "50%", marginBottom: "0" }}>
-              Select A Song To Begin
-            </h3>
-          )}
+          <h3
+            style={{
+              display: "block",
+              height: "50%",
+              marginBottom: "0",
+              visibility: props.searchFocused ? "hidden" : "visible",
+            }}
+          >
+            Select A Song To Begin
+          </h3>
         </>
       )}
     </>
