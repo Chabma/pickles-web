@@ -662,6 +662,28 @@ class App extends Component {
     );
   }
 
+  queueNextTest = () => {
+    const nextTrack =
+      this.state.total_queue[this.state.queue_pos + 1] ||
+      (this.state.next && this.state.next[0]);
+    if (!nextTrack) {
+      dbgLog("queueTest: no next track available");
+      return;
+    }
+    dbgLog(`queueTest: queueing "${nextTrack.name}"`);
+    fetch(
+      `https://api.spotify.com/v1/me/player/queue?device_id=${
+        this.state.deviceID
+      }&uri=${encodeURIComponent(nextTrack.uri)}`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+      }
+    )
+      .then((response) => dbgLog(`queueTest: status ${response.status}`))
+      .catch((e) => dbgLog(`queueTest: error ${e && e.message}`));
+  };
+
   handleVisibilityChange = () => {
     dbgLog(document.hidden ? "event: hidden" : "event: visible");
     if (document.hidden) {
@@ -2064,6 +2086,13 @@ class App extends Component {
                     </pre>
                     <Button size="small" onClick={() => dbgClear()}>
                       Clear Debug
+                    </Button>
+                    <Button
+                      size="small"
+                      style={{ marginLeft: "8px" }}
+                      onClick={() => this.queueNextTest()}
+                    >
+                      Queue Next Rec
                     </Button>
                   </div>
                 )}
