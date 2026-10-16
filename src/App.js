@@ -112,6 +112,7 @@ class App extends Component {
     super();
     this.accessToken = null;
     this.featureCache = {};
+    this.debouncedSearch = debounce(this, this.getSearchResults, 300);
     this.state = {
       //Variables for login / refresh / flobal
       token: null,
@@ -141,6 +142,7 @@ class App extends Component {
       //Search
       searchValue: "",
       searchResults: [],
+      searchOpen: false,
 
       //Additional Feature Info
       next_features: [],
@@ -185,6 +187,7 @@ class App extends Component {
                 this.setState({
                   searchValue: value,
                   searchResults: results,
+                  searchOpen: false,
                 });
               }}
               playFunc={this.play}
@@ -1590,18 +1593,46 @@ class App extends Component {
                   size="large"
                   onChange={(value) => {
                     this.setState({ searchValue: value.target.value });
-                    debounce(
-                      this,
-                      this.getSearchResults(value.target.value),
-                      10000
-                    );
+                    this.debouncedSearch(value.target.value);
                   }}
+                  onFocus={() => this.setState({ searchOpen: true })}
                   allowClear={true}
                   value={this.state.searchValue}
                   prefix={<SearchOutlined className="search-form-icon" />}
                 />
                 {card}
               </div>
+              {this.state.searchOpen && (
+                <div
+                  className="search-overlay"
+                  onClick={() => this.setState({ searchOpen: false })}
+                >
+                  <div
+                    className="search-overlay-panel"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <input
+                      id="searchInputOverlay"
+                      className="search-overlay-input"
+                      autoFocus
+                      placeholder="Song Search..."
+                      value={this.state.searchValue}
+                      onChange={(value) => {
+                        this.setState({ searchValue: value.target.value });
+                        this.debouncedSearch(value.target.value);
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === "Escape") {
+                          this.setState({ searchOpen: false });
+                        }
+                      }}
+                    />
+                    {this.state.searchResults.length > 0 && (
+                      <div className="search-overlay-results">{card}</div>
+                    )}
+                  </div>
+                </div>
+              )}
               <Select
                   name="additional_features"
                   id="additional_features"

@@ -513,3 +513,17 @@
   width: 100%;
 }
 
+/* Spotlight-style search overlay (dark) */
+.Dark .search-overlay-input {
+  background: #3a3a3a;
+  color: #eee;
+}
+
+.Dark .search-overlay-input::placeholder {
+  color: #bbb;
+}
+
+.Dark .search-overlay-results {
+  background: #2b2b2b;
+}
+
