@@ -90,11 +90,11 @@ const SearchItem = (props) => {
           <Avatar
             shape="square"
             size="large"
-            src={props.element.album.images[0].url}
+            src={props.element.album?.images?.[0]?.url}
           />
         }
         title={<p href="https://ant.design">{props.element.name}</p>}
-        description={props.artists.join(", ")}
+        description={(props.artists || []).join(", ")}
         style={{
           textOverflow: "ellipsis",
           whiteSpace: "nowrap",

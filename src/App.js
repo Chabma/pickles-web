@@ -237,9 +237,9 @@ class App extends Component {
       .then(({ tracks }) => {
         //create an item for each search result
         let results = [];
-        tracks.items.forEach((element) => {
+        (tracks?.items ?? []).forEach((element) => {
           let artists = [];
-          element.artists.forEach((artist) => artists.push(artist.name));
+          (element.artists ?? []).forEach((artist) => artists.push(artist.name));
 
           results.push(
             <SearchItem
@@ -346,7 +346,7 @@ class App extends Component {
       songDuration: track.duration_ms,
       name: track.name,
       artists: track.artists,
-      image: track.album.images[0],
+      image: track.album?.images?.[0],
       item: (
         <List.Item
           key={track.uri.concat("-", Date.now.toString())}
@@ -358,7 +358,7 @@ class App extends Component {
               <Avatar
                 shape="square"
                 size="large"
-                src={track.album.images[0].url}
+                src={track.album?.images?.[0]?.url}
                 style={{ height: "50%", width: "150px" }}
               />
             }

@@ -93,13 +93,13 @@ const QueueItem = ({ track, index, onRemove }) => (
           <Avatar
             shape="square"
             size="large"
-            src={track.image.url}
+            src={track.image?.url}
             style={{ height: "100%", width: "100%" }}
           />
         </FlipCover>
       }
       title={<p href="https://ant.design">{track.name}</p>}
-      description={track.artists.map((artist) => artist.name).join(", ")}
+      description={(track.artists || []).map((artist) => artist.name).join(", ")}
     />
   </List.Item>
 );
@@ -387,7 +387,7 @@ const Player = (props) => {
                         margin: "auto",
                         display: "block",
                       }}
-                      src={props.total_queue[props.queue_pos]?.image.url}
+                      src={props.total_queue[props.queue_pos]?.image?.url}
                       alt="player"
                     />
                   </FlipCover>

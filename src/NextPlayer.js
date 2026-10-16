@@ -36,7 +36,7 @@ const NextPlayer = (props) => {
                   }}
                 >
                   <div className="next-playing__img">
-                    <img src={track.album.images[0].url} alt="player" />
+                    <img src={track.album?.images?.[0]?.url} alt="player" />
                   </div>
                   <div className="next-playing__side">
                     <div className="next-playing__name">{track.name}</div>
