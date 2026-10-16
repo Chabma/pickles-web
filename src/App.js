@@ -142,7 +142,6 @@ class App extends Component {
       //Search
       searchValue: "",
       searchResults: [],
-      searchOpen: false,
 
       //Additional Feature Info
       next_features: [],
@@ -187,7 +186,6 @@ class App extends Component {
                 this.setState({
                   searchValue: value,
                   searchResults: results,
-                  searchOpen: false,
                 });
               }}
               playFunc={this.play}
@@ -1529,6 +1527,24 @@ class App extends Component {
           {/* TODO: confirm all these state properties are needed */}
           {code.code && (
             <div style={{ zIndex: 10, width: "100%", height: "100%" }}>
+              {/* Song Search Field & Results (pinned to the top) */}
+              <div className="top-search">
+                <input
+                  id="searchInput"
+                  className="top-search-input"
+                  placeholder="Song Search..."
+                  value={this.state.searchValue}
+                  onChange={(value) => {
+                    this.setState({ searchValue: value.target.value });
+                    this.debouncedSearch(value.target.value);
+                  }}
+                  allowClear={true}
+                />
+                {this.state.searchResults.length > 0 && (
+                  <div className="top-search-results">{card}</div>
+                )}
+              </div>
+
               {/* Song Queue */}
               <Player
                 is_playing={this.state.is_playing}
@@ -1582,57 +1598,6 @@ class App extends Component {
               {/* Refresh Recomendations Button */}
               {/* TODO: move all styles to css */}
 
-              {/* Song Search Field & Results */}
-              <div className="Search">
-                <input
-                  id="searchInput"
-                  style={{
-                    width: "100%",
-                  }}
-                  placeholder="Song Search..."
-                  size="large"
-                  onChange={(value) => {
-                    this.setState({ searchValue: value.target.value });
-                    this.debouncedSearch(value.target.value);
-                  }}
-                  onFocus={() => this.setState({ searchOpen: true })}
-                  allowClear={true}
-                  value={this.state.searchValue}
-                  prefix={<SearchOutlined className="search-form-icon" />}
-                />
-                {card}
-              </div>
-              {this.state.searchOpen && (
-                <div
-                  className="search-overlay"
-                  onClick={() => this.setState({ searchOpen: false })}
-                >
-                  <div
-                    className="search-overlay-panel"
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    <input
-                      id="searchInputOverlay"
-                      className="search-overlay-input"
-                      autoFocus
-                      placeholder="Song Search..."
-                      value={this.state.searchValue}
-                      onChange={(value) => {
-                        this.setState({ searchValue: value.target.value });
-                        this.debouncedSearch(value.target.value);
-                      }}
-                      onKeyDown={(event) => {
-                        if (event.key === "Escape") {
-                          this.setState({ searchOpen: false });
-                        }
-                      }}
-                    />
-                    {this.state.searchResults.length > 0 && (
-                      <div className="search-overlay-results">{card}</div>
-                    )}
-                  </div>
-                </div>
-              )}
               <Select
                   name="additional_features"
                   id="additional_features"

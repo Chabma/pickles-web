@@ -513,17 +513,18 @@
   width: 100%;
 }
 
-/* Spotlight-style search overlay (dark) */
-.Dark .search-overlay-input {
+/* Song search pinned to the top (dark) */
+.Dark .top-search-input {
   background: #3a3a3a;
   color: #eee;
+  border-color: #666;
 }
 
-.Dark .search-overlay-input::placeholder {
+.Dark .top-search-input::placeholder {
   color: #bbb;
 }
 
-.Dark .search-overlay-results {
+.Dark .top-search-results {
   background: #2b2b2b;
 }
 
