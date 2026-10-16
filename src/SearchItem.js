@@ -2,6 +2,8 @@ import React from "react";
 import play_btn from "./images/play.png";
 import add_start_queue from "./images/add_start_queue.png";
 import add_end_queue from "./images/add_end_queue.png";
+import add_start_queue_dark from "./images/add_start_queue(copy).png";
+import add_end_queue_dark from "./images/add_end_queue(copy).png";
 import { List, Avatar } from "antd";
 
 const SearchItem = (props) => {
@@ -57,7 +59,7 @@ const SearchItem = (props) => {
         <img
           id="list_queue_start_btn"
           alt="add song to start of queue"
-          src={add_start_queue}
+          src={props.isDark ? add_start_queue_dark : add_start_queue}
           style={{
             marginRight: "3%",
             width: "12%",
@@ -71,7 +73,7 @@ const SearchItem = (props) => {
         <img
           id="list_queue_end_btn"
           alt="add song to end of queue"
-          src={add_end_queue}
+          src={props.isDark ? add_end_queue_dark : add_end_queue}
           style={{
             width: "12%",
             display: props.total_queue?.length > 0 ? "block" : "none",

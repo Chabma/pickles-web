@@ -193,6 +193,7 @@ class App extends Component {
               playFunc={this.play}
               queueFunc={this.queue}
               player={this.state.player}
+              isDark={this.state.isDark}
             />
           );
         });
@@ -1613,6 +1614,7 @@ class App extends Component {
                 isPicklesPlayer={this.state.isPicklesPlayer}
                 isDark={this.state.isDark}
                 updateLastSecond={this.updateLastSecond}
+                searchFocused={this.state.searchFocused}
               />
 
               {/* Song recomendations */}
