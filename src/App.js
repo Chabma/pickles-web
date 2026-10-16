@@ -120,6 +120,48 @@ const dbgText = () => dbgLines.join("\n") || "no debug events yet";
 const dbgClear = () => {
   dbgLines.length = 0;
 };
+const dbgEnvironment = () => {
+  try {
+    const media = document.querySelectorAll("audio, video");
+    dbgLog(
+      `env: audio/video=${media.length} iframes=${window.frames.length}`
+    );
+    media.forEach((el, i) => {
+      dbgLog(
+        `env: media[${i}] ${el.tagName} paused=${el.paused} t=${Math.round(
+          el.currentTime
+        )} dur=${Math.round(el.duration || 0)}`
+      );
+    });
+    for (let i = 0; i < window.frames.length; i++) {
+      let access = "? ";
+      try {
+        access = window.frames[i].document ? "same-origin" : "no-doc";
+      } catch (e) {
+        access = "CROSS-ORIGIN";
+      }
+      let src = "";
+      try {
+        src = (document.querySelectorAll("iframe")[i] || {}).src || "";
+      } catch (e) {}
+      dbgLog(`env: iframe[${i}] ${access} ${String(src).slice(0, 40)}`);
+    }
+    dbgLog(
+      `env: playbackState=${
+        navigator.mediaSession && navigator.mediaSession.playbackState
+      }`
+    );
+    dbgLog(
+      `env: top metadata=${
+        navigator.mediaSession &&
+        navigator.mediaSession.metadata &&
+        navigator.mediaSession.metadata.title
+      }`
+    );
+  } catch (e) {
+    dbgLog(`env: ERROR ${e && e.message}`);
+  }
+};
 
 class App extends Component {
   constructor() {
@@ -1989,9 +2031,13 @@ class App extends Component {
                 </Button>
                 <Button
                   style={{ marginLeft: "8px" }}
-                  onClick={() =>
-                    this.setState({ debugOpen: !this.state.debugOpen })
-                  }
+                  onClick={() => {
+                    const opening = !this.state.debugOpen;
+                    if (opening) {
+                      dbgEnvironment();
+                    }
+                    this.setState({ debugOpen: opening });
+                  }}
                 >
                   {this.state.debugOpen ? "Hide Debug" : "Show Debug"}
                 </Button>
