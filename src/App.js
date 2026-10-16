@@ -870,11 +870,12 @@ class App extends Component {
     let additionalFeatures = this.state.additionalFeatures;
     let primaryFeature = $("#primary_features").val();
     let all_tracks = this.state.total_queue.map((x) => x.id);
-    let all_artists = this.state.total_queue.map((x) => x.artists[0].id);
+    let all_artists = this.state.total_queue.map((x) => x.artists?.[0]?.id);
     if (firstSongs != null) {
       all_tracks = firstSongs.map((x) => x.id);
-      all_artists = firstSongs.map((x) => x.artists[0].id);
+      all_artists = firstSongs.map((x) => x.artists?.[0]?.id);
     }
+    dbgLog(`recs: start seeds=${all_tracks.length}`);
     let tracks_string = "seed_tracks=" + all_tracks.slice(-3).join("%2C");
     let artists_string = "seed_artists=" + all_artists.slice(-3).join("%2C");
 
@@ -887,6 +888,7 @@ class App extends Component {
     const missingIds = recentIds.filter((id) => !this.featureCache[id]);
 
     const buildRecommendations = (featuresById) => {
+      dbgLog("recs: building");
       // Weight songs by recency: half-life of 5 songs back.
       const rows = [];
       recentIds.forEach((id, idx) => {
@@ -1010,6 +1012,7 @@ class App extends Component {
         },
         success: (data) => {
           if (data) {
+            dbgLog(`recs: got ${data.tracks ? data.tracks.length : 0}`);
             let recSongs = [];
             let h = 0;
             let shuffled = data.tracks
@@ -1092,8 +1095,9 @@ class App extends Component {
             });
           }
         },
-        error: () => {
+        error: (xhr) => {
           console.log("Failure loading recommendations");
+          dbgLog(`recs: recommendations failed ${xhr && xhr.status}`);
         },
       });
     };
@@ -1118,8 +1122,10 @@ class App extends Component {
           }
           buildRecommendations(this.featureCache);
         },
-        error: () => {
+        error: (xhr) => {
           console.log("Failure loading audio features");
+          dbgLog(`recs: audio-features failed ${xhr && xhr.status}`);
+          buildRecommendations(this.featureCache);
         },
       });
     }
