@@ -207,6 +207,7 @@ class App extends Component {
       searchResults: [],
       searchFocused: false,
       debugOpen: false,
+      debugNow: Date.now(),
 
       //Additional Feature Info
       next_features: [],
@@ -684,6 +685,21 @@ class App extends Component {
       .catch((e) => dbgLog(`queueTest: error ${e && e.message}`));
   };
 
+  toggleDebug = () => {
+    const opening = !this.state.debugOpen;
+    if (opening) {
+      dbgEnvironment();
+      this.debugTimer = setInterval(
+        () => this.setState({ debugNow: Date.now() }),
+        1000
+      );
+    } else if (this.debugTimer) {
+      clearInterval(this.debugTimer);
+      this.debugTimer = null;
+    }
+    this.setState({ debugOpen: opening });
+  };
+
   handleVisibilityChange = () => {
     dbgLog(document.hidden ? "event: hidden" : "event: visible");
     if (document.hidden) {
@@ -1013,6 +1029,7 @@ class App extends Component {
         success: (data) => {
           if (data) {
             this.recsRetryCount = 0;
+            this.recsRetryAt = 0;
             dbgLog(`recs: got ${data.tracks ? data.tracks.length : 0}`);
             let recSongs = [];
             let h = 0;
@@ -1104,6 +1121,7 @@ class App extends Component {
               parseInt(xhr.getResponseHeader("Retry-After"), 10) || 20;
             this.recsRetryCount = (this.recsRetryCount || 0) + 1;
             if (this.recsRetryCount <= 3) {
+              this.recsRetryAt = Date.now() + retryAfter * 1000;
               dbgLog(
                 `recs: rate limited, retry ${this.recsRetryCount} in ${retryAfter}s`
               );
@@ -1584,6 +1602,9 @@ class App extends Component {
       "visibilitychange",
       this.handleVisibilityChange
     );
+    if (this.debugTimer) {
+      clearInterval(this.debugTimer);
+    }
   }
 
   componentDidMount() {
@@ -2079,13 +2100,7 @@ class App extends Component {
                 </Button>
                 <Button
                   style={{ marginLeft: "8px" }}
-                  onClick={() => {
-                    const opening = !this.state.debugOpen;
-                    if (opening) {
-                      dbgEnvironment();
-                    }
-                    this.setState({ debugOpen: opening });
-                  }}
+                  onClick={() => this.toggleDebug()}
                 >
                   {this.state.debugOpen ? "Hide Debug" : "Show Debug"}
                 </Button>
@@ -2102,6 +2117,11 @@ class App extends Component {
                         overflow: "auto",
                       }}
                     >
+                      {this.recsRetryAt && this.recsRetryAt > this.state.debugNow
+                        ? `next recs retry in ${Math.ceil(
+                            (this.recsRetryAt - this.state.debugNow) / 1000
+                          )}s\n\n`
+                        : ""}
                       {dbgText()}
                     </pre>
                     <Button size="small" onClick={() => dbgClear()}>
