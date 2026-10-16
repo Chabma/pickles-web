@@ -576,12 +576,29 @@ class App extends Component {
     );
   }
 
+  handleVisibilityChange = () => {
+    if (document.hidden) {
+      return;
+    }
+    lastSecond = Date.now();
+    if (this.pendingPlayPosition != null) {
+      this.recoverPlayback(this.pendingPlayPosition);
+    } else {
+      this.syncDevice(false);
+    }
+  };
+
   recoverPlayback(queuePosition) {
     /*
   Playback failed, usually because the SDK device dropped after a network
   change. Remember the intended track and try to re-establish the player.
   */
     this.pendingPlayPosition = queuePosition;
+    // A new player cannot autoplay while hidden (it needs a user gesture), so
+    // we wait and let the visibility handler resume when the tab returns.
+    if (document.hidden) {
+      return;
+    }
     if (this.recovering || Date.now() - this.lastRecoveryAt < 5000) {
       return;
     }
@@ -1075,7 +1092,9 @@ class App extends Component {
     }
 
     // Resume a play that was interrupted by a lost device (network change).
+    // Skipped while hidden; the visibility handler handles it on return.
     if (
+      !document.hidden &&
       this.pendingPlayPosition != null &&
       !this.recovering &&
       Date.now() - this.lastRecoveryAt > 5000
@@ -1084,7 +1103,7 @@ class App extends Component {
     }
 
     // Periodically make sure state.deviceID still points at a live player.
-    if (Date.now() - this.lastDeviceSync > 20000) {
+    if (!document.hidden && Date.now() - this.lastDeviceSync > 20000) {
       this.lastDeviceSync = Date.now();
       this.syncDevice(false);
     }
@@ -1426,6 +1445,13 @@ class App extends Component {
     }
   }
 
+  componentWillUnmount() {
+    document.removeEventListener(
+      "visibilitychange",
+      this.handleVisibilityChange
+    );
+  }
+
   componentDidMount() {
     /*
  Initial built in function run once this component mounts (will only be called once after the first render)
@@ -1439,6 +1465,9 @@ class App extends Component {
 
     // enable horizontal scrolls
     this.enableHorizontalScroll();
+
+    // Pause recovery while hidden; resume it when the tab comes back.
+    document.addEventListener("visibilitychange", this.handleVisibilityChange);
 
     //initialize extra pause and play via headphones
     // TODO see if needed
