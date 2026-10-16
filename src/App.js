@@ -1012,6 +1012,7 @@ class App extends Component {
         },
         success: (data) => {
           if (data) {
+            this.recsRetryCount = 0;
             dbgLog(`recs: got ${data.tracks ? data.tracks.length : 0}`);
             let recSongs = [];
             let h = 0;
@@ -1098,6 +1099,19 @@ class App extends Component {
         error: (xhr) => {
           console.log("Failure loading recommendations");
           dbgLog(`recs: recommendations failed ${xhr && xhr.status}`);
+          if (xhr && xhr.status === 429) {
+            const retryAfter =
+              parseInt(xhr.getResponseHeader("Retry-After"), 10) || 20;
+            this.recsRetryCount = (this.recsRetryCount || 0) + 1;
+            if (this.recsRetryCount <= 3) {
+              dbgLog(
+                `recs: rate limited, retry ${this.recsRetryCount} in ${retryAfter}s`
+              );
+              setTimeout(() => this.getRecs(firstSongs), retryAfter * 1000);
+            } else {
+              dbgLog("recs: rate limited, giving up");
+            }
+          }
         },
       });
     };
