@@ -513,18 +513,3 @@
   width: 100%;
 }
 
-/* Song search pinned to the top (dark) */
-.Dark .top-search-input {
-  background: #3a3a3a;
-  color: #eee;
-  border-color: #666;
-}
-
-.Dark .top-search-input::placeholder {
-  color: #bbb;
-}
-
-.Dark .top-search-results {
-  background: #2b2b2b;
-}
-

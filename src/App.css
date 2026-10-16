@@ -612,38 +612,3 @@ svg {
   border-radius: 4px;
   cursor: pointer;
 }
-
-/* Song search pinned to the top of the screen */
-.top-search {
-  position: fixed;
-  top: 9vh;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 88%;
-  max-width: 800px;
-  z-index: 100;
-}
-
-.top-search-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px 16px;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  font-size: 1rem;
-  text-align: center;
-  color: #111;
-  background: #fff;
-  font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-    "Helvetica Neue", sans-serif;
-}
-
-.top-search-results {
-  margin-top: 6px;
-  max-height: 60vh;
-  overflow-y: auto;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-}

@@ -112,7 +112,6 @@ class App extends Component {
     super();
     this.accessToken = null;
     this.featureCache = {};
-    this.debouncedSearch = debounce(this, this.getSearchResults, 300);
     this.lastMediaSessionSync = 0;
     this.state = {
       //Variables for login / refresh / flobal
@@ -1535,24 +1534,6 @@ class App extends Component {
           {/* TODO: confirm all these state properties are needed */}
           {code.code && (
             <div style={{ zIndex: 10, width: "100%", height: "100%" }}>
-              {/* Song Search Field & Results (pinned to the top) */}
-              <div className="top-search">
-                <input
-                  id="searchInput"
-                  className="top-search-input"
-                  placeholder="Song Search..."
-                  value={this.state.searchValue}
-                  onChange={(value) => {
-                    this.setState({ searchValue: value.target.value });
-                    this.debouncedSearch(value.target.value);
-                  }}
-                  allowClear={true}
-                />
-                {this.state.searchResults.length > 0 && (
-                  <div className="top-search-results">{card}</div>
-                )}
-              </div>
-
               {/* Song Queue */}
               <Player
                 is_playing={this.state.is_playing}
@@ -1606,6 +1587,29 @@ class App extends Component {
               {/* Refresh Recomendations Button */}
               {/* TODO: move all styles to css */}
 
+              {/* Song Search Field & Results */}
+              <div className="Search">
+                <input
+                  id="searchInput"
+                  style={{
+                    width: "100%",
+                  }}
+                  placeholder="Song Search..."
+                  size="large"
+                  onChange={(value) => {
+                    this.setState({ searchValue: value.target.value });
+                    debounce(
+                      this,
+                      this.getSearchResults(value.target.value),
+                      10000
+                    );
+                  }}
+                  allowClear={true}
+                  value={this.state.searchValue}
+                  prefix={<SearchOutlined className="search-form-icon" />}
+                />
+                {card}
+              </div>
               <Select
                   name="additional_features"
                   id="additional_features"
