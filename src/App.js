@@ -114,6 +114,12 @@ class App extends Component {
     this.featureCache = {};
     this.lastMediaSessionSync = 0;
     this.searchRef = React.createRef();
+    this.recovering = false;
+    this.pendingPlayPosition = null;
+    this.lastRecoveryAt = 0;
+    this.lastDeviceSync = 0;
+    this.lastRebuildAt = 0;
+    this.lastSetUpAt = 0;
     this.state = {
       //Variables for login / refresh / flobal
       token: null,
@@ -367,7 +373,7 @@ class App extends Component {
                   } else {
                     console.log("play failed, giving up", response.status);
                     this.setState({ is_playing: false, progress_ms: 0 });
-                    this.getDevices();
+                    this.recoverPlayback(queuePosition);
                   }
                 }
                 else{
@@ -410,7 +416,7 @@ class App extends Component {
                   );
                 } else {
                   this.setState({ is_playing: false, progress_ms: 0 });
-                  this.getDevices();
+                  this.recoverPlayback(queuePosition);
                 }
               });
           });
@@ -489,6 +495,98 @@ class App extends Component {
     }
     // Re-assert after the SDK's own state handling for this event has run.
     setTimeout(() => this.registerMediaSessionHandlers(), 0);
+  }
+
+  finishRecovery() {
+    this.recovering = false;
+    if (this.pendingPlayPosition != null) {
+      const pos = this.pendingPlayPosition;
+      this.pendingPlayPosition = null;
+      this.play(pos);
+    }
+  }
+
+  syncDevice(recover = false) {
+    /*
+  Refresh the device list and make sure state.deviceID points at a live
+  player, adopting a reconnected SDK device or rebuilding if it is gone.
+  */
+    fetch(`https://api.spotify.com/v1/me/player/devices`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${this.state.token}` },
+    })
+      .then((response) => {
+        if (response.status === 401) {
+          this.refreshToken(0);
+          throw Error("Unauthorized device sync");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const devices = data.devices || [];
+        this.setState({ devices });
+        const ids = devices.map((device) => device.id);
+        if (this.state.deviceID && ids.includes(this.state.deviceID)) {
+          if (recover) {
+            this.finishRecovery();
+          }
+          return;
+        }
+        const pickles = devices.find(
+          (device) => device.name === "Pickles Web Player"
+        );
+        if (pickles) {
+          this.setState({ deviceID: pickles.id }, () => {
+            if (recover) {
+              this.finishRecovery();
+            }
+          });
+        } else if (recover) {
+          this.rebuildPlayer();
+        } else {
+          this.setState({ deviceID: null });
+        }
+      })
+      .catch((error) => {
+        console.log("device sync failed", error);
+        if (recover) {
+          this.recovering = false;
+        }
+      });
+  }
+
+  rebuildPlayer() {
+    if (Date.now() - this.lastRebuildAt < 30000) {
+      this.recovering = false;
+      return;
+    }
+    this.lastRebuildAt = Date.now();
+    if (this.state.player && this.state.player.disconnect) {
+      try {
+        this.state.player.disconnect();
+      } catch (e) {}
+    }
+    this.setUpPlayer(
+      {
+        access_token: this.state.token,
+        refresh_token: this.state.refresh_token,
+      },
+      false
+    );
+  }
+
+  recoverPlayback(queuePosition) {
+    /*
+  Playback failed, usually because the SDK device dropped after a network
+  change. Remember the intended track and try to re-establish the player.
+  */
+    this.pendingPlayPosition = queuePosition;
+    if (this.recovering || Date.now() - this.lastRecoveryAt < 5000) {
+      return;
+    }
+    this.lastRecoveryAt = Date.now();
+    this.recovering = true;
+    this.syncDevice(true);
   }
 
   updatePlaying = (refreshSelections, setItemBoolean = true) => {
@@ -960,6 +1058,21 @@ class App extends Component {
       this.registerMediaSessionHandlers();
     }
 
+    // Resume a play that was interrupted by a lost device (network change).
+    if (
+      this.pendingPlayPosition != null &&
+      !this.recovering &&
+      Date.now() - this.lastRecoveryAt > 5000
+    ) {
+      this.recoverPlayback(this.pendingPlayPosition);
+    }
+
+    // Periodically make sure state.deviceID still points at a live player.
+    if (Date.now() - this.lastDeviceSync > 20000) {
+      this.lastDeviceSync = Date.now();
+      this.syncDevice(false);
+    }
+
     // check for token refresh
     if (Date.now() - this.state.current_time > 1800000) {
       this.setState({
@@ -1124,6 +1237,12 @@ class App extends Component {
   }
 
   setUpPlayer(data, playAfter = false) {
+    if (Date.now() - this.lastSetUpAt < 5000) {
+      console.log("skipping duplicate player setup");
+      this.recovering = false;
+      return;
+    }
+    this.lastSetUpAt = Date.now();
     let access_token = data.access_token;
     let refresh_token = data.refresh_token;
     this.accessToken = access_token;
@@ -1213,15 +1332,15 @@ class App extends Component {
     // Ready
     player.addListener("ready", ({ device_id }) => {
       console.log("Ready with Device ID", device_id);
-      this.setState({
-        deviceID: device_id,
-      });
+      this.setState({ deviceID: device_id }, () => this.finishRecovery());
     });
 
     // Not Ready
     player.addListener("not_ready", ({ device_id }) => {
-      //alert("Device ID has gone offline: ", device_id);
-      console.log("Device ID has; gone offline: ", device_id)
+      console.log("Device ID has gone offline: ", device_id);
+      if (this.state.deviceID === device_id) {
+        this.setState({ deviceID: null, is_playing: false });
+      }
     });
 
     // Connect to the player!
