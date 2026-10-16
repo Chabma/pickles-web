@@ -107,6 +107,20 @@ let endSong = false;
 let tickInterval = null;
 let lastSecond = Date.now();
 
+// TEMP DEBUG (media session investigation) - remove when done
+const dbgLines = [];
+let lastDbgTitle = null;
+const dbgLog = (msg) => {
+  dbgLines.push(`${new Date().toLocaleTimeString()} ${msg}`);
+  if (dbgLines.length > 40) {
+    dbgLines.shift();
+  }
+};
+const dbgText = () => dbgLines.join("\n") || "no debug events yet";
+const dbgClear = () => {
+  dbgLines.length = 0;
+};
+
 class App extends Component {
   constructor() {
     super();
@@ -150,6 +164,7 @@ class App extends Component {
       searchValue: "",
       searchResults: [],
       searchFocused: false,
+      debugOpen: false,
 
       //Additional Feature Info
       next_features: [],
@@ -373,6 +388,7 @@ class App extends Component {
                     );
                   } else {
                     console.log("play failed, giving up", response.status);
+                    dbgLog(`event: play failed ${response.status}`);
                     this.setState({ is_playing: false, progress_ms: 0 });
                     this.recoverPlayback(queuePosition);
                   }
@@ -475,15 +491,40 @@ class App extends Component {
     }
     const track = this.state.total_queue[this.state.queue_pos];
     if (track) {
-      navigator.mediaSession.metadata = new window.MediaMetadata({
-        title: track.name ?? "Pickles Music Player",
-        artist:
-          track.artists?.map((artist) => artist.name).join(", ") || "Pickles",
-        album: "Pickles",
-        artwork: [{ src: track.image?.url ?? "./images/logo.png" }],
-      });
+      const expectedTitle = track.name ?? "Pickles Music Player";
+      try {
+        navigator.mediaSession.metadata = new window.MediaMetadata({
+          title: expectedTitle,
+          artist:
+            track.artists?.map((artist) => artist.name).join(", ") || "Pickles",
+          album: "Pickles",
+          artwork: [{ src: track.image?.url ?? "./images/logo.png" }],
+        });
+      } catch (e) {
+        dbgLog(`media: SET ERROR ${e && e.message}`);
+      }
+      if (expectedTitle !== lastDbgTitle) {
+        lastDbgTitle = expectedTitle;
+        dbgLog(`media: MediaMetadata is ${typeof window.MediaMetadata}`);
+        dbgLog(`media: set "${expectedTitle}"`);
+        setTimeout(() => {
+          const actual =
+            navigator.mediaSession &&
+            navigator.mediaSession.metadata &&
+            navigator.mediaSession.metadata.title;
+          dbgLog(
+            actual === expectedTitle
+              ? `media: still "${actual}" after 2s (GOOD)`
+              : `media: CHANGED after 2s -> ${actual}`
+          );
+        }, 2000);
+      }
     }
-    navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+    try {
+      navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+    } catch (e) {
+      dbgLog(`media: playbackState ERROR ${e && e.message}`);
+    }
     if (track && track.songDuration) {
       try {
         const duration = track.songDuration / 1000;
@@ -492,7 +533,9 @@ class App extends Component {
           playbackRate: 1,
           position: Math.max(0, Math.min(this.state.progress_ms / 1000, duration)),
         });
-      } catch (e) {}
+      } catch (e) {
+        dbgLog(`media: positionState ERROR ${e && e.message}`);
+      }
     }
     // Re-assert after the SDK's own state handling for this event has run.
     setTimeout(() => this.registerMediaSessionHandlers(), 0);
@@ -562,6 +605,7 @@ class App extends Component {
       return;
     }
     this.lastRebuildAt = Date.now();
+    dbgLog("event: rebuilding player");
     if (this.state.player && this.state.player.disconnect) {
       try {
         this.state.player.disconnect();
@@ -577,6 +621,7 @@ class App extends Component {
   }
 
   handleVisibilityChange = () => {
+    dbgLog(document.hidden ? "event: hidden" : "event: visible");
     if (document.hidden) {
       return;
     }
@@ -594,6 +639,7 @@ class App extends Component {
   change. Remember the intended track and try to re-establish the player.
   */
     this.pendingPlayPosition = queuePosition;
+    dbgLog(`event: recoverPlayback ${queuePosition}`);
     // A new player cannot autoplay while hidden (it needs a user gesture), so
     // we wait and let the visibility handler resume when the tab returns.
     if (document.hidden) {
@@ -1050,6 +1096,7 @@ class App extends Component {
       !endSong
     ) {
       endSong = true;
+      dbgLog("event: song end (tick)");
       this.play(this.state.queue_pos + 1);
     }
 
@@ -1315,6 +1362,7 @@ class App extends Component {
         this.state.progress_ms > currentSongDuration * 0.5
       ) {
         endSong = true;
+        dbgLog("event: song end (sdk)");
         this.setState({
           progress_ms: 0,
         });
@@ -1367,12 +1415,14 @@ class App extends Component {
     // Ready
     player.addListener("ready", ({ device_id }) => {
       console.log("Ready with Device ID", device_id);
+      dbgLog("event: SDK ready");
       this.setState({ deviceID: device_id }, () => this.finishRecovery());
     });
 
     // Not Ready
     player.addListener("not_ready", ({ device_id }) => {
       console.log("Device ID has gone offline: ", device_id);
+      dbgLog("event: SDK not_ready");
     });
 
     // Connect to the player!
@@ -1468,6 +1518,9 @@ class App extends Component {
 
     // Pause recovery while hidden; resume it when the tab comes back.
     document.addEventListener("visibilitychange", this.handleVisibilityChange);
+    dbgLog(
+      `start: mediaSession ${"mediaSession" in navigator}, MediaMetadata ${typeof window.MediaMetadata}`
+    );
 
     //initialize extra pause and play via headphones
     // TODO see if needed
@@ -1934,6 +1987,34 @@ class App extends Component {
                   >
                     Toggle Dark Mode
                 </Button>
+                <Button
+                  style={{ marginLeft: "8px" }}
+                  onClick={() =>
+                    this.setState({ debugOpen: !this.state.debugOpen })
+                  }
+                >
+                  {this.state.debugOpen ? "Hide Debug" : "Show Debug"}
+                </Button>
+                {this.state.debugOpen && (
+                  <div>
+                    <pre
+                      style={{
+                        textAlign: "left",
+                        whiteSpace: "pre-wrap",
+                        fontSize: "11px",
+                        background: "#00000022",
+                        padding: "8px",
+                        maxHeight: "40vh",
+                        overflow: "auto",
+                      }}
+                    >
+                      {dbgText()}
+                    </pre>
+                    <Button size="small" onClick={() => dbgClear()}>
+                      Clear Debug
+                    </Button>
+                  </div>
+                )}
                 <br />
                 {/* Device Chooser */}
                 {this.state.deviceID && (
