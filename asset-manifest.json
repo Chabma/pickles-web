@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/static/css/main.99255292.chunk.css",
-    "main.js": "/static/js/main.b9144a3e.chunk.js",
-    "main.js.map": "/static/js/main.b9144a3e.chunk.js.map",
+    "main.css": "/static/css/main.fd4dc3b8.chunk.css",
+    "main.js": "/static/js/main.800afeb4.chunk.js",
+    "main.js.map": "/static/js/main.800afeb4.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.83d6dfd9.js",
     "runtime-main.js.map": "/static/js/runtime-main.83d6dfd9.js.map",
     "static/css/2.32c23847.chunk.css": "/static/css/2.32c23847.chunk.css",
@@ -12,7 +12,7 @@
     "static/js/3.86912ae0.chunk.js.map": "/static/js/3.86912ae0.chunk.js.map",
     "index.html": "/index.html",
     "static/css/2.32c23847.chunk.css.map": "/static/css/2.32c23847.chunk.css.map",
-    "static/css/main.99255292.chunk.css.map": "/static/css/main.99255292.chunk.css.map",
+    "static/css/main.fd4dc3b8.chunk.css.map": "/static/css/main.fd4dc3b8.chunk.css.map",
     "static/js/2.d390ec83.chunk.js.LICENSE.txt": "/static/js/2.d390ec83.chunk.js.LICENSE.txt",
     "static/media/App.css": "/static/media/Nabla-Regular-VariableFont_EDPT,EHLT.bcfdce2e.ttf",
     "static/media/add_end_queue.aa85d3a8.png": "/static/media/add_end_queue.aa85d3a8.png",
@@ -24,7 +24,7 @@
     "static/js/runtime-main.83d6dfd9.js",
     "static/css/2.32c23847.chunk.css",
     "static/js/2.d390ec83.chunk.js",
-    "static/css/main.99255292.chunk.css",
-    "static/js/main.b9144a3e.chunk.js"
+    "static/css/main.fd4dc3b8.chunk.css",
+    "static/js/main.800afeb4.chunk.js"
   ]
 }
