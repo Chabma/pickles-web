@@ -476,6 +476,16 @@ class App extends Component {
       });
     }
     navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+    if (track && track.songDuration) {
+      try {
+        const duration = track.songDuration / 1000;
+        navigator.mediaSession.setPositionState({
+          duration,
+          playbackRate: 1,
+          position: Math.max(0, Math.min(this.state.progress_ms / 1000, duration)),
+        });
+      } catch (e) {}
+    }
     // Re-assert after the SDK's own state handling for this event has run.
     setTimeout(() => this.registerMediaSessionHandlers(), 0);
   }
