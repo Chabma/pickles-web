@@ -635,3 +635,9 @@ svg {
   background: rgba(0, 0, 0, 0.5);
   z-index: 2000;
 }
+
+/* Center the search result text */
+.Search .ant-list-item-meta-title,
+.Search .ant-list-item-meta-description {
+  text-align: center;
+}

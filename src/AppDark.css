@@ -532,3 +532,13 @@
   background-color: transparent;
 }
 
+/* Brighter search result text in dark mode */
+.Dark .Search .ant-list-item-meta-title,
+.Dark .Search .ant-list-item-meta-title p {
+  color: #f5f5f5;
+}
+
+.Dark .Search .ant-list-item-meta-description {
+  color: #dcdcdc;
+}
+
