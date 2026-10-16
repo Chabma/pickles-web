@@ -815,7 +815,10 @@ class App extends Component {
           const range = featureRanges[feature] || [0, 1];
           // Keep at least a small band: a single song has a spread of 0, and a
           // zero-width target makes Spotify return too few recommendations.
-          const spread = Math.max(stats.std, (range[1] - range[0]) * 0.05);
+          // Tempo uses a fixed 10 BPM minimum instead of 5% of its range.
+          const minSpread =
+            feature === "tempo" ? 10 : (range[1] - range[0]) * 0.05;
+          const spread = Math.max(stats.std, minSpread);
           const min = Math.max(range[0], mean - spread);
           const max = Math.min(range[1], mean + spread);
           additionalFeatureString += "&min_" + feature + "=" + min;
