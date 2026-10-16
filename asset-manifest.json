@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/static/css/main.b8871a7e.chunk.css",
-    "main.js": "/static/js/main.c17a7427.chunk.js",
-    "main.js.map": "/static/js/main.c17a7427.chunk.js.map",
+    "main.js": "/static/js/main.aff20e30.chunk.js",
+    "main.js.map": "/static/js/main.aff20e30.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.0a79d178.js",
     "runtime-main.js.map": "/static/js/runtime-main.0a79d178.js.map",
     "static/css/2.32c23847.chunk.css": "/static/css/2.32c23847.chunk.css",
@@ -15,7 +15,9 @@
     "static/css/main.b8871a7e.chunk.css.map": "/static/css/main.b8871a7e.chunk.css.map",
     "static/js/2.7d940644.chunk.js.LICENSE.txt": "/static/js/2.7d940644.chunk.js.LICENSE.txt",
     "static/media/App.css": "/static/media/Nabla-Regular-VariableFont_EDPT,EHLT.bcfdce2e.ttf",
+    "static/media/add_end_queue(copy).11eb4b8a.png": "/static/media/add_end_queue(copy).11eb4b8a.png",
     "static/media/add_end_queue.aa85d3a8.png": "/static/media/add_end_queue.aa85d3a8.png",
+    "static/media/add_start_queue(copy).93656dfe.png": "/static/media/add_start_queue(copy).93656dfe.png",
     "static/media/add_start_queue.852d6a3b.png": "/static/media/add_start_queue.852d6a3b.png",
     "static/media/logo.d9839d4d.png": "/static/media/logo.d9839d4d.png",
     "static/media/refresh(copy).5327d932.png": "/static/media/refresh(copy).5327d932.png"
@@ -25,6 +27,6 @@
     "static/css/2.32c23847.chunk.css",
     "static/js/2.7d940644.chunk.js",
     "static/css/main.b8871a7e.chunk.css",
-    "static/js/main.c17a7427.chunk.js"
+    "static/js/main.aff20e30.chunk.js"
   ]
 }
