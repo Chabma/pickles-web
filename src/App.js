@@ -866,13 +866,14 @@ class App extends Component {
     // console.log(this.state.progress_ms)
     // console.log(this.state.is_playing)
 
-    // Fallback end-of-song detector: if the SDK never reports the end, advance
-    // once we are within the last half second. `endSong` guards against doubles.
+    // Fallback end-of-song detector: only if the SDK never reported the end
+    // (i.e. we have run 1.5s past the track length) advance. `endSong` guards
+    // against doubles. The SDK signal is the primary detector.
     const trackDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
     if (
       this.state.is_playing &&
       trackDuration &&
-      this.state.progress_ms >= trackDuration - 150 &&
+      this.state.progress_ms >= trackDuration + 1500 &&
       !endSong
     ) {
       endSong = true;
