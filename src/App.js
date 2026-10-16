@@ -113,6 +113,7 @@ class App extends Component {
     this.accessToken = null;
     this.featureCache = {};
     this.lastMediaSessionSync = 0;
+    this.searchRef = React.createRef();
     this.state = {
       //Variables for login / refresh / flobal
       token: null,
@@ -142,6 +143,7 @@ class App extends Component {
       //Search
       searchValue: "",
       searchResults: [],
+      searchFocused: false,
 
       //Additional Feature Info
       next_features: [],
@@ -1467,6 +1469,45 @@ class App extends Component {
       }
     };
 
+  openSearch = () => {
+    const node = this.searchRef.current;
+    if (node) {
+      this.searchFirstRect = node.getBoundingClientRect();
+    }
+    this.setState({ searchFocused: true });
+  };
+
+  closeSearch = () => {
+    this.setState({ searchFocused: false });
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    // Slide the existing search box from its inline spot up to the top (FLIP).
+    if (
+      !prevState.searchFocused &&
+      this.state.searchFocused &&
+      this.searchRef.current &&
+      this.searchFirstRect
+    ) {
+      const node = this.searchRef.current;
+      const first = this.searchFirstRect;
+      this.searchFirstRect = null;
+      const last = node.getBoundingClientRect();
+      node.style.transition = "none";
+      node.style.transform = `translate(${first.left - last.left}px, ${
+        first.top - last.top
+      }px)`;
+      node.style.opacity = "0.7";
+      // force a reflow so the transition starts from the inverted spot
+      void node.offsetWidth;
+      requestAnimationFrame(() => {
+        node.style.transition = "transform 0.35s ease, opacity 0.35s ease";
+        node.style.transform = "translate(0, 0)";
+        node.style.opacity = "1";
+      });
+    }
+  }
+
   render() {
     /*
  Built in Funtion which runs every time this component renders or rerenders due to a state change (called once before componentDidMount)
@@ -1588,7 +1629,15 @@ class App extends Component {
               {/* TODO: move all styles to css */}
 
               {/* Song Search Field & Results */}
-              <div className="Search">
+              {this.state.searchFocused && (
+                <div className="search-backdrop" onClick={this.closeSearch} />
+              )}
+              <div
+                className={
+                  "Search" + (this.state.searchFocused ? " Search--focused" : "")
+                }
+                ref={this.searchRef}
+              >
                 <input
                   id="searchInput"
                   style={{
@@ -1603,6 +1652,12 @@ class App extends Component {
                       this.getSearchResults(value.target.value),
                       10000
                     );
+                  }}
+                  onFocus={this.openSearch}
+                  onKeyDown={(event) => {
+                    if (event.key === "Escape") {
+                      this.closeSearch();
+                    }
                   }}
                   allowClear={true}
                   value={this.state.searchValue}

@@ -612,3 +612,25 @@ svg {
   border-radius: 4px;
   cursor: pointer;
 }
+
+/* Search box lifted to the top of the screen while focused */
+.Search--focused {
+  position: fixed;
+  top: 8vh;
+  left: 6%;
+  width: 88%;
+  height: auto;
+  margin: 0;
+  z-index: 2001;
+  text-align: initial;
+}
+
+.search-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+}
