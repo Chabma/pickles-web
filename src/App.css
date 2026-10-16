@@ -564,7 +564,8 @@ svg {
   touch-action: manipulation;
 }
 
-.ant-list-item-meta-avatar {
+/* Center the flip covers in the queue only (not search results) */
+.queue-item-meta .ant-list-item-meta-avatar {
   display: flex;
   align-items: center;
   justify-content: center;

@@ -86,6 +86,7 @@ const QueueItem = ({ track, index, onRemove }) => (
     style={{ height: "100%", border: "4px solid #0000" }}
   >
     <List.Item.Meta
+      className="queue-item-meta"
       style={{ display: "block" }}
       avatar={
         <FlipCover onConfirm={() => onRemove(index)}>
