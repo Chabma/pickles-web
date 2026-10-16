@@ -938,7 +938,7 @@ class App extends Component {
                     next_features[i] = "";
                     for (var j = 0; j < additionalFeatures.length; j++) {
                       next_features[i] +=
-                        " || " +
+                        (j > 0 ? " || " : "") +
                         additionalFeatures[j] +
                         " : " +
                         features[additionalFeatures[j]];
