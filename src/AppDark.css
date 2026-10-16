@@ -513,3 +513,22 @@
   width: 100%;
 }
 
+/* Search placeholder readable in dark mode */
+.Dark #searchInput::placeholder {
+  color: #bfbfbf;
+  opacity: 1;
+}
+
+.Dark #searchInput::-webkit-input-placeholder {
+  color: #bfbfbf;
+}
+
+/* Search results panel matches the dark translucent surfaces */
+.Dark .Search .ant-card {
+  background-color: #747474c2;
+}
+
+.Dark .Search .ant-card-body {
+  background-color: transparent;
+}
+
