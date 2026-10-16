@@ -343,7 +343,7 @@ class App extends Component {
     //TODO: determine if this is needed
   };
 
-  play = (queuePosition = this.state.queue_pos, tickBool = false) => {
+  play = (queuePosition = this.state.queue_pos, tickBool = false, attempt = 0) => {
     /*
   Call spotify api to play the song at `queuePosition` via current web player (calls update playing function)
   */
@@ -380,9 +380,18 @@ class App extends Component {
                       playLock: false,
                     },
                   );
-                  debugAlert(`PLAY retry status=${response.status}`);
-                  console.log("retrying")
-                  this.play(queuePosition, tickBool);
+                  if (attempt < 2) {
+                    console.log("retrying play", response.status)
+                    setTimeout(
+                      () => this.play(queuePosition, tickBool, attempt + 1),
+                      500
+                    );
+                  } else {
+                    console.log("play failed, giving up", response.status);
+                    debugAlert(`PLAY failed status=${response.status} (stopped retrying)`);
+                    this.setState({ is_playing: false, progress_ms: 0 });
+                    this.getDevices();
+                  }
                 }
                 else{
                   if(tickBool){
@@ -415,10 +424,18 @@ class App extends Component {
                     playLock: false,
                   },
                 );
-                debugAlert(`PLAY error ${error?.message || error}`);
                 console.log(error);
-                console.log("retrying")
-                this.play(queuePosition, tickBool);
+                if (attempt < 2) {
+                  console.log("retrying play after error")
+                  setTimeout(
+                    () => this.play(queuePosition, tickBool, attempt + 1),
+                    500
+                  );
+                } else {
+                  debugAlert(`PLAY error ${error?.message || error} (stopped retrying)`);
+                  this.setState({ is_playing: false, progress_ms: 0 });
+                  this.getDevices();
+                }
               });
           });
       }
