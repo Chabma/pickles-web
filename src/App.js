@@ -418,6 +418,43 @@ class App extends Component {
     lastSecond = Date.now();
   }
 
+  registerMediaSessionHandlers() {
+    /*
+  (Re)register lock-screen actions. Called after metadata so it wins over the
+  SDK's own handlers, which it installs around connect(). Each action is
+  guarded because support varies by platform.
+  */
+    if (!("mediaSession" in navigator)) {
+      return;
+    }
+    const player = this.state.player;
+    if (!player) {
+      return;
+    }
+    const set = (action, handler) => {
+      try {
+        navigator.mediaSession.setActionHandler(action, handler);
+      } catch (e) {
+        console.log("mediaSession action not supported:", action);
+      }
+    };
+    set("play", () => {
+      if (player.activateElement) {
+        player.activateElement().then(() => player.resume());
+      } else {
+        player.resume();
+      }
+    });
+    set("pause", () => player.pause());
+    set("previoustrack", () => this.play(this.state.queue_pos - 1));
+    set("nexttrack", () => this.play(this.state.queue_pos + 1));
+    set("seekto", (details) => {
+      if (details && details.seekTime != null) {
+        player.seek(details.seekTime);
+      }
+    });
+  }
+
   updateMediaSession(isPlaying = this.state.is_playing) {
     /*
   Keep the phone / lock screen media controls in sync with the current track.
@@ -436,6 +473,7 @@ class App extends Component {
       });
     }
     navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+    this.registerMediaSessionHandlers();
   }
 
   updatePlaying = (refreshSelections, setItemBoolean = true) => {
@@ -1165,29 +1203,6 @@ class App extends Component {
       console.log("Device ID has; gone offline: ", device_id)
     });
 
-    // Phone / lock screen media controls (registered once per player)
-    if ("mediaSession" in navigator) {
-      try {
-        navigator.mediaSession.setActionHandler("play", () => {
-          player.activateElement().then(() => player.resume());
-        });
-        navigator.mediaSession.setActionHandler("pause", () => player.pause());
-        navigator.mediaSession.setActionHandler("previoustrack", () =>
-          this.play(this.state.queue_pos - 1)
-        );
-        navigator.mediaSession.setActionHandler("nexttrack", () =>
-          this.play(this.state.queue_pos + 1)
-        );
-        navigator.mediaSession.setActionHandler("seekto", (details) => {
-          if (details && details.seekTime != null) {
-            player.seek(details.seekTime);
-          }
-        });
-      } catch (e) {
-        console.log("mediaSession action handlers not supported", e);
-      }
-    }
-
     // Connect to the player!
     player.connect();
 
@@ -1210,7 +1225,10 @@ class App extends Component {
             refresh_token: refresh_token,
             code: code.code,
           },
-          this.getFirstRecs
+          () => {
+            this.getFirstRecs();
+            this.registerMediaSessionHandlers();
+          }
         );
 
           this.getUserImage();
