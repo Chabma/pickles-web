@@ -375,6 +375,7 @@ const Player = (props) => {
                   }}
                 >
                   <FlipCover
+                    key={props.total_queue[props.queue_pos]?.uri}
                     className="flip-cover-main"
                     onConfirm={() => props.removeFunc(props.queue_pos)}
                   >
