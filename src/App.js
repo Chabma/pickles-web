@@ -545,7 +545,7 @@ class App extends Component {
         } else if (recover) {
           this.rebuildPlayer();
         } else {
-          this.setState({ deviceID: null });
+          console.log("device missing from player list; waiting for recovery");
         }
       })
       .catch((error) => {
@@ -671,6 +671,8 @@ class App extends Component {
               console.log(e.responseText);
             },
           });
+        } else if (document.hidden) {
+          console.log("device missing while backgrounded; deferring rebuild");
         } else {
           console.log("another player created");
           console.log(data);
@@ -1352,9 +1354,6 @@ class App extends Component {
     // Not Ready
     player.addListener("not_ready", ({ device_id }) => {
       console.log("Device ID has gone offline: ", device_id);
-      if (this.state.deviceID === device_id) {
-        this.setState({ deviceID: null, is_playing: false });
-      }
     });
 
     // Connect to the player!
