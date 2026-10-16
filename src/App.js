@@ -113,6 +113,7 @@ class App extends Component {
     this.accessToken = null;
     this.featureCache = {};
     this.debouncedSearch = debounce(this, this.getSearchResults, 300);
+    this.lastMediaSessionSync = 0;
     this.state = {
       //Variables for login / refresh / flobal
       token: null,
@@ -474,7 +475,8 @@ class App extends Component {
       });
     }
     navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
-    this.registerMediaSessionHandlers();
+    // Re-assert after the SDK's own state handling for this event has run.
+    setTimeout(() => this.registerMediaSessionHandlers(), 0);
   }
 
   updatePlaying = (refreshSelections, setItemBoolean = true) => {
@@ -939,6 +941,12 @@ class App extends Component {
     // else{
     //   lastSecond = Date.now();
     // }
+
+    // Keep our lock-screen actions from being clobbered by the SDK.
+    if (Date.now() - this.lastMediaSessionSync > 5000) {
+      this.lastMediaSessionSync = Date.now();
+      this.registerMediaSessionHandlers();
+    }
 
     // check for token refresh
     if (Date.now() - this.state.current_time > 1800000) {
