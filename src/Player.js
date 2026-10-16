@@ -21,7 +21,11 @@ const FlipCover = ({ children, onConfirm, className }) => {
   const lastTap = useRef(0);
   const coverRef = useRef(null);
 
-  const handleTap = () => {
+  const handleTap = (event) => {
+    // Keep cover taps from reaching the window-level particle click handler.
+    if (event && event.stopPropagation) {
+      event.stopPropagation();
+    }
     const now = Date.now();
     if (lastTap.current !== 0 && now - lastTap.current < 450) {
       setFlipped((f) => !f);
