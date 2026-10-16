@@ -1563,6 +1563,12 @@ class App extends Component {
     dbgLog(
       `start: mediaSession ${"mediaSession" in navigator}, MediaMetadata ${typeof window.MediaMetadata}`
     );
+    try {
+      const lastCrash = sessionStorage.getItem("picklesLastCrash");
+      if (lastCrash) {
+        dbgLog("last crash: " + lastCrash.split("\n")[0]);
+      }
+    } catch (e) {}
 
     //initialize extra pause and play via headphones
     // TODO see if needed
