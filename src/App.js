@@ -762,6 +762,22 @@ class App extends Component {
     );
   }
 
+  dumpQueue = () => {
+    fetch(`https://api.spotify.com/v1/me/player/queue`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${this.accessToken}` },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const current =
+          data && data.currently_playing ? data.currently_playing.name : "none";
+        const upcoming =
+          data && data.queue ? data.queue.map((track) => track.name) : [];
+        dbgLog(`queue: current="${current}" next=[${upcoming.join(", ")}]`);
+      })
+      .catch((e) => dbgLog(`queue: dump error ${e && e.message}`));
+  };
+
   handleVisibilityChange = () => {
     dbgLog(document.hidden ? "event: hidden" : "event: visible");
     if (document.hidden) {
@@ -2235,6 +2251,13 @@ class App extends Component {
                       onClick={() => this.queueNextTest()}
                     >
                       Queue Next Rec
+                    </Button>
+                    <Button
+                      size="small"
+                      style={{ marginLeft: "8px" }}
+                      onClick={() => this.dumpQueue()}
+                    >
+                      Dump Queue
                     </Button>
                   </div>
                 )}
