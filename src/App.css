@@ -553,6 +553,18 @@ svg {
 }
 
 /* Double-tap an album cover to reveal the remove confirmation */
+.queue-row {
+  border: 4px solid #0000;
+}
+
+.queue-row-frozen {
+  border-color: #1e3a8a;
+}
+
+.Dark .queue-row-frozen {
+  border-color: #93c5fd;
+}
+
 .flip-cover {
   position: relative;
   display: block;

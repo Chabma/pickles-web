@@ -195,6 +195,7 @@ class App extends Component {
       progress_ms: 0,
       total_queue: [],
       queue_pos: 0,
+      frozenIndex: null,
       next: null,
       current: false,
       current_time: Date.now(),
@@ -449,6 +450,8 @@ class App extends Component {
                       queue_pos: queuePosition,
                       progress_ms: 0,
                       playLock: false,
+                      current: true,
+                      frozenIndex: null,
                     },
                     () => {
                       if(debug){console.log("updating based on play function")}
@@ -700,9 +703,69 @@ class App extends Component {
     this.setState({ debugOpen: opening });
   };
 
+  getNextPick() {
+    const queuedNext = this.state.total_queue[this.state.queue_pos + 1];
+    if (queuedNext) {
+      return queuedNext;
+    }
+    if (this.state.next && this.state.next[0]) {
+      return this.state.next[0];
+    }
+    return null;
+  }
+
+  queueOnDevice(uri) {
+    dbgLog(`bg: queueing ...${uri.slice(-8)}`);
+    fetch(
+      `https://api.spotify.com/v1/me/player/queue?device_id=${
+        this.state.deviceID
+      }&uri=${encodeURIComponent(uri)}`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+      }
+    )
+      .then((response) => dbgLog(`bg: queue status ${response.status}`))
+      .catch((e) => dbgLog(`bg: queue error ${e && e.message}`));
+  }
+
+  freezeNext() {
+    if (this.state.frozenIndex != null) {
+      return;
+    }
+    const pick = this.getNextPick();
+    if (!pick) {
+      dbgLog("bg: no next pick to freeze");
+      return;
+    }
+    const idx = this.state.queue_pos + 1;
+    const existing = this.state.total_queue[idx];
+    if (existing && existing.uri === pick.uri) {
+      dbgLog(`bg: freezing existing next at index ${idx}`);
+      this.setState({ frozenIndex: idx }, () => this.queueOnDevice(pick.uri));
+      return;
+    }
+    const item = {
+      uri: pick.uri,
+      id: pick.id,
+      songDuration: pick.songDuration ?? pick.duration_ms,
+      name: pick.name,
+      artists: pick.artists,
+      image:
+        pick.image || (pick.album && pick.album.images && pick.album.images[0]),
+    };
+    const newQueue = [...this.state.total_queue];
+    newQueue.splice(idx, 0, item);
+    dbgLog(`bg: freezing new next "${pick.name}" at index ${idx}`);
+    this.setState({ total_queue: newQueue, frozenIndex: idx }, () =>
+      this.queueOnDevice(pick.uri)
+    );
+  }
+
   handleVisibilityChange = () => {
     dbgLog(document.hidden ? "event: hidden" : "event: visible");
     if (document.hidden) {
+      this.freezeNext();
       return;
     }
     lastSecond = Date.now();
@@ -1192,6 +1255,7 @@ class App extends Component {
     // against doubles. The SDK signal is the primary detector.
     const trackDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
     if (
+      this.state.frozenIndex == null &&
       this.state.is_playing &&
       trackDuration &&
       this.state.progress_ms >= trackDuration + 1500 &&
@@ -1255,6 +1319,17 @@ class App extends Component {
     if (!document.hidden && Date.now() - this.lastDeviceSync > 20000) {
       this.lastDeviceSync = Date.now();
       this.syncDevice(false);
+    }
+
+    // While hidden, keep exactly one track queued so Spotify advances on its
+    // own instead of waiting for (throttled) JS at the song end.
+    if (
+      document.hidden &&
+      this.state.frozenIndex == null &&
+      Date.now() - (this.lastFreezeAttempt || 0) > 10000
+    ) {
+      this.lastFreezeAttempt = Date.now();
+      this.freezeNext();
     }
 
     // check for token refresh
@@ -1453,10 +1528,36 @@ class App extends Component {
     // Playback status updates based on headphone buttons
     player.addListener("player_state_changed", (state) => {
       let currentSongDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
-      // console.log(this.state.progress_ms + 1000);
-      // console.log(currentSongDuration);
-      
+
+      // If Spotify advanced to another track (e.g. a frozen background track),
+      // keep our queue position in sync with what is actually playing.
+      const sdkUri =
+        state &&
+        state.track_window &&
+        state.track_window.current_track &&
+        state.track_window.current_track.uri;
+      const playingUri = this.state.total_queue[this.state.queue_pos]?.uri;
+      if (sdkUri && playingUri !== sdkUri) {
+        const idx = this.state.total_queue.findIndex((t) => t.uri === sdkUri);
+        if (idx >= 0) {
+          dbgLog(`bg: advanced to index ${idx}`);
+          this.setState({ queue_pos: idx }, () => {
+            if (
+              this.state.frozenIndex != null &&
+              this.state.frozenIndex <= idx
+            ) {
+              this.setState({ frozenIndex: null }, () => {
+                if (document.hidden) {
+                  this.freezeNext();
+                }
+              });
+            }
+          });
+        }
+      }
+
       if (
+        this.state.frozenIndex == null &&
         state &&
         !endSong &&
         state.paused &&
@@ -1940,6 +2041,7 @@ class App extends Component {
                 isDark={this.state.isDark}
                 updateLastSecond={this.updateLastSecond}
                 searchFocused={this.state.searchFocused}
+                frozenIndex={this.state.frozenIndex}
               />
 
               {/* Song recomendations */}
