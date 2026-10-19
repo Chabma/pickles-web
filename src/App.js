@@ -1925,20 +1925,6 @@ class App extends Component {
 
     // Pause recovery while hidden; resume it when the tab comes back.
     document.addEventListener("visibilitychange", this.handleVisibilityChange);
-    // Hold a Web Lock so Chrome doesn't freeze/throttle this tab while audio is
-    // playing (which can otherwise pause playback mid-song when backgrounded).
-    try {
-      if (navigator.locks && navigator.locks.request) {
-        navigator.locks
-          .request("pickles-keepalive", () => new Promise(() => {}))
-          .catch(() => {});
-        dbgLog("keepalive: holding web lock");
-      } else {
-        dbgLog("keepalive: web locks unsupported");
-      }
-    } catch (e) {
-      dbgLog(`keepalive: error ${e && e.message}`);
-    }
     dbgLog(
       `start: mediaSession ${"mediaSession" in navigator}, MediaMetadata ${typeof window.MediaMetadata}`
     );
