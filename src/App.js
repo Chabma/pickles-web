@@ -179,6 +179,8 @@ class App extends Component {
     this.frozenQueuedUri = null;
     this.queueCheckedForFreeze = false;
     this.freezeInFlight = false;
+    this.keepAliveAudio = null;
+    this.keepAliveUrl = null;
     this.state = {
       //Variables for login / refresh / flobal
       token: null,
@@ -449,6 +451,7 @@ class App extends Component {
   Call spotify api to play the song at `queuePosition` via current web player (calls update playing function)
   */
     console.log(tickBool)
+    this.startKeepAlive();
 
     if (queuePosition >= 0) {
       if (
@@ -746,6 +749,76 @@ class App extends Component {
     this.setState({ debugOpen: opening });
   };
 
+  makeKeepAliveBlob() {
+    // 10s, 8kHz, mono, 8-bit WAV with a tiny (inaudible) 20Hz tone.
+    const sampleRate = 8000;
+    const numSamples = sampleRate * 10;
+    const buffer = new ArrayBuffer(44 + numSamples);
+    const view = new DataView(buffer);
+    const writeString = (offset, str) => {
+      for (let i = 0; i < str.length; i++) {
+        view.setUint8(offset + i, str.charCodeAt(i));
+      }
+    };
+    writeString(0, "RIFF");
+    view.setUint32(4, 36 + numSamples, true);
+    writeString(8, "WAVE");
+    writeString(12, "fmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate, true);
+    view.setUint16(32, 1, true);
+    view.setUint16(34, 8, true);
+    writeString(36, "data");
+    view.setUint32(40, numSamples, true);
+    for (let i = 0; i < numSamples; i++) {
+      const sample =
+        128 + Math.round(2 * Math.sin((2 * Math.PI * 20 * i) / sampleRate));
+      view.setUint8(44 + i, Math.max(0, Math.min(255, sample)));
+    }
+    return new Blob([view], { type: "audio/wav" });
+  }
+
+  startKeepAlive() {
+    if (typeof Audio === "undefined") {
+      return;
+    }
+    if (this.keepAliveAudio) {
+      if (this.keepAliveAudio.paused) {
+        this.keepAliveAudio.play().catch(() => {});
+      }
+      return;
+    }
+    try {
+      this.keepAliveUrl = URL.createObjectURL(this.makeKeepAliveBlob());
+      const audio = new Audio(this.keepAliveUrl);
+      audio.loop = true;
+      // Deliberately not 0 and not muted: a muted/zero-volume track can still
+      // be frozen. Microscopic volume keeps the tab "audible" to Android.
+      audio.volume = 0.001;
+      this.keepAliveAudio = audio;
+      audio
+        .play()
+        .then(() => {
+          dbgLog("keepalive: silent audio playing");
+          setTimeout(() => {
+            const title =
+              navigator.mediaSession &&
+              navigator.mediaSession.metadata &&
+              navigator.mediaSession.metadata.title;
+            dbgLog(`keepalive: mediaSession title=${title}`);
+          }, 2000);
+        })
+        .catch((e) =>
+          dbgLog(`keepalive: silent audio failed ${e && e.message}`)
+        );
+    } catch (e) {
+      dbgLog(`keepalive: silent audio error ${e && e.message}`);
+    }
+  }
+
   getNextPick() {
     const queuedNext = this.state.total_queue[this.state.queue_pos + 1];
     if (queuedNext) {
@@ -967,6 +1040,7 @@ class App extends Component {
   handleVisibilityChange = () => {
     dbgLog(document.hidden ? "event: hidden" : "event: visible");
     if (document.hidden) {
+      this.startKeepAlive();
       this.freezeNext();
       return;
     }
@@ -1906,6 +1980,12 @@ class App extends Component {
     );
     if (this.debugTimer) {
       clearInterval(this.debugTimer);
+    }
+    if (this.keepAliveAudio) {
+      this.keepAliveAudio.pause();
+    }
+    if (this.keepAliveUrl) {
+      URL.revokeObjectURL(this.keepAliveUrl);
     }
   }
 
