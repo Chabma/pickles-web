@@ -63,14 +63,16 @@ const SearchItem = (props) => {
           style={{
             marginRight: "3%",
             width: "12%",
-            display:
-              props.total_queue?.length > 0 && props.frozenIndex == null
-                ? "block"
-                : "none",
+            display: props.total_queue?.length > 0 ? "block" : "none",
           }}
           onClick={() => {
             props.setFunc("", []);
-            props.queueFunc(props.element, props.queue_pos + 1);
+            props.queueFunc(
+              props.element,
+              props.frozenIndex != null
+                ? props.frozenIndex + 1
+                : props.queue_pos + 1
+            );
           }}
         />,
         <img

@@ -427,6 +427,11 @@ class App extends Component {
           },
           () => {
             this.updateMediaSession(true);
+            // `next` while paused changes the track without starting it, so
+            // make sure playback actually resumes.
+            if (this.state.player && this.state.player.resume) {
+              this.state.player.resume();
+            }
             if (document.hidden) {
               this.freezeNext();
             }
@@ -742,12 +747,14 @@ class App extends Component {
   };
 
   getNextPick() {
+    const currentUri = this.state.total_queue[this.state.queue_pos]?.uri;
     const queuedNext = this.state.total_queue[this.state.queue_pos + 1];
-    if (queuedNext) {
+    if (queuedNext && queuedNext.uri !== currentUri) {
       return queuedNext;
     }
-    if (this.state.next && this.state.next[0]) {
-      return this.state.next[0];
+    const rec = this.state.next && this.state.next[0];
+    if (rec && rec.uri !== currentUri) {
+      return rec;
     }
     return null;
   }
@@ -840,30 +847,11 @@ class App extends Component {
     ) {
       return;
     }
+    // Queue immediately (no extra GET) so this lands before the browser can
+    // suspend us. `frozenQueuedUri` is set synchronously by queueOnDevice.
     this.freezeInFlight = true;
-    const finish = () => {
-      this.freezeInFlight = false;
-    };
-    // Always check first: guarantees Spotify's queue never holds more than one
-    // track, even across reloads or if something was queued elsewhere.
-    fetch(`https://api.spotify.com/v1/me/player/queue`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${this.accessToken}` },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const upcoming = data && data.queue ? data.queue : [];
-        if (upcoming.length > 0) {
-          this.adoptQueuedTrack(upcoming[0]);
-        } else {
-          this.queueNextPick();
-        }
-        finish();
-      })
-      .catch(() => {
-        this.queueNextPick();
-        finish();
-      });
+    this.queueNextPick();
+    this.freezeInFlight = false;
   }
 
   dumpQueue = () => {
