@@ -80,11 +80,10 @@ const FlipCover = ({ children, onConfirm, className }) => {
 };
 
 // Queue row rendered from track data so its cover can be double tapped.
-const QueueItem = ({ track, index, onRemove, frozen }) => (
+const QueueItem = ({ track, index, onRemove }) => (
   <List.Item
     key={track.uri}
-    className={"queue-row" + (frozen ? " queue-row-frozen" : "")}
-    style={{ height: "100%" }}
+    style={{ height: "100%", border: "4px solid #0000" }}
   >
     <List.Item.Meta
       className="queue-item-meta"
@@ -296,7 +295,6 @@ const Player = (props) => {
                 track={track}
                 index={props.queue_pos + 1 + i}
                 onRemove={props.removeFunc}
-                frozen={props.queue_pos + 1 + i === props.frozenIndex}
               />
             ))}
         </ul>
