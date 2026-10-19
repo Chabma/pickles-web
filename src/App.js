@@ -910,6 +910,60 @@ class App extends Component {
     step(0);
   };
 
+  syncFromState(state) {
+    if (!state) {
+      return;
+    }
+    const sdkUri =
+      state.track_window &&
+      state.track_window.current_track &&
+      state.track_window.current_track.uri;
+    if (!sdkUri) {
+      return;
+    }
+    const frozenIndex = this.state.frozenIndex;
+    const frozenUri =
+      frozenIndex != null ? this.state.total_queue[frozenIndex]?.uri : null;
+    if (frozenIndex != null && sdkUri === frozenUri) {
+      // The frozen track is now playing. Use its known index rather than a URI
+      // search, which is ambiguous when a song appears twice.
+      dbgLog(`bg: frozen played at index ${frozenIndex}`);
+      this.frozenQueuedUri = null;
+      this.setState({ queue_pos: frozenIndex, frozenIndex: null }, () => {
+        if (document.hidden) {
+          this.freezeNext();
+        }
+      });
+      return;
+    }
+    const playingUri = this.state.total_queue[this.state.queue_pos]?.uri;
+    if (playingUri !== sdkUri) {
+      // Search back to front: the most recent occurrence is the one.
+      let idx = -1;
+      for (let i = this.state.total_queue.length - 1; i >= 0; i--) {
+        if (this.state.total_queue[i].uri === sdkUri) {
+          idx = i;
+          break;
+        }
+      }
+      if (idx >= 0) {
+        dbgLog(`bg: synced current to index ${idx}`);
+        this.setState({ queue_pos: idx });
+      }
+    }
+  }
+
+  syncNow() {
+    const player = this.state.player;
+    if (!player || !player.getCurrentState) {
+      return;
+    }
+    player
+      .getCurrentState()
+      .then((state) => this.syncFromState(state))
+      .catch(() => {});
+  }
+
   handleVisibilityChange = () => {
     dbgLog(document.hidden ? "event: hidden" : "event: visible");
     if (document.hidden) {
@@ -1394,6 +1448,13 @@ class App extends Component {
     lastSecond = Date.now();
   }
 
+    // Poll the real player state so we stay in sync even if SDK events are
+    // missed while backgrounded (throttled to ~3s).
+    if (Date.now() - (this.lastSdkSync || 0) > 3000) {
+      this.lastSdkSync = Date.now();
+      this.syncNow();
+    }
+
     // check if next song should play
     // console.log(this.state.total_queue[this.state.queue_pos]?.songDuration)
     // console.log(this.state.progress_ms)
@@ -1694,45 +1755,7 @@ class App extends Component {
 
       // If Spotify advanced to another track (e.g. a frozen background track),
       // keep our queue position in sync with what is actually playing.
-      const sdkUri =
-        state &&
-        state.track_window &&
-        state.track_window.current_track &&
-        state.track_window.current_track.uri;
-      if (sdkUri) {
-        const frozenIndex = this.state.frozenIndex;
-        const frozenUri =
-          frozenIndex != null
-            ? this.state.total_queue[frozenIndex]?.uri
-            : null;
-        if (frozenIndex != null && sdkUri === frozenUri) {
-          // The frozen track is now playing. Use its known index rather than a
-          // URI search, which is ambiguous when a song appears twice.
-          dbgLog(`bg: frozen played at index ${frozenIndex}`);
-          this.frozenQueuedUri = null;
-          this.setState({ queue_pos: frozenIndex, frozenIndex: null }, () => {
-            if (document.hidden) {
-              this.freezeNext();
-            }
-          });
-        } else {
-          const playingUri = this.state.total_queue[this.state.queue_pos]?.uri;
-          if (playingUri !== sdkUri) {
-            // Search back to front: the most recent occurrence is the one.
-            let idx = -1;
-            for (let i = this.state.total_queue.length - 1; i >= 0; i--) {
-              if (this.state.total_queue[i].uri === sdkUri) {
-                idx = i;
-                break;
-              }
-            }
-            if (idx >= 0) {
-              dbgLog(`bg: synced current to index ${idx}`);
-              this.setState({ queue_pos: idx });
-            }
-          }
-        }
-      }
+      this.syncFromState(state);
 
       if (
         this.state.frozenIndex == null &&
@@ -1902,6 +1925,20 @@ class App extends Component {
 
     // Pause recovery while hidden; resume it when the tab comes back.
     document.addEventListener("visibilitychange", this.handleVisibilityChange);
+    // Hold a Web Lock so Chrome doesn't freeze/throttle this tab while audio is
+    // playing (which can otherwise pause playback mid-song when backgrounded).
+    try {
+      if (navigator.locks && navigator.locks.request) {
+        navigator.locks
+          .request("pickles-keepalive", () => new Promise(() => {}))
+          .catch(() => {});
+        dbgLog("keepalive: holding web lock");
+      } else {
+        dbgLog("keepalive: web locks unsupported");
+      }
+    } catch (e) {
+      dbgLog(`keepalive: error ${e && e.message}`);
+    }
     dbgLog(
       `start: mediaSession ${"mediaSession" in navigator}, MediaMetadata ${typeof window.MediaMetadata}`
     );
