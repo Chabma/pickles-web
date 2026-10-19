@@ -63,7 +63,10 @@ const SearchItem = (props) => {
           style={{
             marginRight: "3%",
             width: "12%",
-            display: props.total_queue?.length > 0 ? "block" : "none",
+            display:
+              props.total_queue?.length > 0 && props.frozenIndex == null
+                ? "block"
+                : "none",
           }}
           onClick={() => {
             props.setFunc("", []);
