@@ -747,14 +747,12 @@ class App extends Component {
   };
 
   getNextPick() {
-    const currentUri = this.state.total_queue[this.state.queue_pos]?.uri;
     const queuedNext = this.state.total_queue[this.state.queue_pos + 1];
-    if (queuedNext && queuedNext.uri !== currentUri) {
+    if (queuedNext) {
       return queuedNext;
     }
-    const rec = this.state.next && this.state.next[0];
-    if (rec && rec.uri !== currentUri) {
-      return rec;
+    if (this.state.next && this.state.next[0]) {
+      return this.state.next[0];
     }
     return null;
   }
@@ -868,6 +866,40 @@ class App extends Component {
         dbgLog(`queue: current="${current}" next=[${upcoming.join(", ")}]`);
       })
       .catch((e) => dbgLog(`queue: dump error ${e && e.message}`));
+  };
+
+  drainQueue = () => {
+    const step = (count) => {
+      if (count >= 25) {
+        dbgLog("queue: drain stopped (max)");
+        return;
+      }
+      fetch(`https://api.spotify.com/v1/me/player/queue`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const upcoming = data && data.queue ? data.queue : [];
+          dbgLog(`queue: drain sees ${upcoming.length} upcoming`);
+          if (upcoming.length === 0) {
+            dbgLog("queue: drain done");
+            return null;
+          }
+          return fetch(
+            `https://api.spotify.com/v1/me/player/next?device_id=${this.state.deviceID}`,
+            {
+              method: "POST",
+              headers: { Authorization: `Bearer ${this.accessToken}` },
+            }
+          )
+            .then(() => new Promise((resolve) => setTimeout(resolve, 400)))
+            .then(() => step(count + 1));
+        })
+        .catch((e) => dbgLog(`queue: drain error ${e && e.message}`));
+    };
+    dbgLog("queue: draining...");
+    step(0);
   };
 
   handleVisibilityChange = () => {
@@ -1659,24 +1691,38 @@ class App extends Component {
         state.track_window &&
         state.track_window.current_track &&
         state.track_window.current_track.uri;
-      const playingUri = this.state.total_queue[this.state.queue_pos]?.uri;
-      if (sdkUri && playingUri !== sdkUri) {
-        const idx = this.state.total_queue.findIndex((t) => t.uri === sdkUri);
-        if (idx >= 0) {
-          dbgLog(`bg: advanced to index ${idx}`);
-          this.setState({ queue_pos: idx }, () => {
-            if (
-              this.state.frozenIndex != null &&
-              this.state.frozenIndex <= idx
-            ) {
-              this.frozenQueuedUri = null;
-              this.setState({ frozenIndex: null }, () => {
-                if (document.hidden) {
-                  this.freezeNext();
-                }
-              });
+      if (sdkUri) {
+        const frozenIndex = this.state.frozenIndex;
+        const frozenUri =
+          frozenIndex != null
+            ? this.state.total_queue[frozenIndex]?.uri
+            : null;
+        if (frozenIndex != null && sdkUri === frozenUri) {
+          // The frozen track is now playing. Use its known index rather than a
+          // URI search, which is ambiguous when a song appears twice.
+          dbgLog(`bg: frozen played at index ${frozenIndex}`);
+          this.frozenQueuedUri = null;
+          this.setState({ queue_pos: frozenIndex, frozenIndex: null }, () => {
+            if (document.hidden) {
+              this.freezeNext();
             }
           });
+        } else {
+          const playingUri = this.state.total_queue[this.state.queue_pos]?.uri;
+          if (playingUri !== sdkUri) {
+            // Search back to front: the most recent occurrence is the one.
+            let idx = -1;
+            for (let i = this.state.total_queue.length - 1; i >= 0; i--) {
+              if (this.state.total_queue[i].uri === sdkUri) {
+                idx = i;
+                break;
+              }
+            }
+            if (idx >= 0) {
+              dbgLog(`bg: synced current to index ${idx}`);
+              this.setState({ queue_pos: idx });
+            }
+          }
         }
       }
 
@@ -2359,6 +2405,13 @@ class App extends Component {
                       onClick={() => this.dumpQueue()}
                     >
                       Dump Queue
+                    </Button>
+                    <Button
+                      size="small"
+                      style={{ marginLeft: "8px" }}
+                      onClick={() => this.drainQueue()}
+                    >
+                      Drain Queue
                     </Button>
                   </div>
                 )}
