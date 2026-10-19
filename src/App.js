@@ -790,11 +790,17 @@ class App extends Component {
       dbgLog("bg: no next pick to freeze");
       return;
     }
+    // Set this synchronously, before any async work, so no other caller can
+    // queue a second track in the meantime.
+    this.frozenQueuedUri = pick.uri;
     const idx = this.state.queue_pos + 1;
     const existing = this.state.total_queue[idx];
     if (existing && existing.uri === pick.uri) {
       dbgLog(`bg: freezing existing next at index ${idx}`);
-      this.setState({ frozenIndex: idx }, () => this.queueOnDevice(pick.uri));
+      this.setState({ frozenIndex: idx }, () => {
+        this.queueOnDevice(pick.uri);
+        this.getRecs();
+      });
       return;
     }
     const item = {
@@ -809,9 +815,11 @@ class App extends Component {
     const newQueue = [...this.state.total_queue];
     newQueue.splice(idx, 0, item);
     dbgLog(`bg: freezing new next "${pick.name}" at index ${idx}`);
-    this.setState({ total_queue: newQueue, frozenIndex: idx }, () =>
-      this.queueOnDevice(pick.uri)
-    );
+    this.setState({ total_queue: newQueue, frozenIndex: idx }, () => {
+      this.queueOnDevice(pick.uri);
+      // Refresh recs so the next freeze doesn't pick this same song again.
+      this.getRecs();
+    });
   }
 
   adoptQueuedTrack(track) {
