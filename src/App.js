@@ -213,6 +213,7 @@ class App extends Component {
       searchResults: [],
       searchFocused: false,
       debugOpen: false,
+      freezeEnabled: true,
       debugNow: Date.now(),
 
       //Additional Feature Info
@@ -734,6 +735,17 @@ class App extends Component {
     );
   }
 
+  toggleFreeze = () => {
+    const enabled = !this.state.freezeEnabled;
+    if (!enabled) {
+      this.frozenQueuedUri = null;
+      this.setState({ freezeEnabled: false, frozenIndex: null });
+    } else {
+      this.setState({ freezeEnabled: true });
+    }
+    dbgLog(`freeze: ${enabled ? "enabled" : "disabled"}`);
+  };
+
   toggleDebug = () => {
     const opening = !this.state.debugOpen;
     if (opening) {
@@ -919,6 +931,9 @@ class App extends Component {
   }
 
   freezeNext() {
+    if (!this.state.freezeEnabled) {
+      return;
+    }
     if (
       this.state.frozenIndex != null ||
       this.frozenQueuedUri ||
@@ -2538,6 +2553,13 @@ class App extends Component {
                       onClick={() => this.drainQueue()}
                     >
                       Drain Queue
+                    </Button>
+                    <Button
+                      size="small"
+                      style={{ marginLeft: "8px" }}
+                      onClick={() => this.toggleFreeze()}
+                    >
+                      {this.state.freezeEnabled ? "Freeze: ON" : "Freeze: OFF"}
                     </Button>
                   </div>
                 )}
