@@ -524,7 +524,7 @@ class App extends Component {
     set("nexttrack", () => this.play(this.state.queue_pos + 1));
     set("seekto", (details) => {
       if (details && details.seekTime != null) {
-        player.seek(details.seekTime);
+        player.seek(details.seekTime * 1000);
       }
     });
   }
