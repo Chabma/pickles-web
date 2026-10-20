@@ -176,9 +176,8 @@ class App extends Component {
     this.lastDeviceSync = 0;
     this.lastRebuildAt = 0;
     this.lastSetUpAt = 0;
-    this.frozenQueuedUri = null;
-    this.queueCheckedForFreeze = false;
-    this.freezeInFlight = false;
+    this.keepAliveAudio = null;
+    this.keepAliveUrl = null;
     this.state = {
       //Variables for login / refresh / flobal
       token: null,
@@ -198,7 +197,6 @@ class App extends Component {
       progress_ms: 0,
       total_queue: [],
       queue_pos: 0,
-      frozenIndex: null,
       next: null,
       current: false,
       current_time: Date.now(),
@@ -263,7 +261,6 @@ class App extends Component {
               queueFunc={this.queue}
               player={this.state.player}
               isDark={this.state.isDark}
-              frozenIndex={this.state.frozenIndex}
             />
           );
         });
@@ -391,73 +388,14 @@ class App extends Component {
     //TODO: determine if this is needed
   };
 
-  skipToFrozen() {
-    /*
-  "Next" into the frozen track: use Spotify's skip so it consumes the queued
-  track (thawing the freeze) instead of starting a new context.
-  */
-    const frozen = this.state.frozenIndex;
-    if (frozen == null || this.state.playLock) {
-      return;
-    }
-    this.setState({ playLock: true, initialStart: false });
-    dbgLog("bg: next -> consuming frozen");
-    fetch(
-      `https://api.spotify.com/v1/me/player/next?device_id=${this.state.deviceID}`,
-      {
-        method: "POST",
-        headers: { Authorization: `Bearer ${this.accessToken}` },
-      }
-    )
-      .then((response) => {
-        if (!response.ok) {
-          dbgLog(`bg: next failed ${response.status}`);
-          this.setState({ playLock: false });
-          return;
-        }
-        endSong = false;
-        this.frozenQueuedUri = null;
-        this.setState(
-          {
-            queue_pos: frozen,
-            progress_ms: 0,
-            playLock: false,
-            current: true,
-            frozenIndex: null,
-          },
-          () => {
-            this.updateMediaSession(true);
-            // `next` while paused changes the track without starting it, so
-            // make sure playback actually resumes.
-            if (this.state.player && this.state.player.resume) {
-              this.state.player.resume();
-            }
-            if (document.hidden) {
-              this.freezeNext();
-            }
-          }
-        );
-      })
-      .catch((e) => {
-        dbgLog(`bg: next error ${e && e.message}`);
-        this.setState({ playLock: false });
-      });
-  }
-
   play = (queuePosition = this.state.queue_pos, tickBool = false, attempt = 0) => {
     /*
   Call spotify api to play the song at `queuePosition` via current web player (calls update playing function)
   */
     console.log(tickBool)
+    this.startKeepAlive();
 
     if (queuePosition >= 0) {
-      if (
-        this.state.frozenIndex != null &&
-        queuePosition === this.state.frozenIndex
-      ) {
-        this.skipToFrozen();
-        return;
-      }
       if (queuePosition >= this.state.total_queue.length) {
         this.queue(this.state.next[0], this.state.total_queue.length, true, tickBool);
       } else if (!this.state.playLock) {
@@ -509,14 +447,12 @@ class App extends Component {
                   console.log(tickBool)
                   console.log(tickInterval)
                   endSong = false;
-                  this.frozenQueuedUri = null;
                   this.setState(
                     {
                       queue_pos: queuePosition,
                       progress_ms: 0,
                       playLock: false,
                       current: true,
-                      frozenIndex: null,
                     },
                     () => {
                       if(debug){console.log("updating based on play function")}
@@ -588,7 +524,7 @@ class App extends Component {
     set("nexttrack", () => this.play(this.state.queue_pos + 1));
     set("seekto", (details) => {
       if (details && details.seekTime != null) {
-        player.seek(details.seekTime);
+        player.seek(details.seekTime * 1000);
       }
     });
   }
@@ -746,118 +682,74 @@ class App extends Component {
     this.setState({ debugOpen: opening });
   };
 
-  getNextPick() {
-    const queuedNext = this.state.total_queue[this.state.queue_pos + 1];
-    if (queuedNext) {
-      return queuedNext;
-    }
-    if (this.state.next && this.state.next[0]) {
-      return this.state.next[0];
-    }
-    return null;
-  }
-
-  queueOnDevice(uri) {
-    // Synchronous guard: Spotify's queue must never hold more than one track.
-    this.frozenQueuedUri = uri;
-    dbgLog(`bg: queueing ...${uri.slice(-8)}`);
-    fetch(
-      `https://api.spotify.com/v1/me/player/queue?device_id=${
-        this.state.deviceID
-      }&uri=${encodeURIComponent(uri)}`,
-      {
-        method: "POST",
-        headers: { Authorization: `Bearer ${this.accessToken}` },
+  makeKeepAliveBlob() {
+    // 10s, 8kHz, mono, 8-bit WAV with a tiny (inaudible) 20Hz tone.
+    const sampleRate = 8000;
+    const numSamples = sampleRate * 10;
+    const buffer = new ArrayBuffer(44 + numSamples);
+    const view = new DataView(buffer);
+    const writeString = (offset, str) => {
+      for (let i = 0; i < str.length; i++) {
+        view.setUint8(offset + i, str.charCodeAt(i));
       }
-    )
-      .then((response) => {
-        if (!response.ok) {
-          this.frozenQueuedUri = null;
-          dbgLog(`bg: queue failed ${response.status}`);
-        } else {
-          dbgLog(`bg: queue status ${response.status}`);
-        }
-      })
-      .catch((e) => {
-        this.frozenQueuedUri = null;
-        dbgLog(`bg: queue error ${e && e.message}`);
-      });
-  }
-
-  queueNextPick() {
-    const pick = this.getNextPick();
-    if (!pick) {
-      dbgLog("bg: no next pick to freeze");
-      return;
-    }
-    // Set this synchronously, before any async work, so no other caller can
-    // queue a second track in the meantime.
-    this.frozenQueuedUri = pick.uri;
-    const idx = this.state.queue_pos + 1;
-    const existing = this.state.total_queue[idx];
-    if (existing && existing.uri === pick.uri) {
-      dbgLog(`bg: freezing existing next at index ${idx}`);
-      this.setState({ frozenIndex: idx }, () => {
-        this.queueOnDevice(pick.uri);
-        this.getRecs();
-      });
-      return;
-    }
-    const item = {
-      uri: pick.uri,
-      id: pick.id,
-      songDuration: pick.songDuration ?? pick.duration_ms,
-      name: pick.name,
-      artists: pick.artists,
-      image:
-        pick.image || (pick.album && pick.album.images && pick.album.images[0]),
     };
-    const newQueue = [...this.state.total_queue];
-    newQueue.splice(idx, 0, item);
-    dbgLog(`bg: freezing new next "${pick.name}" at index ${idx}`);
-    this.setState({ total_queue: newQueue, frozenIndex: idx }, () => {
-      this.queueOnDevice(pick.uri);
-      // Refresh recs so the next freeze doesn't pick this same song again.
-      this.getRecs();
-    });
+    writeString(0, "RIFF");
+    view.setUint32(4, 36 + numSamples, true);
+    writeString(8, "WAVE");
+    writeString(12, "fmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate, true);
+    view.setUint16(32, 1, true);
+    view.setUint16(34, 8, true);
+    writeString(36, "data");
+    view.setUint32(40, numSamples, true);
+    for (let i = 0; i < numSamples; i++) {
+      const sample =
+        128 + Math.round(2 * Math.sin((2 * Math.PI * 20 * i) / sampleRate));
+      view.setUint8(44 + i, Math.max(0, Math.min(255, sample)));
+    }
+    return new Blob([view], { type: "audio/wav" });
   }
 
-  adoptQueuedTrack(track) {
-    this.frozenQueuedUri = track.uri;
-    let idx = this.state.total_queue.findIndex((t) => t.uri === track.uri);
-    if (idx > this.state.queue_pos) {
-      dbgLog(`bg: adopting queued track at index ${idx}`);
-      this.setState({ frozenIndex: idx });
+  startKeepAlive() {
+    if (typeof Audio === "undefined") {
       return;
     }
-    idx = this.state.queue_pos + 1;
-    const item = {
-      uri: track.uri,
-      id: track.id,
-      songDuration: track.duration_ms,
-      name: track.name,
-      artists: track.artists,
-      image: track.album && track.album.images && track.album.images[0],
-    };
-    const newQueue = [...this.state.total_queue];
-    newQueue.splice(idx, 0, item);
-    dbgLog(`bg: adopting queued "${track.name}" at index ${idx}`);
-    this.setState({ total_queue: newQueue, frozenIndex: idx });
-  }
-
-  freezeNext() {
-    if (
-      this.state.frozenIndex != null ||
-      this.frozenQueuedUri ||
-      this.freezeInFlight
-    ) {
+    if (this.keepAliveAudio) {
+      if (this.keepAliveAudio.paused) {
+        this.keepAliveAudio.play().catch(() => {});
+      }
       return;
     }
-    // Queue immediately (no extra GET) so this lands before the browser can
-    // suspend us. `frozenQueuedUri` is set synchronously by queueOnDevice.
-    this.freezeInFlight = true;
-    this.queueNextPick();
-    this.freezeInFlight = false;
+    try {
+      this.keepAliveUrl = URL.createObjectURL(this.makeKeepAliveBlob());
+      const audio = new Audio(this.keepAliveUrl);
+      audio.loop = true;
+      // Deliberately not 0 and not muted: a muted/zero-volume track can still
+      // be frozen. Microscopic volume keeps the tab "audible" to Android.
+      audio.volume = 0.001;
+      this.keepAliveAudio = audio;
+      audio
+        .play()
+        .then(() => {
+          dbgLog("keepalive: silent audio playing");
+          setTimeout(() => {
+            const title =
+              navigator.mediaSession &&
+              navigator.mediaSession.metadata &&
+              navigator.mediaSession.metadata.title;
+            dbgLog(`keepalive: mediaSession title=${title}`);
+          }, 2000);
+        })
+        .catch((e) =>
+          dbgLog(`keepalive: silent audio failed ${e && e.message}`)
+        );
+    } catch (e) {
+      dbgLog(`keepalive: silent audio error ${e && e.message}`);
+    }
   }
 
   dumpQueue = () => {
@@ -921,21 +813,6 @@ class App extends Component {
     if (!sdkUri) {
       return;
     }
-    const frozenIndex = this.state.frozenIndex;
-    const frozenUri =
-      frozenIndex != null ? this.state.total_queue[frozenIndex]?.uri : null;
-    if (frozenIndex != null && sdkUri === frozenUri) {
-      // The frozen track is now playing. Use its known index rather than a URI
-      // search, which is ambiguous when a song appears twice.
-      dbgLog(`bg: frozen played at index ${frozenIndex}`);
-      this.frozenQueuedUri = null;
-      this.setState({ queue_pos: frozenIndex, frozenIndex: null }, () => {
-        if (document.hidden) {
-          this.freezeNext();
-        }
-      });
-      return;
-    }
     const playingUri = this.state.total_queue[this.state.queue_pos]?.uri;
     if (playingUri !== sdkUri) {
       // Search back to front: the most recent occurrence is the one.
@@ -967,11 +844,10 @@ class App extends Component {
   handleVisibilityChange = () => {
     dbgLog(document.hidden ? "event: hidden" : "event: visible");
     if (document.hidden) {
-      this.freezeNext();
+      this.startKeepAlive();
       return;
     }
     lastSecond = Date.now();
-    this.queueCheckedForFreeze = false;
     if (this.pendingPlayPosition != null) {
       this.recoverPlayback(this.pendingPlayPosition);
     } else {
@@ -1465,7 +1341,6 @@ class App extends Component {
     // against doubles. The SDK signal is the primary detector.
     const trackDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
     if (
-      this.state.frozenIndex == null &&
       this.state.is_playing &&
       trackDuration &&
       this.state.progress_ms >= trackDuration + 1500 &&
@@ -1531,17 +1406,6 @@ class App extends Component {
       this.syncDevice(false);
     }
 
-    // While hidden, keep exactly one track queued so Spotify advances on its
-    // own instead of waiting for (throttled) JS at the song end.
-    if (
-      document.hidden &&
-      this.state.frozenIndex == null &&
-      Date.now() - (this.lastFreezeAttempt || 0) > 10000
-    ) {
-      this.lastFreezeAttempt = Date.now();
-      this.freezeNext();
-    }
-
     // check for token refresh
     if (Date.now() - this.state.current_time > 1800000) {
       this.setState({
@@ -1585,14 +1449,6 @@ class App extends Component {
     if (index < 0 || index >= total.length) {
       return;
     }
-    if (index === this.state.frozenIndex) {
-      dbgLog("bg: cannot remove the frozen next");
-      return;
-    }
-    const frozenIndexAfter =
-      this.state.frozenIndex != null && index < this.state.frozenIndex
-        ? this.state.frozenIndex - 1
-        : this.state.frozenIndex;
     const oldPos = this.state.queue_pos;
     const newQueue = [...total.slice(0, index), ...total.slice(index + 1)];
 
@@ -1621,7 +1477,6 @@ class App extends Component {
       {
         total_queue: newQueue,
         queue_pos: newPos,
-        frozenIndex: frozenIndexAfter,
       },
       () => {
       if (index === oldPos) {
@@ -1753,12 +1608,11 @@ class App extends Component {
     player.addListener("player_state_changed", (state) => {
       let currentSongDuration = this.state.total_queue[this.state.queue_pos]?.songDuration;
 
-      // If Spotify advanced to another track (e.g. a frozen background track),
-      // keep our queue position in sync with what is actually playing.
+      // If the player advanced to another track, keep our queue position in
+      // sync with what is actually playing.
       this.syncFromState(state);
 
       if (
-        this.state.frozenIndex == null &&
         state &&
         !endSong &&
         state.paused &&
@@ -1907,6 +1761,12 @@ class App extends Component {
     if (this.debugTimer) {
       clearInterval(this.debugTimer);
     }
+    if (this.keepAliveAudio) {
+      this.keepAliveAudio.pause();
+    }
+    if (this.keepAliveUrl) {
+      URL.revokeObjectURL(this.keepAliveUrl);
+    }
   }
 
   componentDidMount() {
@@ -1925,8 +1785,9 @@ class App extends Component {
 
     // Pause recovery while hidden; resume it when the tab comes back.
     document.addEventListener("visibilitychange", this.handleVisibilityChange);
-    // Hold a Web Lock so Chrome doesn't freeze/throttle this tab while audio is
-    // playing (which can otherwise pause playback mid-song when backgrounded).
+    // Keep a Web Lock for the whole session. Chrome exempts locked pages from
+    // freezing/intensive throttling, so audio keeps playing and the refill tick
+    // keeps running when the app is backgrounded. Released on close/discard.
     try {
       if (navigator.locks && navigator.locks.request) {
         navigator.locks
@@ -2256,7 +2117,6 @@ class App extends Component {
                 isDark={this.state.isDark}
                 updateLastSecond={this.updateLastSecond}
                 searchFocused={this.state.searchFocused}
-                frozenIndex={this.state.frozenIndex}
               />
 
               {/* Song recomendations */}
