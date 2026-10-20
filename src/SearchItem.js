@@ -67,12 +67,7 @@ const SearchItem = (props) => {
           }}
           onClick={() => {
             props.setFunc("", []);
-            props.queueFunc(
-              props.element,
-              props.frozenIndex != null
-                ? props.frozenIndex + 1
-                : props.queue_pos + 1
-            );
+            props.queueFunc(props.element, props.queue_pos + 1);
           }}
         />,
         <img
