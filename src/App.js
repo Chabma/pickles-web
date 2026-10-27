@@ -111,6 +111,13 @@ class App extends Component {
   constructor() {
     super();
     this.accessToken = null;
+    this.tokenExpiry = null;
+    this.refreshTokenPromise = null;
+    this.refresh_token = null;
+    this.lastConnectionCheck = 0;
+    this.isReconnecting = false;
+    this.reconnectTimer = null;
+    this.deviceWasReady = false;
     this.featureCache = {};
     this.state = {
       //Variables for login / refresh / flobal
@@ -877,12 +884,16 @@ class App extends Component {
     //   lastSecond = Date.now();
     // }
 
-    // check for token refresh
-    if (Date.now() - this.state.current_time > 1800000) {
-      this.setState({
-        current_time: Date.now(),
-      });
-      this.refreshToken(0);
+    // Keep the access token fresh. The SDK also asks for a token on demand
+    // via getOAuthToken, so this is just a foreground safety net.
+    if (!this.tokenExpiry || Date.now() > this.tokenExpiry) {
+      this.refreshToken();
+    }
+
+    // Every ~15s make sure the SDK device hasn't gone offline while idle.
+    if (this.deviceWasReady && Date.now() - this.lastConnectionCheck > 15000) {
+      this.lastConnectionCheck = Date.now();
+      this.checkPlayerConnection();
     }
   }
 
@@ -985,48 +996,178 @@ class App extends Component {
     }
   };
 
-  refreshToken(x) {
+  refreshToken(x = 0) {
     /*
-  Refresh spotify access token via api to allow player to stay active and avoid token timeout
+  Refresh the Spotify access token and keep the SDK + API calls alive.
+  Returns a promise that resolves with the new token so callers (including
+  the Web Playback SDK's getOAuthToken) can await a fresh token on demand.
   */
-    //TODO: add device refresh here
-    $.ajax({
-      url: `https://accounts.spotify.com/api/token`,
-      type: "POST",
-      data: {
-        grant_type: "refresh_token",
-        refresh_token: this.state.refresh_token,
-        client_id: clientId,
-        client_secret: clientSecret,
-      },
-      success: (data) => {
-        console.log("successfully refreshed token");
-        console.log(data);
-        if (data) {
-          this.accessToken = data.access_token;
-          this.setState({
-            token: data.access_token,
-          });
+    if (this.refreshTokenPromise) {
+      return this.refreshTokenPromise;
+    }
+
+    this.refreshTokenPromise = new Promise((resolve, reject) => {
+      const attempt = (attemptNumber) => {
+        const refresh_token = this.refresh_token || this.state.refresh_token;
+        if (!refresh_token) {
+          this.refreshTokenPromise = null;
+          reject(new Error("No refresh token available yet"));
+          return;
         }
-      },
-      error: () => {
-        if (x < 10) {
-          console.log("failured to refresh token, trying again");
-          console.log(x);
-          this.refreshToken(x + 1);
-        }
-      },
+        $.ajax({
+          url: tokenEndpoint,
+          type: "POST",
+          data: {
+            grant_type: "refresh_token",
+            refresh_token: refresh_token,
+            client_id: clientId,
+            client_secret: clientSecret,
+          },
+          success: (data) => {
+            if (data && data.access_token) {
+              console.log("successfully refreshed token");
+              this.accessToken = data.access_token;
+              this.tokenExpiry =
+                Date.now() + ((data.expires_in || 3600) - 60) * 1000;
+              this.setState({ token: data.access_token });
+              this.refreshTokenPromise = null;
+              resolve(data.access_token);
+            } else {
+              this.refreshTokenPromise = null;
+              reject(new Error("Token refresh returned no access token"));
+            }
+          },
+          error: () => {
+            if (attemptNumber < 3) {
+              console.log("failed to refresh token, retrying", attemptNumber);
+              setTimeout(
+                () => attempt(attemptNumber + 1),
+                1000 * (attemptNumber + 1)
+              );
+            } else {
+              console.log("failed to refresh token after retries");
+              this.refreshTokenPromise = null;
+              reject(new Error("Failed to refresh Spotify token"));
+            }
+          },
+        });
+      };
+      attempt(x);
     });
+
+    return this.refreshTokenPromise;
   }
+
+  getFreshToken = (force = false) => {
+    /*
+  Return a promise for a valid access token, refreshing first if the current
+  one is missing or close to expiring. The Web Playback SDK's getOAuthToken
+  uses this, so the SDK gets a fresh token whenever it asks.
+  */
+    if (
+      !force &&
+      this.accessToken &&
+      this.tokenExpiry &&
+      Date.now() < this.tokenExpiry
+    ) {
+      return Promise.resolve(this.accessToken);
+    }
+    return this.refreshToken();
+  };
+
+  handleAuthError = (player) => {
+    /*
+  The SDK lost authentication (usually an expired token while the tab was
+  backgrounded). Force a fresh token and reconnect.
+  */
+    this.getFreshToken(true)
+      .then(() => this.reconnectPlayer(player))
+      .catch(() => {});
+  };
+
+  scheduleReconnect = (player, delayMs = 3000) => {
+    /*
+  Debounced reconnect so a flurry of not_ready events doesn't hammer the SDK.
+  */
+    if (this.reconnectTimer) {
+      return;
+    }
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null;
+      this.reconnectPlayer(player);
+    }, delayMs);
+  };
+
+  reconnectPlayer = (player) => {
+    const target = player || this.state.player;
+    if (!target || this.isReconnecting) {
+      return;
+    }
+    this.isReconnecting = true;
+    target
+      .connect()
+      .then(() => {
+        this.isReconnecting = false;
+      })
+      .catch(() => {
+        this.isReconnecting = false;
+      });
+  };
+
+  checkPlayerConnection = () => {
+    /*
+  Ask the SDK for its current state and reconnect if the device has gone
+  offline (state is null) or stopped answering.
+  */
+    const player = this.state.player;
+    if (!player || this.isReconnecting) {
+      return;
+    }
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("player state timeout")), 4000)
+    );
+    timeout.catch(() => {});
+    Promise.race([player.getCurrentState(), timeout])
+      .then((state) => {
+        if (!state) {
+          this.reconnectPlayer(player);
+        }
+      })
+      .catch(() => {
+        this.reconnectPlayer(player);
+      });
+  };
+
+  onVisibilityChange = () => {
+    /*
+  Browsers throttle/stop timers in background tabs, so the periodic token
+  refresh may not run. When the tab becomes visible again, refresh the token
+  and reconnect the player if it has gone offline.
+  */
+    if (document.visibilityState !== "visible") {
+      return;
+    }
+    this.lastConnectionCheck = 0;
+    this.getFreshToken(true)
+      .then(() => this.checkPlayerConnection())
+      .catch(() => {});
+  };
 
   setUpPlayer(data, playAfter = false) {
     let access_token = data.access_token;
     let refresh_token = data.refresh_token;
     this.accessToken = access_token;
+    this.refresh_token = refresh_token;
+    this.tokenExpiry =
+      Date.now() + ((data.expires_in || 3600) - 60) * 1000;
 
     let player = new window.Spotify.Player({
       name: "Pickles Web Player",
-      getOAuthToken: (cb) => cb(this.accessToken),
+      getOAuthToken: (cb) => {
+        this.getFreshToken()
+          .then((token) => cb(token))
+          .catch(() => cb(this.accessToken));
+      },
     });
 
     // Error handling
@@ -1036,10 +1177,9 @@ class App extends Component {
     }
     );
     player.addListener("authentication_error", (message) => {
-      //alert(message.message);
-      console.log(message.message);
-    }
-    );
+      console.log("authentication_error: " + message.message);
+      this.handleAuthError(player);
+    });
     player.addListener("account_error", (message) => console.log(message.message));
     player.addListener("playback_error", (message) => console.log(message.message));
 
@@ -1102,6 +1242,7 @@ class App extends Component {
     // Ready
     player.addListener("ready", ({ device_id }) => {
       console.log("Ready with Device ID", device_id);
+      this.deviceWasReady = true;
       this.setState({
         deviceID: device_id,
       });
@@ -1109,8 +1250,8 @@ class App extends Component {
 
     // Not Ready
     player.addListener("not_ready", ({ device_id }) => {
-      //alert("Device ID has gone offline: ", device_id);
-      console.log("Device ID has; gone offline: ", device_id)
+      console.log("Device ID has gone offline: ", device_id);
+      this.scheduleReconnect(player, 3000);
     });
 
     // Connect to the player!
@@ -1193,6 +1334,10 @@ class App extends Component {
 
     // enable horizontal scrolls
     this.enableHorizontalScroll();
+
+    // Refresh the Spotify session when the user comes back to the tab
+    // (timers are throttled while backgrounded).
+    document.addEventListener("visibilitychange", this.onVisibilityChange);
 
     //initialize extra pause and play via headphones
     // TODO see if needed
