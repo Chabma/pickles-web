@@ -118,6 +118,9 @@ class App extends Component {
     this.isReconnecting = false;
     this.reconnectTimer = null;
     this.deviceWasReady = false;
+    this.pendingResume = null;
+    this.isRecreating = false;
+    this.resumeAttempts = 0;
     this.featureCache = {};
     this.state = {
       //Variables for login / refresh / flobal
@@ -406,6 +409,131 @@ class App extends Component {
     lastSecond = Date.now();
   }
 
+  resume = () => {
+    /*
+  Resume the current track at its last known position. If the SDK device has
+  expired while paused, recreate it first and resume once it is ready.
+  */
+    const track = this.state.total_queue[this.state.queue_pos];
+    if (!track) {
+      return;
+    }
+    this.pendingResume = {
+      uri: track.uri,
+      positionMs: this.state.progress_ms || 0,
+    };
+    this.resumeAttempts = 0;
+    this.ensureDeviceThenResume();
+  };
+
+  ensureDeviceThenResume = () => {
+    const deviceId = this.state.deviceID;
+    const token = this.accessToken || this.state.token;
+    if (!deviceId) {
+      this.recreatePlayer();
+      return;
+    }
+    fetch(`https://api.spotify.com/v1/me/player/devices`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const ids = (data.devices || []).map((d) => d.id);
+        if (ids.includes(deviceId)) {
+          this.doResume(deviceId);
+        } else {
+          this.recreatePlayer();
+        }
+      })
+      .catch(() => this.recreatePlayer());
+  };
+
+  doResume = (deviceId) => {
+    const pending = this.pendingResume;
+    if (!pending || !deviceId) {
+      return;
+    }
+    const body = { uris: [pending.uri] };
+    if (pending.positionMs && pending.positionMs > 0) {
+      body.position_ms = Math.round(pending.positionMs);
+    }
+    const token = this.accessToken || this.state.token;
+    fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+      method: "PUT",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          this.pendingResume = null;
+          this.setState({ is_playing: true });
+          if ("mediaSession" in navigator) {
+            navigator.mediaSession.playbackState = "playing";
+          }
+        } else {
+          this.recreatePlayer();
+        }
+      })
+      .catch(() => this.recreatePlayer());
+  };
+
+  recreatePlayer = () => {
+    /*
+  Tear down the current SDK player and create a fresh one. The ready listener
+  picks up any pendingResume once the new device is registered.
+  */
+    if (this.isRecreating) {
+      return;
+    }
+    if (this.resumeAttempts >= 3) {
+      this.pendingResume = null;
+      this.play(this.state.queue_pos);
+      return;
+    }
+    this.resumeAttempts += 1;
+    this.isRecreating = true;
+    const old = this.state.player;
+    if (old) {
+      try {
+        old.disconnect().catch(() => {});
+      } catch (e) {}
+    }
+    this.setUpPlayer(
+      {
+        access_token: this.accessToken || this.state.token,
+        refresh_token: this.refresh_token || this.state.refresh_token,
+      },
+      false
+    );
+  };
+
+  pause = () => {
+    /*
+  Pause the current track and reflect it in state + media session.
+  */
+    const deviceId = this.state.deviceID;
+    if (!deviceId) {
+      return;
+    }
+    const token = this.accessToken || this.state.token;
+    fetch(`https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(() => {
+      this.setState({ is_playing: false });
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.playbackState = "paused";
+      }
+    });
+  };
+
 
   updatePlaying = (refreshSelections, setItemBoolean = true) => {
     /*
@@ -478,8 +606,7 @@ class App extends Component {
                 this.getRecs();
               }
 
-              // update android player
-              // make this a seperate function?
+              // update android player / notification drawer
               if ("mediaSession" in navigator) {
                 navigator.mediaSession.metadata = new window.MediaMetadata({
                   title: data?.item.name ?? "Pickles Music Player",
@@ -487,9 +614,13 @@ class App extends Component {
                   album: data?.item.album.name ?? "Pickles",
                   artwork: [{src: data?.item.album.images[0].url ?? "./images/logo.png"}],
                 });
-                  navigator.mediaSession.setActionHandler("previoustrack", () => this.play(this.state.queue_pos - 1));
-                  navigator.mediaSession.setActionHandler("nexttrack", () => this.play(this.state.queue_pos + 1));
-                // TODO: Update playback state.
+                navigator.mediaSession.setActionHandler("play", () => this.resume());
+                navigator.mediaSession.setActionHandler("pause", () => this.pause());
+                navigator.mediaSession.setActionHandler("previoustrack", () => this.play(this.state.queue_pos - 1));
+                navigator.mediaSession.setActionHandler("nexttrack", () => this.play(this.state.queue_pos + 1));
+                navigator.mediaSession.playbackState = data?.is_playing
+                  ? "playing"
+                  : "paused";
               }
 
               this.updateScrollPosition();
@@ -500,15 +631,8 @@ class App extends Component {
             },
           });
         } else {
-          console.log("another player created");
-          console.log(data);
-          this.setUpPlayer(
-            {
-              access_token: this.state.token,
-              refresh_token: this.state.refresh_token,
-            },
-            true
-          );
+          console.log("device gone, recreating player to resume");
+          this.resume();
         }
       })
       .catch((error) =>
@@ -1243,9 +1367,17 @@ class App extends Component {
     player.addListener("ready", ({ device_id }) => {
       console.log("Ready with Device ID", device_id);
       this.deviceWasReady = true;
-      this.setState({
-        deviceID: device_id,
-      });
+      this.isRecreating = false;
+      this.setState(
+        {
+          deviceID: device_id,
+        },
+        () => {
+          if (this.pendingResume) {
+            this.doResume(device_id);
+          }
+        }
+      );
     });
 
     // Not Ready
@@ -1282,9 +1414,7 @@ class App extends Component {
           this.getUserImage();
         this.getDevices();
 
-        if (playAfter) {
-          this.play();
-        }
+
       })
       .catch((error) => {
         console.log(error);
